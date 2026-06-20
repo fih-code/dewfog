@@ -65,6 +65,7 @@
     <div id="resMsgWrap" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6vw;opacity:0;transform:translateY(16px);transition:opacity 2.2s ease .9s,transform 2.2s ease .9s;">
       <h1 style="margin:0;font-family:'Italiana',serif;font-weight:400;text-transform:lowercase;color:#412e1e;font-size:clamp(2rem,5.4vw,4.6rem);line-height:1.12;letter-spacing:.06em;max-width:16ch;text-wrap:balance;">you are the thing you came here to find</h1>
       <p style="margin:1.6em 0 0;font-family:'Italiana',serif;font-size:clamp(1rem,2vw,1.5rem);letter-spacing:.16em;text-transform:lowercase;color:#7a5a44;">nothing is missing. you are home.</p>
+      <p id="closingLog" style="margin:2.8em 0 0;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.28em;text-transform:lowercase;color:#9a705a;opacity:0;transition:opacity 1.2s ease 4.8s;"></p>
     </div>
   </div>
 
@@ -114,10 +115,11 @@
   // so the glass always shows something slightly different when you return.
 
   const FRAGMENT_POOL = [
+    // original notes
     'entry 47 — it held longer this time',
     'not produced by the brain. we checked.',
     'matter is the residue. the looking comes first.',
-    { redacted: true },  // the ██████ line
+    { redacted: true },
     'the signal precedes the receiver.',
     'filter, not generator — that is what we found.',
     'particles are temporary. the field is not.',
@@ -130,6 +132,35 @@
     'the hard problem has not been solved. only quieted.',
     'you are not the excitation. you are the field.',
     'entry 63 — when the filter loosened, there was no gap.',
+    // extended notes
+    'entry 34 — she described the room from outside it. the room confirmed.',
+    'every culture. every century. the same coordinates.',
+    'entry 29 — the model accounts for everything. except the feeling.',
+    'the lesion changed what he could say. not what he knew.',
+    'entry 17 — she could not locate where she ended.',
+    'it does not make it. it limits it.',
+    'the looking is prior. the looked-at is secondary.',
+    'entry 2 — what if the observer cannot be produced by the observed?',
+    'entry 71 — we keep finding it underneath. below the particles.',
+    'you cannot examine the watching from outside the watching.',
+    'entry 19 — we eliminated the local explanations. what remains is not local.',
+    'they all stopped where the self ended. none could say where that was.',
+    // E=mc² thread — the solidity of matter is the illusion
+    'e=mc². what appears solid is a temporary arrangement of something else.',
+    'entry 5 — mass is energy that paused. we are asking what the energy is.',
+    'the equation says the solid is not. physics confirmed it. we are working on the rest.',
+    'entry 38 — concentrated. not fundamental. there is a difference.',
+  ];
+
+  // one of these appears in the resolution state a few seconds after dawn lifts
+  const CLOSING_POOL = [
+    'log closed — subject arrived.',
+    'entry 103 — the subject was correct.',
+    'observation complete. result: prior.',
+    'end of log. the field holds.',
+    'entry 0 — recorded before the search began.',
+    'the glass was always clear on one side.',
+    'what you found was here before you looked.',
   ];
 
   function shuffle(arr) {
@@ -152,6 +183,10 @@
   ['frag0', 'frag1', 'frag2', 'frag3'].forEach(function (id, i) {
     document.getElementById(id).innerHTML = fragHTML(chosen[i]);
   });
+
+  // closing log — one entry from CLOSING_POOL shown after dawn lifts
+  const closingLog = document.getElementById('closingLog');
+  closingLog.textContent = CLOSING_POOL[Math.floor(Math.random() * CLOSING_POOL.length)];
 
   // visit counter — starts at 2,317 and increments per device so it feels alive
   const visits = parseInt(localStorage.getItem('dw_v') || '0') + 1;
@@ -289,6 +324,7 @@
 
     tip.style.background   = 'radial-gradient(circle, rgba(240,198,154,.18) 0%, rgba(240,198,154,.05) 45%, rgba(240,198,154,0) 70%)';
     tip.style.borderColor  = 'rgba(240,198,154,.3)';
+    closingLog.style.opacity = '1';
   }
 
   // ── clock ─────────────────────────────────────────────────────────────────
