@@ -42,12 +42,13 @@
     <div style="position:absolute;left:58%;top:58%;width:40vw;height:40vw;border-radius:50%;filter:blur(80px);background:radial-gradient(circle, rgba(159,232,219,.08) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 21s ease-in-out infinite;animation-delay:-6s;"></div>
 
     <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
+    <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
     <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(159,232,219,.62);">
-      <div style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 9s ease-in-out infinite;">entry 47 — it held longer this time</div>
-      <div style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 11s ease-in-out infinite;animation-delay:-3s;">not produced by the brain. we checked.</div>
-      <div style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 12s ease-in-out infinite;animation-delay:-5s;">matter is the residue. the looking comes first.</div>
-      <div style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-7s;">the <span style="background:rgba(159,232,219,.22);color:transparent;padding:0 .15em;letter-spacing:0;">██████</span> is not lost — nothing here is</div>
-      <div style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);">you are the 2,317th to wipe the glass</div>
+      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 9s ease-in-out infinite;"></div>
+      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 11s ease-in-out infinite;animation-delay:-3s;"></div>
+      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 12s ease-in-out infinite;animation-delay:-5s;"></div>
+      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-7s;"></div>
+      <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);white-space:nowrap;"></div>
     </div>
 
     <!-- whisper: outer owns state opacity, inner owns breathing keyframe -->
@@ -75,6 +76,59 @@
 
 <script>
 (function () {
+
+  // ── fragment pool ─────────────────────────────────────────────────────────
+  // 16 notes drawn from the essay's ideas. 4 are chosen at random each visit
+  // so the glass always shows something slightly different when you return.
+
+  const FRAGMENT_POOL = [
+    'entry 47 — it held longer this time',
+    'not produced by the brain. we checked.',
+    'matter is the residue. the looking comes first.',
+    { redacted: true },  // the ██████ line
+    'the signal precedes the receiver.',
+    'filter, not generator — that is what we found.',
+    'particles are temporary. the field is not.',
+    'why does it feel like anything at all',
+    'they all reported the same place. no coordinates.',
+    'entry 12 — no cortical activity. full account. we are still checking.',
+    'it was here before the matter. we think.',
+    'the observer is not produced by what it observes.',
+    'entry 91 — the boundary dissolved. she could not say where she ended.',
+    'the hard problem has not been solved. only quieted.',
+    'you are not the excitation. you are the field.',
+    'entry 63 — when the filter loosened, there was no gap.',
+  ];
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function fragHTML(f) {
+    if (f && f.redacted) {
+      return 'the <span style="background:rgba(159,232,219,.22);color:transparent;padding:0 .15em;letter-spacing:0;">██████</span> is not lost — nothing here is';
+    }
+    return f;
+  }
+
+  const chosen = shuffle(FRAGMENT_POOL).slice(0, 4);
+  ['frag0', 'frag1', 'frag2', 'frag3'].forEach(function (id, i) {
+    document.getElementById(id).innerHTML = fragHTML(chosen[i]);
+  });
+
+  // visit counter — starts at 2,317 and increments per device so it feels alive
+  const visits = parseInt(localStorage.getItem('dw_v') || '0') + 1;
+  localStorage.setItem('dw_v', String(visits));
+  document.getElementById('fragTop').textContent =
+    'you are the ' + (2316 + visits).toLocaleString() + 'th to wipe the glass';
+
+  // ── end fragment pool ─────────────────────────────────────────────────────
+
   const stage      = document.getElementById('stage');
   const fogCanvas  = document.getElementById('fog');
   const tip        = document.getElementById('tip');
