@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dewfog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    @keyframes dewWhisper  { 0%,100% { opacity: .78; letter-spacing: .34em } 50% { opacity: 1; letter-spacing: .38em } }
+    @keyframes dewBlob     { 0%,100% { transform: translate3d(0,0,0) scale(1); opacity: .5 } 50% { transform: translate3d(2%,-2%,0) scale(1.08); opacity: .78 } }
+    @keyframes dewHint     { 0%,100% { opacity: .5 } 50% { opacity: 1 } }
+    @keyframes dewMote     { 0% { transform: translate3d(0,0,0); opacity: 0 } 12% { opacity: .7 } 88% { opacity: .6 } 100% { transform: translate3d(14px,-120px,0); opacity: 0 } }
+    @keyframes dewFrag     { 0%,100% { opacity: 1 } 50% { opacity: .72 } }
+  </style>
+</head>
+<body>
+
+<div id="stage" style="position:fixed;inset:0;overflow:hidden;cursor:none;background:#0b1316;font-family:'Space Mono',monospace;touch-action:none;">
+
+  <!-- DAWN / RESOLUTION (z:1 — bottom, revealed on resolve) -->
+  <div id="dawn" style="position:absolute;inset:0;z-index:1;opacity:0;transition:opacity 3s ease;background:radial-gradient(135% 120% at 50% 9%, #fdf4e8 0%, #f6dcc0 26%, #f0c69a 46%, #d8a37e 64%, #9a705a 82%, #3a2a22 100%);">
+    <div style="position:absolute;left:50%;top:8%;width:80vw;height:80vw;max-width:900px;max-height:900px;transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(255,244,228,.85) 0%, rgba(240,198,154,.35) 36%, rgba(240,198,154,0) 66%);pointer-events:none;"></div>
+    <div style="position:absolute;left:8%;top:60%;width:5px;height:5px;border-radius:50%;background:rgba(255,250,240,.9);box-shadow:0 0 8px rgba(255,245,225,.9);animation:dewMote 13s linear infinite;animation-delay:-2s;"></div>
+    <div style="position:absolute;left:22%;top:72%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 16s linear infinite;animation-delay:-7s;"></div>
+    <div style="position:absolute;left:74%;top:66%;width:5px;height:5px;border-radius:50%;background:rgba(255,250,240,.9);box-shadow:0 0 8px rgba(255,245,225,.9);animation:dewMote 15s linear infinite;animation-delay:-4s;"></div>
+    <div style="position:absolute;left:86%;top:78%;width:3px;height:3px;border-radius:50%;background:rgba(255,250,240,.8);box-shadow:0 0 6px rgba(255,245,225,.7);animation:dewMote 18s linear infinite;animation-delay:-11s;"></div>
+    <div style="position:absolute;left:48%;top:80%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 14s linear infinite;animation-delay:-9s;"></div>
+    <!-- resolution message: outer owns state opacity, inner owns keyframe — so transition can override animation -->
+    <div id="resMsgWrap" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6vw;opacity:0;transform:translateY(16px);transition:opacity 2.2s ease .9s,transform 2.2s ease .9s;">
+      <h1 style="margin:0;font-family:'Italiana',serif;font-weight:400;text-transform:lowercase;color:#412e1e;font-size:clamp(2rem,5.4vw,4.6rem);line-height:1.12;letter-spacing:.06em;max-width:16ch;text-wrap:balance;">you are the thing you came here to find</h1>
+      <p style="margin:1.6em 0 0;font-family:'Italiana',serif;font-size:clamp(1rem,2vw,1.5rem);letter-spacing:.16em;text-transform:lowercase;color:#7a5a44;">nothing is missing. you are home.</p>
+    </div>
+  </div>
+
+  <!-- MYSTERY (z:2 — deep teal scene, sits behind the frost canvas) -->
+  <div style="position:absolute;inset:0;z-index:2;background:radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%);">
+    <div style="position:absolute;left:30%;top:30%;width:46vw;height:46vw;border-radius:50%;filter:blur(70px);background:radial-gradient(circle, rgba(159,232,219,.10) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 17s ease-in-out infinite;"></div>
+    <div style="position:absolute;left:58%;top:58%;width:40vw;height:40vw;border-radius:50%;filter:blur(80px);background:radial-gradient(circle, rgba(159,232,219,.08) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 21s ease-in-out infinite;animation-delay:-6s;"></div>
+
+    <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
+    <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(159,232,219,.62);">
+      <div style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 9s ease-in-out infinite;">entry 47 — it held longer this time</div>
+      <div style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 11s ease-in-out infinite;animation-delay:-3s;">not produced by the brain. we checked.</div>
+      <div style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 12s ease-in-out infinite;animation-delay:-5s;">matter is the residue. the looking comes first.</div>
+      <div style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-7s;">the <span style="background:rgba(159,232,219,.22);color:transparent;padding:0 .15em;letter-spacing:0;">██████</span> is not lost — nothing here is</div>
+      <div style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);">you are the 2,317th to wipe the glass</div>
+    </div>
+
+    <!-- whisper: outer owns state opacity, inner owns breathing keyframe -->
+    <div id="whisperWrap" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:1;transition:opacity 1.4s ease;">
+      <div style="font-family:'Italiana',serif;text-transform:lowercase;font-size:clamp(2rem,5.2vw,4.2rem);color:rgba(223,240,236,.62);letter-spacing:.36em;text-indent:.36em;text-shadow:0 0 26px rgba(159,232,219,.55),0 0 60px rgba(159,232,219,.25);animation:dewWhisper 7s ease-in-out infinite;">it was never out there</div>
+    </div>
+  </div>
+
+  <!-- FROST CANVAS (z:3 — the glass you wipe) -->
+  <canvas id="fog" style="position:absolute;inset:0;z-index:3;width:100%;height:100%;opacity:1;transition:opacity 2.8s ease;"></canvas>
+
+  <!-- HUD (z:4 — timestamp + hint, pointer-events:none) -->
+  <div id="clock" style="position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.22em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);pointer-events:none;opacity:1;transition:opacity 1.4s ease;">observed: 03:14:07</div>
+  <!-- hint: outer owns reveal opacity, inner owns pulse keyframe -->
+  <div id="hintWrap" style="position:absolute;left:50%;bottom:11%;transform:translateX(-50%);z-index:4;pointer-events:none;opacity:0.85;transition:opacity .8s ease;">
+    <span style="display:block;font-size:9.5px;letter-spacing:.5em;text-transform:uppercase;color:rgba(196,210,208,.85);animation:dewHint 4.2s ease-in-out infinite;">wipe the glass</span>
+  </div>
+
+  <!-- vignette (z:4) -->
+  <div style="position:absolute;inset:0;z-index:4;pointer-events:none;box-shadow:inset 0 0 200px 40px rgba(6,12,14,.55);"></div>
+
+  <!-- FINGERTIP CURSOR (z:6 — glowing dot tracking the pointer) -->
+  <div id="tip" style="position:fixed;left:0;top:0;z-index:6;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;pointer-events:none;background:radial-gradient(circle, rgba(159,232,219,.16) 0%, rgba(159,232,219,.05) 45%, rgba(159,232,219,0) 70%);border:1px solid rgba(159,232,219,.22);opacity:0;transition:background .9s ease,border-color .9s ease;"></div>
+</div>
+
+<script>
+(function () {
+  const stage      = document.getElementById('stage');
+  const fogCanvas  = document.getElementById('fog');
+  const tip        = document.getElementById('tip');
+  const clock      = document.getElementById('clock');
+  const dawn       = document.getElementById('dawn');
+  const frags      = document.getElementById('frags');
+  const whisperWrap = document.getElementById('whisperWrap');
+  const hintWrap   = document.getElementById('hintWrap');
+  const resMsgWrap = document.getElementById('resMsgWrap');
+
+  const WIPE_RADIUS  = 78;
+  const THRESHOLD    = 0.52;
+
+  let resolved   = false;
+  let touched    = false;
+  let last       = null;
+  let dpr        = 1;
+  let offscreen  = null;
+  let checkTimer = null;
+  let clockTimer = null;
+
+  // ── canvas ────────────────────────────────────────────────────────────────
+
+  function initCanvas() {
+    const rect = fogCanvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    fogCanvas.width  = Math.max(1, Math.round(rect.width  * dpr));
+    fogCanvas.height = Math.max(1, Math.round(rect.height * dpr));
+    paintFrost();
+  }
+
+  function paintFrost() {
+    const ctx = fogCanvas.getContext('2d');
+    const w = fogCanvas.width, h = fogCanvas.height;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, w, h);
+
+    const g = ctx.createRadialGradient(w * 0.5, h * 0.42, 0, w * 0.5, h * 0.42, Math.max(w, h) * 0.72);
+    g.addColorStop(0,   'rgba(190,212,210,0.80)');
+    g.addColorStop(0.5, 'rgba(176,198,196,0.90)');
+    g.addColorStop(1,   'rgba(150,172,172,0.96)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    const n = Math.round((w * h) / 5200);
+    for (let i = 0; i < n; i++) {
+      const x   = Math.random() * w;
+      const y   = Math.random() * h;
+      const rad = (Math.random() * 1.6 + 0.4) * dpr;
+      ctx.beginPath();
+      ctx.arc(x, y, rad, 0, Math.PI * 2);
+      ctx.fillStyle = Math.random() > 0.5
+        ? 'rgba(232,242,240,' + (Math.random() * 0.18 + 0.05) + ')'
+        : 'rgba(120,142,142,' + (Math.random() * 0.14 + 0.04) + ')';
+      ctx.fill();
+    }
+  }
+
+  // ── wipe ──────────────────────────────────────────────────────────────────
+
+  function wipeTo(clientX, clientY) {
+    const ctx  = fogCanvas.getContext('2d');
+    const rect = fogCanvas.getBoundingClientRect();
+    const x    = (clientX - rect.left) / rect.width  * fogCanvas.width;
+    const y    = (clientY - rect.top)  / rect.height * fogCanvas.height;
+    const R    = WIPE_RADIUS * dpr;
+
+    ctx.globalCompositeOperation = 'destination-out';
+
+    function stamp(px, py) {
+      const rg = ctx.createRadialGradient(px, py, 0, px, py, R);
+      rg.addColorStop(0,    'rgba(0,0,0,0.95)');
+      rg.addColorStop(0.55, 'rgba(0,0,0,0.55)');
+      rg.addColorStop(1,    'rgba(0,0,0,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(px, py, R, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (last) {
+      const dx    = x - last.x, dy = y - last.y;
+      const dist  = Math.hypot(dx, dy);
+      const steps = Math.max(1, Math.floor(dist / (R / 3)));
+      for (let i = 1; i <= steps; i++) stamp(last.x + dx * i / steps, last.y + dy * i / steps);
+    } else {
+      stamp(x, y);
+    }
+
+    last = { x, y };
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  // ── resolve check ─────────────────────────────────────────────────────────
+
+  function maybeResolve() {
+    if (resolved) return;
+    if (!offscreen) offscreen = document.createElement('canvas');
+    const sw = 100;
+    const sh = Math.max(1, Math.round(100 * fogCanvas.height / fogCanvas.width));
+    offscreen.width  = sw;
+    offscreen.height = sh;
+    const o = offscreen.getContext('2d');
+    o.clearRect(0, 0, sw, sh);
+    o.drawImage(fogCanvas, 0, 0, sw, sh);
+    const data  = o.getImageData(0, 0, sw, sh).data;
+    let clear   = 0;
+    for (let i = 3; i < data.length; i += 4) if (data[i] < 36) clear++;
+    if (clear / (sw * sh) >= THRESHOLD) {
+      clearInterval(checkTimer);
+      triggerResolve();
+    }
+  }
+
+  function triggerResolve() {
+    resolved = true;
+
+    fogCanvas.style.opacity    = '0';
+    frags.style.opacity        = '0';
+    whisperWrap.style.opacity  = '0';
+    clock.style.opacity        = '0';
+
+    dawn.style.opacity         = '1';
+    resMsgWrap.style.opacity   = '1';
+    resMsgWrap.style.transform = 'translateY(0)';
+
+    tip.style.background   = 'radial-gradient(circle, rgba(240,198,154,.18) 0%, rgba(240,198,154,.05) 45%, rgba(240,198,154,0) 70%)';
+    tip.style.borderColor  = 'rgba(240,198,154,.3)';
+  }
+
+  // ── clock ─────────────────────────────────────────────────────────────────
+
+  function startClock() {
+    let s = 3 * 3600 + 14 * 60 + 7;
+    const pad = n => String(n).padStart(2, '0');
+    clockTimer = setInterval(() => {
+      if (resolved) return;
+      s++;
+      clock.textContent = 'observed: '
+        + pad(Math.floor(s / 3600) % 24) + ':'
+        + pad(Math.floor(s / 60) % 60)   + ':'
+        + pad(s % 60);
+    }, 1000);
+  }
+
+  // ── pointer ───────────────────────────────────────────────────────────────
+
+  function bindPointer() {
+    function onMove(e) {
+      const p = (e.touches && e.touches[0]) || e;
+      const x = p.clientX, y = p.clientY;
+      tip.style.opacity   = '1';
+      tip.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      if (!resolved) {
+        wipeTo(x, y);
+        if (!touched) {
+          touched = true;
+          hintWrap.style.opacity = '0';
+        }
+      }
+    }
+
+    stage.addEventListener('pointermove', onMove);
+    stage.addEventListener('pointerdown', onMove);
+    stage.addEventListener('pointerleave', () => {
+      last = null;
+      tip.style.opacity = '0';
+    });
+  }
+
+  // ── init ──────────────────────────────────────────────────────────────────
+
+  initCanvas();
+  startClock();
+  bindPointer();
+  checkTimer = setInterval(maybeResolve, 600);
+  window.addEventListener('resize', initCanvas);
+}());
+</script>
+</body>
+</html>

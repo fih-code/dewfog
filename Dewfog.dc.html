@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+  html,body{margin:0;padding:0;height:100%;background:#0b1316;overflow:hidden;}
+  *{box-sizing:border-box;}
+  @keyframes dewWhisper{0%,100%{opacity:.78;letter-spacing:.34em}50%{opacity:1;letter-spacing:.38em}}
+  @keyframes dewBlob{0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.5}50%{transform:translate3d(2%,-2%,0) scale(1.08);opacity:.78}}
+  @keyframes dewHint{0%,100%{opacity:.5}50%{opacity:1}}
+  @keyframes dewMote{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:.7}88%{opacity:.6}100%{transform:translate3d(14px,-120px,0);opacity:0}}
+  @keyframes dewFrag{0%,100%{opacity:1}50%{opacity:.72}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" data-screen-label="dewfog" style="position:fixed;inset:0;overflow:hidden;cursor:none;background:#0b1316;font-family:'Space Mono',monospace;touch-action:none;">
+
+  <!-- DAWN / RESOLUTION (bottom, revealed on resolve) -->
+  <div style="position:absolute;inset:0;z-index:1;opacity:{{ dawnOp }};transition:opacity 3s ease;background:radial-gradient(135% 120% at 50% 9%, #fdf4e8 0%, #f6dcc0 26%, #f0c69a 46%, #d8a37e 64%, #9a705a 82%, #3a2a22 100%);">
+    <div style="position:absolute;left:50%;top:8%;width:80vw;height:80vw;max-width:900px;max-height:900px;transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(255,244,228,.85) 0%, rgba(240,198,154,.35) 36%, rgba(240,198,154,0) 66%);pointer-events:none;"></div>
+    <div style="position:absolute;left:8%;top:60%;width:5px;height:5px;border-radius:50%;background:rgba(255,250,240,.9);box-shadow:0 0 8px rgba(255,245,225,.9);animation:dewMote 13s linear infinite;animation-delay:-2s;"></div>
+    <div style="position:absolute;left:22%;top:72%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 16s linear infinite;animation-delay:-7s;"></div>
+    <div style="position:absolute;left:74%;top:66%;width:5px;height:5px;border-radius:50%;background:rgba(255,250,240,.9);box-shadow:0 0 8px rgba(255,245,225,.9);animation:dewMote 15s linear infinite;animation-delay:-4s;"></div>
+    <div style="position:absolute;left:86%;top:78%;width:3px;height:3px;border-radius:50%;background:rgba(255,250,240,.8);box-shadow:0 0 6px rgba(255,245,225,.7);animation:dewMote 18s linear infinite;animation-delay:-11s;"></div>
+    <div style="position:absolute;left:48%;top:80%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 14s linear infinite;animation-delay:-9s;"></div>
+
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6vw;opacity:{{ resOp }};transform:translateY({{ resShift }});transition:opacity 2.2s ease .9s,transform 2.2s ease .9s;">
+      <h1 style="margin:0;font-family:'Italiana',serif;font-weight:400;text-transform:lowercase;color:#412e1e;font-size:clamp(2rem,5.4vw,4.6rem);line-height:1.12;letter-spacing:.06em;max-width:16ch;text-wrap:balance;">you are the thing you came here to find</h1>
+      <p style="margin:1.6em 0 0;font-family:'Italiana',serif;font-size:clamp(1rem,2vw,1.5rem);letter-spacing:.16em;text-transform:lowercase;color:#7a5a44;">nothing is missing. you are home.</p>
+    </div>
+  </div>
+
+  <!-- MYSTERY (deep teal scene, behind the frost) -->
+  <div style="position:absolute;inset:0;z-index:2;background:radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%);">
+    <div style="position:absolute;left:30%;top:30%;width:46vw;height:46vw;border-radius:50%;filter:blur(70px);background:radial-gradient(circle, rgba(159,232,219,.10) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 17s ease-in-out infinite;"></div>
+    <div style="position:absolute;left:58%;top:58%;width:40vw;height:40vw;border-radius:50%;filter:blur(80px);background:radial-gradient(circle, rgba(159,232,219,.08) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 21s ease-in-out infinite;animation-delay:-6s;"></div>
+
+    <div style="position:absolute;inset:0;opacity:{{ fragsOp }};transition:opacity 1.6s ease;color:rgba(159,232,219,.62);">
+      <div style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 9s ease-in-out infinite;">entry 47 — it held longer this time</div>
+      <div style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 11s ease-in-out infinite;animation-delay:-3s;">not produced by the brain. we checked.</div>
+      <div style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 12s ease-in-out infinite;animation-delay:-5s;">matter is the residue. the looking comes first.</div>
+      <div style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-7s;">the <span style="background:rgba(159,232,219,.22);color:transparent;padding:0 .15em;letter-spacing:0;">██████</span> is not lost — nothing here is</div>
+      <div style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);">you are the 2,317th to wipe the glass</div>
+    </div>
+
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:{{ whisperOp }};transition:opacity 1.4s ease;">
+      <div style="font-family:'Italiana',serif;text-transform:lowercase;font-size:clamp(2rem,5.2vw,4.2rem);color:rgba(223,240,236,.62);letter-spacing:.36em;text-indent:.36em;text-shadow:0 0 26px rgba(159,232,219,.55),0 0 60px rgba(159,232,219,.25);animation:dewWhisper 7s ease-in-out infinite;">it was never out there</div>
+    </div>
+  </div>
+
+  <!-- FROST CANVAS (the glass you wipe) -->
+  <canvas ref="{{ fogRef }}" style="position:absolute;inset:0;z-index:3;width:100%;height:100%;opacity:{{ fogOp }};transition:opacity 2.8s ease;"></canvas>
+
+  <!-- etched HUD: timestamp + hint, riding on the glass -->
+  <div ref="{{ clockRef }}" style="position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.22em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);pointer-events:none;opacity:{{ clockOp }};transition:opacity 1.4s ease;">observed: 03:14:07</div>
+  <div style="position:absolute;left:50%;bottom:11%;transform:translateX(-50%);z-index:4;pointer-events:none;opacity:{{ hintOp }};transition:opacity .8s ease;">
+    <span style="display:block;font-size:9.5px;letter-spacing:.5em;text-transform:uppercase;color:rgba(196,210,208,.85);animation:dewHint 4.2s ease-in-out infinite;">wipe the glass</span>
+  </div>
+
+  <!-- vignette -->
+  <div style="position:absolute;inset:0;z-index:4;pointer-events:none;box-shadow:inset 0 0 200px 40px rgba(6,12,14,.55);"></div>
+
+  <!-- fingertip cursor -->
+  <div ref="{{ tipRef }}" style="position:fixed;left:0;top:0;z-index:6;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;pointer-events:none;background:{{ tipBg }};border:1px solid {{ tipBorder }};opacity:0;transition:background .9s ease,border-color .9s ease;"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;forceState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;mystery&quot;,&quot;resolved&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;wipeRadius&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:78,&quot;min&quot;:36,&quot;max&quot;:140,&quot;tsType&quot;:&quot;number&quot;},&quot;revealThreshold&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:0.52,&quot;min&quot;:0.2,&quot;max&quot;:0.85,&quot;step&quot;:0.02,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  fogRef = React.createRef();
+  clockRef = React.createRef();
+  tipRef = React.createRef();
+  state = { resolved: false, touched: false };
+
+  renderVals() {
+    const r = this.state.resolved;
+    const t = this.state.touched;
+    return {
+      rootRef: this.rootRef, fogRef: this.fogRef, clockRef: this.clockRef, tipRef: this.tipRef,
+      dawnOp: r ? '1' : '0',
+      fogOp: r ? '0' : '1',
+      fragsOp: r ? '0' : '1',
+      whisperOp: r ? '0' : '1',
+      clockOp: r ? '0' : '1',
+      hintOp: (t || r) ? '0' : '0.85',
+      resOp: r ? '1' : '0',
+      resShift: r ? '0px' : '16px',
+      tipBg: r
+        ? 'radial-gradient(circle, rgba(240,198,154,.18) 0%, rgba(240,198,154,.05) 45%, rgba(240,198,154,0) 70%)'
+        : 'radial-gradient(circle, rgba(159,232,219,.16) 0%, rgba(159,232,219,.05) 45%, rgba(159,232,219,0) 70%)',
+      tipBorder: r ? 'rgba(240,198,154,.3)' : 'rgba(159,232,219,.22)',
+    };
+  }
+
+  componentDidMount() {
+    this.force = this.props.forceState || 'auto';
+    this.radius = this.props.wipeRadius || 78;
+    this.threshold = this.props.revealThreshold || 0.52;
+    this.last = null;
+
+    this.initCanvas();
+    this.startClock();
+
+    if (this.force === 'resolved') {
+      this.setState({ resolved: true });
+    } else {
+      this.bindPointer();
+      if (this.force === 'auto') this.checkTimer = setInterval(() => this.maybeResolve(), 600);
+    }
+
+    this._onResize = () => this.initCanvas();
+    window.addEventListener('resize', this._onResize);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.checkTimer);
+    clearInterval(this.clockTimer);
+    window.removeEventListener('resize', this._onResize);
+  }
+
+  initCanvas() {
+    const c = this.fogRef.current; if (!c) return;
+    const rect = c.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = Math.max(1, Math.round(rect.width * dpr));
+    c.height = Math.max(1, Math.round(rect.height * dpr));
+    this.dpr = dpr;
+    this.paintFrost();
+  }
+
+  paintFrost() {
+    const c = this.fogRef.current; const ctx = c.getContext('2d');
+    const w = c.width, h = c.height;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, w, h);
+    const g = ctx.createRadialGradient(w * 0.5, h * 0.42, 0, w * 0.5, h * 0.42, Math.max(w, h) * 0.72);
+    g.addColorStop(0, 'rgba(190,212,210,0.80)');
+    g.addColorStop(0.5, 'rgba(176,198,196,0.90)');
+    g.addColorStop(1, 'rgba(150,172,172,0.96)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    const n = Math.round((w * h) / 5200);
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * w, y = Math.random() * h;
+      const rad = (Math.random() * 1.6 + 0.4) * this.dpr;
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, 7);
+      ctx.fillStyle = Math.random() > 0.5
+        ? 'rgba(232,242,240,' + (Math.random() * 0.18 + 0.05) + ')'
+        : 'rgba(120,142,142,' + (Math.random() * 0.14 + 0.04) + ')';
+      ctx.fill();
+    }
+  }
+
+  bindPointer() {
+    const root = this.rootRef.current;
+    const move = (e) => {
+      const p = (e.touches && e.touches[0]) || e;
+      const x = p.clientX, y = p.clientY;
+      const tip = this.tipRef.current;
+      if (tip) { tip.style.opacity = '1'; tip.style.transform = 'translate(' + x + 'px,' + y + 'px)'; }
+      if (!this.state.resolved) { this.wipeTo(x, y); this.onTouch(); }
+    };
+    root.addEventListener('pointermove', move);
+    root.addEventListener('pointerdown', move);
+    root.addEventListener('pointerleave', () => {
+      this.last = null;
+      if (this.tipRef.current) this.tipRef.current.style.opacity = '0';
+    });
+  }
+
+  onTouch() {
+    if (!this.state.touched) this.setState({ touched: true });
+  }
+
+  wipeTo(clientX, clientY) {
+    const c = this.fogRef.current; const ctx = c.getContext('2d');
+    const rect = c.getBoundingClientRect();
+    const x = (clientX - rect.left) / rect.width * c.width;
+    const y = (clientY - rect.top) / rect.height * c.height;
+    const R = this.radius * this.dpr;
+    ctx.globalCompositeOperation = 'destination-out';
+    const stamp = (px, py) => {
+      const rg = ctx.createRadialGradient(px, py, 0, px, py, R);
+      rg.addColorStop(0, 'rgba(0,0,0,0.95)');
+      rg.addColorStop(0.55, 'rgba(0,0,0,0.55)');
+      rg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(px, py, R, 0, 7); ctx.fill();
+    };
+    if (this.last) {
+      const dx = x - this.last.x, dy = y - this.last.y;
+      const dist = Math.hypot(dx, dy);
+      const steps = Math.max(1, Math.floor(dist / (R / 3)));
+      for (let i = 1; i <= steps; i++) stamp(this.last.x + dx * i / steps, this.last.y + dy * i / steps);
+    } else {
+      stamp(x, y);
+    }
+    this.last = { x, y };
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  maybeResolve() {
+    if (this.state.resolved) return;
+    const c = this.fogRef.current; if (!c) return;
+    if (!this.off) this.off = document.createElement('canvas');
+    const sw = 100, sh = Math.max(1, Math.round(100 * c.height / c.width));
+    this.off.width = sw; this.off.height = sh;
+    const o = this.off.getContext('2d');
+    o.clearRect(0, 0, sw, sh);
+    o.drawImage(c, 0, 0, sw, sh);
+    const d = o.getImageData(0, 0, sw, sh).data;
+    let clear = 0; const total = sw * sh;
+    for (let i = 3; i < d.length; i += 4) if (d[i] < 36) clear++;
+    if (clear / total >= this.threshold) {
+      clearInterval(this.checkTimer);
+      this.setState({ resolved: true });
+    }
+  }
+
+  startClock() {
+    let s = 3 * 3600 + 14 * 60 + 7;
+    const pad = (n) => String(n).padStart(2, '0');
+    this.clockTimer = setInterval(() => {
+      if (this.state.resolved) return;
+      s++;
+      const hh = pad(Math.floor(s / 3600) % 24), mm = pad(Math.floor(s / 60) % 60), ss = pad(s % 60);
+      if (this.clockRef.current) this.clockRef.current.textContent = 'observed: ' + hh + ':' + mm + ':' + ss;
+    }, 1000);
+  }
+}
+</script>
+</body>
+</html>
