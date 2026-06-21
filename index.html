@@ -705,25 +705,18 @@
       return document.getElementById(id);
     });
 
+    let isDown = false;
+
     function onMove(e) {
+      if (e.type === 'pointerdown') isDown = true;
+
       const p = (e.touches && e.touches[0]) || e;
       const x = p.clientX, y = p.clientY;
       tip.style.opacity   = '1';
       tip.style.transform = 'translate(' + x + 'px,' + y + 'px)';
 
       if (!resolved) {
-        const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
-        wipeTo(x, y, radius);
-
-        if (!touched) {
-          touched = true;
-          hintWrap.style.opacity = '0';
-          initAudio();
-        } else if (audioCtx && audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-
-        // fragment proximity brightening — fragments glow as fingertip approaches
+        // proximity brightening works on hover — no press needed
         fragEls.forEach(function (el) {
           if (!el) return;
           const r = el.getBoundingClientRect();
@@ -733,15 +726,29 @@
           el.style.textShadow = '0 0 ' + Math.round(12 + 14*t) + 'px rgba(159,232,219,'
             + (0.40 + 0.45*t).toFixed(2) + ')';
         });
+
+        // wipe only while button / finger is held — pointerdown is a trusted
+        // gesture so AudioContext always starts on the same event as the first wipe
+        if (isDown) {
+          const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
+          wipeTo(x, y, radius);
+
+          if (!touched) {
+            touched = true;
+            hintWrap.style.opacity = '0';
+            initAudio();
+          } else if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+        }
       }
     }
 
-    stage.addEventListener('pointermove', onMove);
-    stage.addEventListener('pointerdown', onMove);
-    stage.addEventListener('pointerleave', function () {
-      last = null;
-      tip.style.opacity = '0';
-    });
+    stage.addEventListener('pointerdown',  onMove);
+    stage.addEventListener('pointermove',  onMove);
+    stage.addEventListener('pointerup',    function () { isDown = false; last = null; });
+    stage.addEventListener('pointercancel',function () { isDown = false; last = null; });
+    stage.addEventListener('pointerleave', function () { last = null; tip.style.opacity = '0'; });
   }
 
   // ── init ──────────────────────────────────────────────────────────────────
