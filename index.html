@@ -404,7 +404,7 @@
 
   const RADIUS_MOUSE = 78;
   const RADIUS_TOUCH = 50;
-  const THRESHOLD    = 0.80;
+  const THRESHOLD    = 0.68;
   const MIN_READ_MS  = 10000;
 
   const pageLoadTime = Date.now();
@@ -642,7 +642,7 @@
     }
 
     if (Date.now() - pageLoadTime < MIN_READ_MS) return;
-    if (clearFraction >= THRESHOLD) {
+    if (maxClearFraction >= THRESHOLD) {
       clearInterval(checkTimer);
       triggerResolve();
     }
@@ -738,6 +738,15 @@
   checkTimer   = setInterval(maybeResolve, 600);
   refrostTimer = setInterval(refrostTick, 1400);
   window.addEventListener('resize', initCanvas);
+
+  // iOS Safari only unlocks AudioContext on touchstart/click — not pointermove.
+  // Add one-shot listeners so audio starts on the very first finger contact.
+  ['touchstart', 'mousedown'].forEach(function (evt) {
+    document.addEventListener(evt, function once() {
+      initAudio();
+      document.removeEventListener(evt, once);
+    }, { passive: true });
+  });
 }());
 </script>
 </body>
