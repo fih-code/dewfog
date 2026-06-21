@@ -81,10 +81,10 @@
     <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
     <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
     <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(159,232,219,.62);">
-      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
       <div id="frag4" style="position:absolute;left:37%;top:44%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
       <div id="frag5" style="position:absolute;left:63%;top:57%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
       <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);white-space:nowrap;opacity:0;transition:opacity 1.4s ease;"></div>
@@ -227,10 +227,34 @@
     'what you found was here before you looked.',
   ];
 
-  // thresholds at which each fragment fades into the scene as the user wipes
-  const REVEAL_IDS = ['fragTop', 'frag0', 'frag1', 'frag2', 'frag3', 'frag4', 'frag5'];
-  const REVEAL_AT  = [0.03, 0.11, 0.22, 0.33, 0.45, 0.54, 0.62];
-  let clearFraction = 0;
+  // Phase 1: 4 fragments barely visible from the start (opacity MIN_OP1).
+  // Each smoothly brightens to full as clearing crosses its window.
+  // Phase 2: 2 more fragments hidden until all phase-1 messages are found,
+  // then appear at MIN_OP2 (even more shaded) for continued discovery.
+  // maxClearFraction is a ratchet — revealed text never dims back when
+  // frost recondenses, so progress is always kept.
+  const MIN_OP1     = 0.10;
+  const MIN_OP2     = 0.08;
+  const PHASE1_DONE = 0.56;
+  const PHASE1_FRAGS = [
+    { id: 'frag0', s: 0.04, f: 0.20 },
+    { id: 'frag1', s: 0.16, f: 0.32 },
+    { id: 'frag2', s: 0.28, f: 0.44 },
+    { id: 'frag3', s: 0.40, f: 0.56 },
+  ];
+  const PHASE2_FRAGS = [
+    { id: 'frag4', s: 0.60, f: 0.73 },
+    { id: 'frag5', s: 0.68, f: 0.78 },
+  ];
+
+  function fragOp(cf, s, f, min) {
+    if (cf <= s) return min;
+    if (cf >= f) return 1;
+    return min + (1 - min) * (cf - s) / (f - s);
+  }
+
+  let clearFraction    = 0;
+  let maxClearFraction = 0;
 
   function shuffle(arr) {
     const a = [...arr];
@@ -327,7 +351,7 @@
 
   const RADIUS_MOUSE = 78;
   const RADIUS_TOUCH = 50;
-  const THRESHOLD    = 0.65;
+  const THRESHOLD    = 0.80;
   const MIN_READ_MS  = 10000;
 
   const pageLoadTime = Date.now();
@@ -543,15 +567,26 @@
     const data = o.getImageData(0, 0, sw, sh).data;
     let clear = 0;
     for (let i = 3; i < data.length; i += 4) if (data[i] < 36) clear++;
-    clearFraction = clear / (sw * sh);
+    clearFraction    = clear / (sw * sh);
+    maxClearFraction = Math.max(maxClearFraction, clearFraction);
 
-    // reveal fragments progressively — each fades in when its clearing threshold is crossed
-    REVEAL_IDS.forEach(function (id, i) {
-      if (clearFraction >= REVEAL_AT[i]) {
-        const el = document.getElementById(id);
-        if (el && el.style.opacity === '0') el.style.opacity = '1';
-      }
+    // fragTop brightens from 0 with the very first wipe
+    const ftEl = document.getElementById('fragTop');
+    if (ftEl) ftEl.style.opacity = fragOp(maxClearFraction, 0.02, 0.12, 0).toFixed(3);
+
+    // phase 1 — barely visible from page load, smoothly brighten as glass clears
+    PHASE1_FRAGS.forEach(function (fr) {
+      const el = document.getElementById(fr.id);
+      if (el) el.style.opacity = fragOp(maxClearFraction, fr.s, fr.f, MIN_OP1).toFixed(3);
     });
+
+    // phase 2 — appear shaded once all phase-1 messages are found; keep wiping to read them
+    if (maxClearFraction >= PHASE1_DONE) {
+      PHASE2_FRAGS.forEach(function (fr) {
+        const el = document.getElementById(fr.id);
+        if (el) el.style.opacity = fragOp(maxClearFraction, fr.s, fr.f, MIN_OP2).toFixed(3);
+      });
+    }
 
     if (Date.now() - pageLoadTime < MIN_READ_MS) return;
     if (clearFraction >= THRESHOLD) {
