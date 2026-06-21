@@ -406,7 +406,7 @@
   const RADIUS_MOUSE = 78;
   const RADIUS_TOUCH = 50;
   const THRESHOLD    = 0.60;
-  const MIN_READ_MS  = 6000;
+  const MIN_READ_MS  = 14000;
 
   const pageLoadTime = Date.now();
 
@@ -443,9 +443,11 @@
 
   if (muteBtn) muteBtn.textContent = isMuted ? '○' : '◎';
 
+  let audioRampStarted = false;
+
   function initAudio() {
     if (audioCtx) {
-      audioCtx.resume();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
       return;
     }
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -459,7 +461,7 @@
     compressor.connect(audioCtx.destination);
 
     masterGain = audioCtx.createGain();
-    masterGain.gain.setValueAtTime(0, 0);
+    masterGain.gain.value = 0;
     masterGain.connect(compressor);
 
     const filter = audioCtx.createBiquadFilter();
@@ -468,7 +470,6 @@
     filter.Q.value = 0.6;
     filter.connect(masterGain);
 
-    // 174/174.7 Hz beat pair + fifth at 261 Hz — audible on any speaker.
     [[174.0, 0.42], [174.7, 0.32], [261.0, 0.26]].forEach(function (pair) {
       const osc = audioCtx.createOscillator();
       osc.type = 'sine';
@@ -480,15 +481,19 @@
       osc.start();
     });
 
-    // Schedule the fade-in AFTER resume() confirms the context is running.
-    // If scheduled while still suspended, Chromium silently drops the ramp.
-    audioCtx.resume().then(function () {
-      if (!isMuted && masterGain) {
-        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-        masterGain.gain.linearRampToValueAtTime(0.38, audioCtx.currentTime + 2);
-      }
-    });
+    function startRamp() {
+      if (isMuted || !masterGain || audioRampStarted) return;
+      if (audioCtx.state !== 'running') return;
+      audioRampStarted = true;
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(0.38, audioCtx.currentTime + 1.5);
+    }
+
+    // Three paths to cover all browsers: immediate check, Promise, statechange event.
+    audioCtx.onstatechange = startRamp;
+    audioCtx.resume().then(startRamp);
+    startRamp();
   }
 
   function resolveAudio() {
