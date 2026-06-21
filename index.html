@@ -81,12 +81,12 @@
     <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
     <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
     <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(159,232,219,.62);">
-      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 9s ease-in-out infinite;opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 11s ease-in-out infinite;animation-delay:-3s;opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 12s ease-in-out infinite;animation-delay:-5s;opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-7s;opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag4" style="position:absolute;left:37%;top:44%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 14s ease-in-out infinite;animation-delay:-2s;opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag5" style="position:absolute;left:63%;top:57%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-9s;opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag4" style="position:absolute;left:37%;top:44%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag5" style="position:absolute;left:63%;top:57%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
       <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);white-space:nowrap;opacity:0;transition:opacity 1.4s ease;"></div>
     </div>
 
@@ -273,8 +273,12 @@
     if (ri === -1) { chosen[5] = { anomaly: true }; }
   }
 
+  // animation delays per slot — inner span owns the flicker so outer opacity:0→1 works cleanly
+  const FRAG_DELAYS = ['0s', '-3s', '-5s', '-7s', '-2s', '-9s'];
+  const FRAG_DURATIONS = ['9s', '11s', '12s', '10s', '14s', '10s'];
   ['frag0','frag1','frag2','frag3','frag4','frag5'].forEach(function (id, i) {
-    document.getElementById(id).innerHTML = fragHTML(chosen[i]);
+    const anim = 'animation:dewFrag ' + FRAG_DURATIONS[i] + ' ease-in-out infinite;animation-delay:' + FRAG_DELAYS[i] + ';display:block;';
+    document.getElementById(id).innerHTML = '<span style="' + anim + '">' + fragHTML(chosen[i]) + '</span>';
   });
 
   if (isRare) {
@@ -362,12 +366,21 @@
   if (muteBtn) muteBtn.textContent = isMuted ? '○' : '◎';
 
   function initAudio() {
-    if (audioCtx) return;
+    if (audioCtx) { audioCtx.resume(); return; }
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.resume();
+
+    const compressor = audioCtx.createDynamicsCompressor();
+    compressor.threshold.value = -18;
+    compressor.knee.value = 6;
+    compressor.ratio.value = 3;
+    compressor.attack.value = 0.02;
+    compressor.release.value = 0.25;
+    compressor.connect(audioCtx.destination);
 
     masterGain = audioCtx.createGain();
     masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    masterGain.connect(audioCtx.destination);
+    masterGain.connect(compressor);
 
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'lowpass';
@@ -375,8 +388,8 @@
     filter.Q.value = 0.6;
     filter.connect(masterGain);
 
-    // three sine oscillators: 174 Hz + 174.7 Hz (0.7 Hz beat = slow atmospheric pulse)
-    // + a fifth at 261 Hz. Solfeggio-range frequencies — audible on phone speakers.
+    // 174/174.7 Hz pair creates a 0.7 Hz beat — slow, breathing pulse.
+    // 261 Hz adds a fifth for depth. All three reproduce on phone speakers.
     [[174.0, 0.42], [174.7, 0.32], [261.0, 0.26]].forEach(function (pair) {
       const osc = audioCtx.createOscillator();
       osc.type = 'sine';
@@ -389,7 +402,7 @@
     });
 
     if (!isMuted) {
-      masterGain.gain.linearRampToValueAtTime(0.28, audioCtx.currentTime + 3.5);
+      masterGain.gain.linearRampToValueAtTime(0.38, audioCtx.currentTime + 3.5);
     }
   }
 
@@ -419,7 +432,7 @@
       if (masterGain && audioCtx) {
         masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
         masterGain.gain.linearRampToValueAtTime(
-          isMuted ? 0 : 0.28, audioCtx.currentTime + 0.6
+          isMuted ? 0 : 0.38, audioCtx.currentTime + 0.6
         );
       }
     });
@@ -604,6 +617,8 @@
           touched = true;
           hintWrap.style.opacity = '0';
           initAudio();
+        } else if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
         }
 
         // fragment proximity brightening — fragments glow as fingertip approaches
