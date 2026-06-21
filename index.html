@@ -255,8 +255,12 @@
   const hintWrap   = document.getElementById('hintWrap');
   const resMsgWrap = document.getElementById('resMsgWrap');
 
-  const WIPE_RADIUS  = 78;
-  const THRESHOLD    = 0.52;
+  const RADIUS_MOUSE = 78;   // desktop brush size
+  const RADIUS_TOUCH = 50;   // smaller on touch — thumb covers more screen relative to viewport
+  const THRESHOLD    = 0.65; // raised from 0.52 — more glass must clear before dawn breaks
+  const MIN_READ_MS  = 10000; // resolve cannot fire until visitor has had 10s to read
+
+  const pageLoadTime = Date.now();
 
   let resolved   = false;
   let touched    = false;
@@ -305,12 +309,12 @@
 
   // ── wipe ──────────────────────────────────────────────────────────────────
 
-  function wipeTo(clientX, clientY) {
+  function wipeTo(clientX, clientY, radius) {
     const ctx  = fogCanvas.getContext('2d');
     const rect = fogCanvas.getBoundingClientRect();
     const x    = (clientX - rect.left) / rect.width  * fogCanvas.width;
     const y    = (clientY - rect.top)  / rect.height * fogCanvas.height;
-    const R    = WIPE_RADIUS * dpr;
+    const R    = radius * dpr;
 
     ctx.globalCompositeOperation = 'destination-out';
 
@@ -342,6 +346,7 @@
 
   function maybeResolve() {
     if (resolved) return;
+    if (Date.now() - pageLoadTime < MIN_READ_MS) return;
     if (!offscreen) offscreen = document.createElement('canvas');
     const sw = 100;
     const sh = Math.max(1, Math.round(100 * fogCanvas.height / fogCanvas.width));
@@ -400,7 +405,8 @@
       tip.style.opacity   = '1';
       tip.style.transform = 'translate(' + x + 'px,' + y + 'px)';
       if (!resolved) {
-        wipeTo(x, y);
+        const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
+        wipeTo(x, y, radius);
         if (!touched) {
           touched = true;
           hintWrap.style.opacity = '0';
