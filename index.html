@@ -389,7 +389,7 @@
     });
 
     if (!isMuted) {
-      masterGain.gain.linearRampToValueAtTime(0.14, audioCtx.currentTime + 3.5);
+      masterGain.gain.linearRampToValueAtTime(0.28, audioCtx.currentTime + 3.5);
     }
   }
 
@@ -419,7 +419,7 @@
       if (masterGain && audioCtx) {
         masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
         masterGain.gain.linearRampToValueAtTime(
-          isMuted ? 0 : 0.14, audioCtx.currentTime + 0.6
+          isMuted ? 0 : 0.28, audioCtx.currentTime + 0.6
         );
       }
     });
