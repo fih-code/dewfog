@@ -371,14 +371,15 @@
 
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 300;
-    filter.Q.value = 0.7;
+    filter.frequency.value = 900;
+    filter.Q.value = 0.6;
     filter.connect(masterGain);
 
-    // three detuned sawtooth oscillators — creates a slow-beating drone
-    [[55, 0.38], [55.9, 0.28], [82.4, 0.34]].forEach(function (pair) {
+    // three sine oscillators: 174 Hz + 174.7 Hz (0.7 Hz beat = slow atmospheric pulse)
+    // + a fifth at 261 Hz. Solfeggio-range frequencies — audible on phone speakers.
+    [[174.0, 0.42], [174.7, 0.32], [261.0, 0.26]].forEach(function (pair) {
       const osc = audioCtx.createOscillator();
-      osc.type = 'sawtooth';
+      osc.type = 'sine';
       osc.frequency.value = pair[0];
       const g = audioCtx.createGain();
       g.gain.value = pair[1];
@@ -388,7 +389,7 @@
     });
 
     if (!isMuted) {
-      masterGain.gain.linearRampToValueAtTime(0.048, audioCtx.currentTime + 3.5);
+      masterGain.gain.linearRampToValueAtTime(0.14, audioCtx.currentTime + 3.5);
     }
   }
 
@@ -418,7 +419,7 @@
       if (masterGain && audioCtx) {
         masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
         masterGain.gain.linearRampToValueAtTime(
-          isMuted ? 0 : 0.048, audioCtx.currentTime + 0.6
+          isMuted ? 0 : 0.14, audioCtx.currentTime + 0.6
         );
       }
     });
