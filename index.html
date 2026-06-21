@@ -65,6 +65,46 @@
     <div style="position:absolute;left:48%;top:80%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 14s linear infinite;animation-delay:-9s;"></div>
     <!-- resolution message: outer owns state opacity, inner owns keyframe — so transition can override animation -->
     <div id="resMsgWrap" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6vw;opacity:0;transform:translateY(16px);transition:opacity 2.2s ease .9s,transform 2.2s ease .9s;">
+      <div style="width:clamp(108px,14vw,162px);aspect-ratio:1;margin:0 0 clamp(24px,4.5vh,52px);filter:drop-shadow(0 0 8px rgba(201,122,74,.28));">
+        <svg viewBox="0 0 200 200" style="display:block;width:100%;height:100%;overflow:visible;">
+          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(74,54,38,.5)" stroke-width="1.1"></circle>
+          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(74,54,38,.22)" stroke-width="0.8"></circle>
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="200s" repeatCount="indefinite"></animateTransform>
+            <g transform="rotate(0 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
+            <g transform="rotate(30 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+            <g transform="rotate(60 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+            <g transform="rotate(90 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
+            <g transform="rotate(120 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+            <g transform="rotate(150 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+            <g transform="rotate(180 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
+            <g transform="rotate(210 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+            <g transform="rotate(240 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+            <g transform="rotate(270 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
+            <g transform="rotate(300 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+            <g transform="rotate(330 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
+          </g>
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="360 100 100" to="0 100 100" dur="120s" repeatCount="indefinite"></animateTransform>
+            <circle cx="100" cy="100" r="64" fill="none" stroke="rgba(201,122,74,.5)" stroke-width="1" stroke-dasharray="1.5 9"></circle>
+          </g>
+          <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(74,54,38,.3)" stroke-width="0.9"></circle>
+          <g stroke-linecap="round" fill="none">
+            <line x1="100" y1="100" x2="100" y2="34" stroke="rgba(74,54,38,.72)" stroke-width="1.7"></line>
+            <g transform="rotate(123 100 100)"><line x1="100" y1="100" x2="100" y2="52" stroke="rgba(74,54,38,.48)" stroke-width="1.2"></line></g>
+            <g transform="rotate(241 100 100)"><line x1="100" y1="100" x2="100" y2="44" stroke="rgba(160,96,58,.62)" stroke-width="1.3"></line></g>
+          </g>
+          <circle cx="100" cy="34" r="1.8" fill="rgba(74,54,38,.7)"></circle>
+          <circle cx="100" cy="100" r="3.2" fill="rgba(201,122,74,.9)">
+            <animate attributeName="r" values="3;4.2;3" dur="6s" repeatCount="indefinite"></animate>
+            <animate attributeName="opacity" values=".7;1;.7" dur="6s" repeatCount="indefinite"></animate>
+          </circle>
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="28s" repeatCount="indefinite"></animateTransform>
+            <circle cx="100" cy="8" r="2.3" fill="rgba(255,250,240,.95)" style="filter:drop-shadow(0 0 4px rgba(255,245,225,.9));"></circle>
+          </g>
+        </svg>
+      </div>
       <h1 style="margin:0;font-family:'Italiana',serif;font-weight:400;text-transform:lowercase;color:#412e1e;font-size:clamp(2rem,5.4vw,4.6rem);line-height:1.12;letter-spacing:.06em;max-width:16ch;text-wrap:balance;">you are the thing you came here to find</h1>
       <p style="margin:1.6em 0 0;font-family:'Italiana',serif;font-size:clamp(1rem,2vw,1.5rem);letter-spacing:.16em;text-transform:lowercase;color:#7a5a44;">nothing is missing. you are home.</p>
       <p id="closingLog" style="margin:2.8em 0 0;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.28em;text-transform:lowercase;color:#9a705a;opacity:0;transition:opacity 1.2s ease 4.8s;"></p>
@@ -80,14 +120,17 @@
 
     <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
     <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
-    <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(159,232,219,.62);">
-      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag4" style="position:absolute;left:37%;top:44%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag5" style="position:absolute;left:63%;top:57%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);white-space:nowrap;opacity:0;transition:opacity 1.4s ease;"></div>
+    <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(173,240,228,.92);white-space:nowrap;">
+      <div id="frag0" style="position:absolute;left:10%;top:19%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag1" style="position:absolute;left:58%;top:26%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag2" style="position:absolute;left:13%;top:34%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag3" style="position:absolute;left:52%;top:36%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag4" style="position:absolute;left:12%;top:62%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag5" style="position:absolute;left:58%;top:64%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag6" style="position:absolute;left:15%;top:70%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag7" style="position:absolute;left:55%;top:72%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag8" style="position:absolute;left:30%;top:79%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(173,240,228,.8);text-shadow:0 0 12px rgba(159,232,219,.5);white-space:nowrap;opacity:0;transition:opacity 1.4s ease;"></div>
     </div>
 
     <!-- whisper: outer owns state opacity, inner owns breathing keyframe -->
@@ -215,6 +258,13 @@
     'entry 55 — the act of observation changes the observed. they called it physics. we think physics is pointing at something.',
     // additional e=mc²
     'entry 14 — solid is a convenient description. beneath it: oscillating energy fields. einstein agreed.',
+    // new design content
+    'energy is never spent. it only changes address.',
+    'remove the observer, the reading goes blank.',
+    'the field was awake before the instrument.',
+    'subject reports no edge between self and field.',
+    'every run agreed. we stopped writing it down.',
+    'matter is the excitation. the looking comes first.',
   ];
 
   const CLOSING_POOL = [
@@ -235,16 +285,19 @@
   // frost recondenses, so progress is always kept.
   const MIN_OP1     = 0.10;
   const MIN_OP2     = 0.08;
-  const PHASE1_DONE = 0.56;
+  const PHASE1_DONE = 0.58;
   const PHASE1_FRAGS = [
-    { id: 'frag0', s: 0.04, f: 0.20 },
-    { id: 'frag1', s: 0.16, f: 0.32 },
-    { id: 'frag2', s: 0.28, f: 0.44 },
-    { id: 'frag3', s: 0.40, f: 0.56 },
+    { id: 'frag0', s: 0.04, f: 0.18 },
+    { id: 'frag1', s: 0.12, f: 0.26 },
+    { id: 'frag2', s: 0.20, f: 0.34 },
+    { id: 'frag3', s: 0.28, f: 0.42 },
+    { id: 'frag4', s: 0.36, f: 0.50 },
+    { id: 'frag5', s: 0.44, f: 0.58 },
   ];
   const PHASE2_FRAGS = [
-    { id: 'frag4', s: 0.60, f: 0.73 },
-    { id: 'frag5', s: 0.68, f: 0.78 },
+    { id: 'frag6', s: 0.62, f: 0.72 },
+    { id: 'frag7', s: 0.67, f: 0.76 },
+    { id: 'frag8', s: 0.73, f: 0.80 },
   ];
 
   function fragOp(cf, s, f, min) {
@@ -288,19 +341,19 @@
   const isReturn  = visits > 1;
   const isRare    = simpleHash(new Date().toDateString() + String(visits)) % 20 === 0;
 
-  const chosen = shuffle(FRAGMENT_POOL).slice(0, 6);
+  const chosen = shuffle(FRAGMENT_POOL).slice(0, 9);
 
   // on rare visit: if redacted fragment is showing, schedule a 2s word-reveal;
-  // otherwise surface the anomaly entry in position 5
+  // otherwise surface the anomaly entry in the last slot
   if (isRare) {
     const ri = chosen.findIndex(f => f && f.redacted);
-    if (ri === -1) { chosen[5] = { anomaly: true }; }
+    if (ri === -1) { chosen[8] = { anomaly: true }; }
   }
 
   // animation delays per slot — inner span owns the flicker so outer opacity:0→1 works cleanly
-  const FRAG_DELAYS = ['0s', '-3s', '-5s', '-7s', '-2s', '-9s'];
-  const FRAG_DURATIONS = ['9s', '11s', '12s', '10s', '14s', '10s'];
-  ['frag0','frag1','frag2','frag3','frag4','frag5'].forEach(function (id, i) {
+  const FRAG_DELAYS    = ['0s', '-3s', '-2s', '-8s', '-5s', '-4s', '-6s', '-7s', '-9s'];
+  const FRAG_DURATIONS = ['9s', '11s', '13s', '10s', '12s', '9.5s', '11.5s', '10s', '12.5s'];
+  ['frag0','frag1','frag2','frag3','frag4','frag5','frag6','frag7','frag8'].forEach(function (id, i) {
     const anim = 'animation:dewFrag ' + FRAG_DURATIONS[i] + ' ease-in-out infinite;animation-delay:' + FRAG_DELAYS[i] + ';display:block;';
     document.getElementById(id).innerHTML = '<span style="' + anim + '">' + fragHTML(chosen[i]) + '</span>';
   });
@@ -634,7 +687,7 @@
   // ── pointer ───────────────────────────────────────────────────────────────
 
   function bindPointer() {
-    const fragEls = ['frag0','frag1','frag2','frag3','frag4','frag5'].map(function (id) {
+    const fragEls = ['frag0','frag1','frag2','frag3','frag4','frag5','frag6','frag7','frag8'].map(function (id) {
       return document.getElementById(id);
     });
 
