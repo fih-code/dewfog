@@ -439,9 +439,10 @@
 
   let audioCtx  = null;
   let masterGain = null;
-  let isMuted   = localStorage.getItem('dw_mute') === '1';
+  let isMuted = false;
+  localStorage.removeItem('dw_mute');
 
-  if (muteBtn) muteBtn.textContent = isMuted ? '○' : '◎';
+  if (muteBtn) muteBtn.textContent = '◎';
 
   let audioRampStarted = false;
 
@@ -517,7 +518,6 @@
   if (muteBtn) {
     muteBtn.addEventListener('click', function () {
       isMuted = !isMuted;
-      localStorage.setItem('dw_mute', isMuted ? '1' : '0');
       muteBtn.textContent = isMuted ? '○' : '◎';
       if (masterGain && audioCtx) {
         masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
