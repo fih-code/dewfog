@@ -121,12 +121,12 @@
     <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
     <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
     <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(173,240,228,.92);white-space:nowrap;">
-      <div id="frag0" style="position:absolute;left:10%;top:19%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag1" style="position:absolute;left:58%;top:26%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag2" style="position:absolute;left:13%;top:34%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag3" style="position:absolute;left:52%;top:36%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag4" style="position:absolute;left:12%;top:62%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
-      <div id="frag5" style="position:absolute;left:58%;top:64%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.10;transition:opacity 1.4s ease;"></div>
+      <div id="frag0" style="position:absolute;left:10%;top:19%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
+      <div id="frag1" style="position:absolute;left:58%;top:26%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
+      <div id="frag2" style="position:absolute;left:13%;top:34%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
+      <div id="frag3" style="position:absolute;left:52%;top:36%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
+      <div id="frag4" style="position:absolute;left:12%;top:62%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
+      <div id="frag5" style="position:absolute;left:58%;top:64%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
       <div id="frag6" style="position:absolute;left:15%;top:70%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
       <div id="frag7" style="position:absolute;left:55%;top:72%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
       <div id="frag8" style="position:absolute;left:30%;top:79%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
@@ -283,8 +283,8 @@
   // then appear at MIN_OP2 (even more shaded) for continued discovery.
   // maxClearFraction is a ratchet — revealed text never dims back when
   // frost recondenses, so progress is always kept.
-  const MIN_OP1     = 0.10;
-  const MIN_OP2     = 0.08;
+  const MIN_OP1     = 0.40;
+  const MIN_OP2     = 0.20;
   const PHASE1_DONE = 0.58;
   const PHASE1_FRAGS = [
     { id: 'frag0', s: 0.04, f: 0.18 },
