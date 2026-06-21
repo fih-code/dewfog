@@ -81,11 +81,13 @@
     <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
     <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
     <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(159,232,219,.62);">
-      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 9s ease-in-out infinite;"></div>
-      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 11s ease-in-out infinite;animation-delay:-3s;"></div>
-      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 12s ease-in-out infinite;animation-delay:-5s;"></div>
-      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-7s;"></div>
-      <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);white-space:nowrap;"></div>
+      <div id="frag0" style="position:absolute;left:13%;top:20%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 9s ease-in-out infinite;opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag1" style="position:absolute;left:60%;top:29%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 11s ease-in-out infinite;animation-delay:-3s;opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag2" style="position:absolute;left:15%;top:67%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 12s ease-in-out infinite;animation-delay:-5s;opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag3" style="position:absolute;left:54%;top:73%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-7s;opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag4" style="position:absolute;left:37%;top:44%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 14s ease-in-out infinite;animation-delay:-2s;opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="frag5" style="position:absolute;left:63%;top:57%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 12px rgba(159,232,219,.4);animation:dewFrag 10s ease-in-out infinite;animation-delay:-9s;opacity:0;transition:opacity 1.4s ease;"></div>
+      <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);white-space:nowrap;opacity:0;transition:opacity 1.4s ease;"></div>
     </div>
 
     <!-- whisper: outer owns state opacity, inner owns breathing keyframe -->
@@ -139,6 +141,9 @@
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">the observer is not produced by what it observes.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">consciousness research, meditation, near-death experience, quantum field theory — converging.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">materialism is one interpretation of reality. it is not the only one.</p>
+  <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">energy, frequency, vibration — tesla said this is how to understand the universe.</p>
+  <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">the double slit experiment: the particle behaves differently when observed. physics confirmed it.</p>
+  <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">quantum entanglement — instant correlation across any distance. confirmed. no agreed explanation.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">what if consciousness is not produced by the brain, but is the ground of reality itself?</p>
 
   <div style="margin:3rem 0;padding:2.5rem 3rem;background:#f0c69a;border-radius:4px;">
@@ -198,6 +203,18 @@
     'plotinus: the one. not a deity. a ground. we think he was right.',
     'every tradition found the same place. none agreed on the name.',
     'entry 56 — the mystics arrived here first. we are still catching up.',
+    // tesla / frequency thread
+    'energy, frequency, vibration — tesla said this is how to understand the universe. we agree.',
+    'entry 44 — every particle oscillates. the universe speaks in frequencies. we are learning to listen.',
+    'entry 61 — the brain emits waves. whether it generates consciousness or receives it is the open question.',
+    // quantum / double slit thread
+    'entry 77 — the double slit experiment, 1927. unobserved: wave. observed: particle. we are still asking why.',
+    'the particle knew it was being watched. it changed its path. we do not fully understand this.',
+    'entry 82 — the wave function collapses when measured. we do not yet know what the measuring is.',
+    'quantum entanglement — two particles, instant correlation, no distance between them. confirmed in labs. we are asking what it means.',
+    'entry 55 — the act of observation changes the observed. they called it physics. we think physics is pointing at something.',
+    // additional e=mc²
+    'entry 14 — solid is a convenient description. beneath it: oscillating energy fields. einstein agreed.',
   ];
 
   const CLOSING_POOL = [
@@ -210,15 +227,9 @@
     'what you found was here before you looked.',
   ];
 
-  // whisper advances as glass clears — four phrases keyed to cleared fraction
-  const WHISPERS = [
-    'it was never out there',
-    'you are already where you are looking',
-    'the fog is the only thing between you and you',
-    'there is only this',
-  ];
-  const WHISPER_AT = [0, 0.18, 0.40, 0.60];
-  let whisperIndex = 0;
+  // thresholds at which each fragment fades into the scene as the user wipes
+  const REVEAL_IDS = ['fragTop', 'frag0', 'frag1', 'frag2', 'frag3', 'frag4', 'frag5'];
+  const REVEAL_AT  = [0.03, 0.11, 0.22, 0.33, 0.45, 0.54, 0.62];
   let clearFraction = 0;
 
   function shuffle(arr) {
@@ -253,16 +264,16 @@
   const isReturn  = visits > 1;
   const isRare    = simpleHash(new Date().toDateString() + String(visits)) % 20 === 0;
 
-  const chosen = shuffle(FRAGMENT_POOL).slice(0, 4);
+  const chosen = shuffle(FRAGMENT_POOL).slice(0, 6);
 
   // on rare visit: if redacted fragment is showing, schedule a 2s word-reveal;
-  // otherwise surface the anomaly entry in position 3
+  // otherwise surface the anomaly entry in position 5
   if (isRare) {
     const ri = chosen.findIndex(f => f && f.redacted);
-    if (ri === -1) { chosen[3] = { anomaly: true }; }
+    if (ri === -1) { chosen[5] = { anomaly: true }; }
   }
 
-  ['frag0','frag1','frag2','frag3'].forEach(function (id, i) {
+  ['frag0','frag1','frag2','frag3','frag4','frag5'].forEach(function (id, i) {
     document.getElementById(id).innerHTML = fragHTML(chosen[i]);
   });
 
@@ -306,7 +317,6 @@
   const dawn        = document.getElementById('dawn');
   const frags       = document.getElementById('frags');
   const whisperWrap = document.getElementById('whisperWrap');
-  const whisperInner = document.getElementById('whisperInner');
   const hintWrap    = document.getElementById('hintWrap');
   const resMsgWrap  = document.getElementById('resMsgWrap');
   const muteBtn     = document.getElementById('muteBtn');
@@ -521,12 +531,13 @@
     for (let i = 3; i < data.length; i += 4) if (data[i] < 36) clear++;
     clearFraction = clear / (sw * sh);
 
-    // advance whisper regardless of time gate
-    const ni = WHISPER_AT.reduce(function (acc, t, i) { return clearFraction >= t ? i : acc; }, 0);
-    if (ni !== whisperIndex && whisperInner) {
-      whisperIndex = ni;
-      whisperInner.textContent = WHISPERS[ni];
-    }
+    // reveal fragments progressively — each fades in when its clearing threshold is crossed
+    REVEAL_IDS.forEach(function (id, i) {
+      if (clearFraction >= REVEAL_AT[i]) {
+        const el = document.getElementById(id);
+        if (el && el.style.opacity === '0') el.style.opacity = '1';
+      }
+    });
 
     if (Date.now() - pageLoadTime < MIN_READ_MS) return;
     if (clearFraction >= THRESHOLD) {
@@ -574,7 +585,7 @@
   // ── pointer ───────────────────────────────────────────────────────────────
 
   function bindPointer() {
-    const fragEls = ['frag0','frag1','frag2','frag3'].map(function (id) {
+    const fragEls = ['frag0','frag1','frag2','frag3','frag4','frag5'].map(function (id) {
       return document.getElementById(id);
     });
 
