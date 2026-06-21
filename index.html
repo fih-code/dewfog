@@ -112,7 +112,7 @@
   </div>
 
   <!-- MYSTERY (z:2 — deep teal scene, sits behind the frost canvas) -->
-  <div style="position:absolute;inset:0;z-index:2;background:radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%);">
+  <div id="mystery" style="position:absolute;inset:0;z-index:2;background:radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%);opacity:1;transition:opacity 2.8s ease;">
     <!-- time-of-day tint overlay — color set by JS based on local hour -->
     <div id="timeTint" style="position:absolute;inset:0;pointer-events:none;"></div>
     <div style="position:absolute;left:30%;top:30%;width:46vw;height:46vw;border-radius:50%;filter:blur(70px);background:radial-gradient(circle, rgba(159,232,219,.10) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 17s ease-in-out infinite;"></div>
@@ -397,6 +397,7 @@
   const clock       = document.getElementById('clock');
   const dawn        = document.getElementById('dawn');
   const frags       = document.getElementById('frags');
+  const mystery     = document.getElementById('mystery');
   const whisperWrap = document.getElementById('whisperWrap');
   const hintWrap    = document.getElementById('hintWrap');
   const resMsgWrap  = document.getElementById('resMsgWrap');
@@ -660,6 +661,7 @@
     clearInterval(refrostTimer);
 
     fogCanvas.style.opacity    = '0';
+    mystery.style.opacity      = '0';
     frags.style.opacity        = '0';
     whisperWrap.style.opacity  = '0';
     clock.style.opacity        = '0';
