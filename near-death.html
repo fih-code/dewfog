@@ -33,6 +33,13 @@
       color: rgba(159,232,219,.35); text-align: center;
       transition: color 2s ease;
     }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
     #vignette {
       position: fixed; inset: 0; pointer-events: none;
       box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
@@ -44,6 +51,7 @@
 <canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
 
 <div id="ui">
+  <a id="home-btn" href="/">home</a>
   <div id="title-wrap">
     <h1>near death</h1>
     <div class="subtitle">void · light · return</div>
