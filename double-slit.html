@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>double slit — dewfog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+
+    #ui {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      font-family: 'Space Mono', monospace;
+    }
+
+    #title-wrap {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    h1 {
+      font-family: 'Italiana', serif;
+      font-weight: 400;
+      text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem, 3vw, 2.8rem);
+      letter-spacing: .06em;
+      margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+
+    .subtitle {
+      font-size: 9px;
+      letter-spacing: .44em;
+      text-transform: uppercase;
+      color: rgba(159,232,219,.32);
+      margin: .45em 0 0;
+    }
+
+    #bottom-ui {
+      position: absolute;
+      bottom: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      pointer-events: all;
+    }
+
+    #status {
+      font-size: 9px;
+      letter-spacing: .28em;
+      color: rgba(159,232,219,.35);
+      text-align: center;
+      white-space: nowrap;
+      transition: color .6s ease;
+    }
+
+    #status.observed { color: rgba(240,198,154,.35); }
+
+    #observer-btn {
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid rgba(159,232,219,.22);
+      color: rgba(159,232,219,.6);
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .44em;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      transition: border-color .5s ease, color .5s ease, box-shadow .5s ease;
+      outline: none;
+    }
+
+    #observer-btn:hover {
+      border-color: rgba(159,232,219,.55);
+      color: rgba(159,232,219,.95);
+      box-shadow: 0 0 18px rgba(159,232,219,.18);
+    }
+
+    #observer-btn.observed {
+      border-color: rgba(240,198,154,.28);
+      color: rgba(240,198,154,.65);
+    }
+
+    #observer-btn.observed:hover {
+      border-color: rgba(240,198,154,.6);
+      color: rgba(240,198,154,1);
+      box-shadow: 0 0 18px rgba(240,198,154,.18);
+    }
+
+    #vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <div id="title-wrap">
+    <h1>the double slit</h1>
+    <div class="subtitle">wave &middot; particle &middot; observer</div>
+  </div>
+  <div id="bottom-ui">
+    <div id="status">unobserved &mdash; interference pattern forming</div>
+    <button id="observer-btn">observe</button>
+  </div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const btn    = document.getElementById('observer-btn');
+const statusEl = document.getElementById('status');
+
+// ----- state -----
+let W, H;
+let observed     = false;
+let particles    = [];
+let wavefronts   = [];
+let detector     = null;
+let detectorMax  = 1;
+let frameCount   = 0;
+let waveTimer    = 0;
+
+// ----- layout (fractions of viewport) -----
+const SRC_FX  = 0.10;
+const BAR_FX  = 0.40;
+const SCR_FX  = 0.76;
+const SLIT_GAP   = 0.10;   // slit centre-to-centre as fraction of H
+const SLIT_HALF  = 0.022;  // half-height of each slit as fraction of H
+
+// ----- helpers -----
+const slit1Y  = () => H * (0.5 - SLIT_GAP / 2);
+const slit2Y  = () => H * (0.5 + SLIT_GAP / 2);
+const barrierX = () => W * BAR_FX;
+const screenX  = () => W * SCR_FX;
+const sourceX  = () => W * SRC_FX;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  detector    = new Float32Array(H + 2);
+  detectorMax = 1;
+  particles   = [];
+  wavefronts  = [];
+  buildCDFs();
+}
+window.addEventListener('resize', resize);
+
+// ----- probability distributions via CDF -----
+let waveCDF, classicCDF;
+
+function makeCDF(pdf) {
+  let sum = 0;
+  for (let i = 0; i < pdf.length; i++) sum += pdf[i];
+  const cdf = new Float32Array(pdf.length);
+  let run = 0;
+  for (let i = 0; i < pdf.length; i++) { run += pdf[i] / sum; cdf[i] = run; }
+  return cdf;
+}
+
+function buildCDFs() {
+  const L      = screenX() - barrierX();
+  const d      = H * SLIT_GAP;
+  const a      = H * SLIT_HALF * 2;
+  const lambda = H * 0.046;
+  const cy     = H * 0.5;
+
+  const wPDF = new Float32Array(H);
+  for (let y = 0; y < H; y++) {
+    const dy   = y - cy;
+    const hyp  = Math.sqrt(dy * dy + L * L);
+    const sinT = dy / hyp;
+    const beta  = Math.PI * d * sinT / lambda;
+    const alpha = Math.PI * a * sinT / lambda;
+    const sinc  = Math.abs(alpha) < 1e-7 ? 1 : Math.sin(alpha) / alpha;
+    wPDF[y] = Math.max(0, Math.pow(Math.cos(beta) * sinc, 2));
+  }
+  waveCDF = makeCDF(wPDF);
+
+  const s1    = slit1Y();
+  const s2    = slit2Y();
+  const sigma = H * 0.038;
+  const cPDF  = new Float32Array(H);
+  for (let y = 0; y < H; y++) {
+    const d1 = (y - s1) / sigma;
+    const d2 = (y - s2) / sigma;
+    cPDF[y] = Math.exp(-0.5 * d1 * d1) + Math.exp(-0.5 * d2 * d2);
+  }
+  classicCDF = makeCDF(cPDF);
+}
+
+function sampleCDF(cdf) {
+  const r = Math.random();
+  let lo = 0, hi = cdf.length - 1;
+  while (lo < hi) { const m = (lo + hi) >> 1; if (cdf[m] < r) lo = m + 1; else hi = m; }
+  return lo + Math.random() - 0.5;
+}
+
+// ----- particles -----
+function spawnParticle() {
+  const sx = sourceX(), bx = barrierX(), ex = screenX();
+  const cy = H * 0.5;
+  const endY = observed ? sampleCDF(classicCDF) : sampleCDF(waveCDF);
+  const s1 = slit1Y(), s2 = slit2Y();
+  const midY = observed
+    ? (Math.abs(endY - s1) < Math.abs(endY - s2) ? s1 : s2)
+    : (Math.random() < 0.5 ? s1 : s2);
+
+  particles.push({
+    phase: 0, t: 0,
+    speed: 0.013 + Math.random() * 0.005,
+    x0: sx, y0: cy,
+    x1: bx, y1: midY,
+    x2: ex, y2: endY,
+    obs: observed, x: sx, y: cy, alpha: 0,
+  });
+}
+
+function ease(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
+
+function updateParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.t += p.speed;
+    if (p.phase === 0) {
+      const t = Math.min(p.t, 1);
+      p.x = p.x0 + (p.x1 - p.x0) * ease(t);
+      p.y = p.y0 + (p.y1 - p.y0) * t;
+      p.alpha = Math.sin(t * Math.PI) * 0.72;
+      if (p.t >= 1) { p.phase = 1; p.t = 0; }
+    } else {
+      const t = Math.min(p.t, 1);
+      p.x = p.x1 + (p.x2 - p.x1) * ease(t);
+      p.y = p.y1 + (p.y2 - p.y1) * t;
+      p.alpha = Math.sin(t * Math.PI) * 0.72;
+      if (p.t >= 1) {
+        const row = Math.round(p.y2);
+        if (row >= 0 && row < detector.length) {
+          detector[row] += 1;
+          if (detector[row] > detectorMax) detectorMax = detector[row];
+        }
+        particles.splice(i, 1);
+      }
+    }
+  }
+}
+
+// ----- wavefronts -----
+function spawnWave() {
+  const bx = barrierX();
+  [slit1Y(), slit2Y()].forEach(sy => wavefronts.push({ x: bx, y: sy, r: 0, born: performance.now() }));
+}
+
+function updateWaves(now) {
+  const maxR = screenX() - barrierX();
+  const spd  = maxR / 1800; // px per ms
+  for (let i = wavefronts.length - 1; i >= 0; i--) {
+    const w = wavefronts[i];
+    w.r = (now - w.born) * spd;
+    if (w.r > maxR * 1.15) wavefronts.splice(i, 1);
+  }
+}
+
+// ----- draw -----
+function drawBg() {
+  ctx.fillStyle = '#0b1316';
+  ctx.fillRect(0, 0, W, H);
+
+  const bx = barrierX();
+  const g = ctx.createRadialGradient(bx, H * 0.5, 0, bx, H * 0.5, H * 0.45);
+  g.addColorStop(0, 'rgba(18,34,38,.3)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function rgb(obs) { return obs ? '240,198,154' : '159,232,219'; }
+
+function drawSource() {
+  const sx = sourceX(), sy = H * 0.5;
+  const t = performance.now() / 1000;
+  const pulse = 0.5 + 0.5 * Math.sin(t * 2.3);
+  const cr = rgb(observed);
+
+  const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 42 + pulse * 10);
+  g.addColorStop(0,   `rgba(${cr},${0.32 + pulse * 0.1})`);
+  g.addColorStop(0.4, `rgba(${cr},0.09)`);
+  g.addColorStop(1,   `rgba(${cr},0)`);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(sx, sy, 52, 0, Math.PI * 2); ctx.fill();
+
+  ctx.beginPath(); ctx.arc(sx, sy, 2.2 + pulse * 0.8, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${cr},${0.8 + pulse * 0.2})`; ctx.fill();
+
+  ctx.font = '8px "Space Mono"';
+  ctx.fillStyle = `rgba(${cr},0.3)`;
+  ctx.textAlign = 'center';
+  ctx.fillText('source', sx, sy + 32);
+}
+
+function drawWavefronts() {
+  if (observed) return;
+  const maxR = screenX() - barrierX();
+  const cr = '159,232,219';
+  wavefronts.forEach(w => {
+    const alpha = Math.pow(1 - w.r / maxR, 1.6) * 0.11;
+    if (alpha < 0.005) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(w.x, w.y, w.r, -Math.PI * 0.52, Math.PI * 0.52);
+    ctx.strokeStyle = `rgba(${cr},${alpha})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  });
+}
+
+function drawBarrier() {
+  const bx = barrierX();
+  const s1 = slit1Y(), s2 = slit2Y();
+  const sh = H * SLIT_HALF;
+  const tw = Math.max(5, W * 0.009);
+  const cr = rgb(observed);
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(8,19,22,0.96)';
+  ctx.strokeStyle = `rgba(${cr},0.16)`;
+  ctx.lineWidth = 0.8;
+
+  [[0, s1 - sh], [s1 + sh, s2 - sh], [s2 + sh, H]].forEach(([ya, yb]) => {
+    ctx.beginPath();
+    ctx.rect(bx - tw / 2, ya, tw, yb - ya);
+    ctx.fill(); ctx.stroke();
+  });
+
+  [s1, s2].forEach(sy => {
+    const g = ctx.createRadialGradient(bx, sy, 0, bx, sy, H * 0.055);
+    g.addColorStop(0, `rgba(${cr},0.16)`);
+    g.addColorStop(1, `rgba(${cr},0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(bx, sy, H * 0.055, 0, Math.PI * 2); ctx.fill();
+  });
+
+  ctx.font = '8px "Space Mono"';
+  ctx.fillStyle = `rgba(${cr},0.25)`;
+  ctx.textAlign = 'left';
+  ctx.fillText('A', bx + tw / 2 + 5, s1 + 3);
+  ctx.fillText('B', bx + tw / 2 + 5, s2 + 3);
+  ctx.restore();
+}
+
+function drawDetector() {
+  const sx  = screenX();
+  const cr  = rgb(observed);
+  const mW  = W * 0.065;
+
+  ctx.save();
+  ctx.strokeStyle = `rgba(${cr},0.13)`;
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, H); ctx.stroke();
+
+  if (detectorMax > 1) {
+    for (let y = 1; y < H - 1; y++) {
+      const v = (detector[y - 1] + detector[y] * 2 + detector[y + 1]) * 0.25;
+      const intens = Math.min(v / detectorMax, 1);
+      if (intens < 0.015) continue;
+      ctx.fillStyle = `rgba(${cr},${intens * 0.62})`;
+      ctx.fillRect(sx, y, intens * mW, 1);
+    }
+    for (let y = 2; y < H - 2; y++) {
+      const v = (detector[y-2] + detector[y-1] + detector[y]*2 + detector[y+1] + detector[y+2]) / 7;
+      const intens = Math.min(v / detectorMax, 1);
+      if (intens < 0.07) continue;
+      const g = ctx.createLinearGradient(sx, 0, sx + mW * 2.2, 0);
+      g.addColorStop(0, `rgba(${cr},${intens * 0.2})`);
+      g.addColorStop(1, `rgba(${cr},0)`);
+      ctx.fillStyle = g;
+      ctx.fillRect(sx, y - 1, mW * 2.2, 3);
+    }
+  }
+
+  ctx.font = '8px "Space Mono"';
+  ctx.fillStyle = `rgba(${cr},0.27)`;
+  ctx.textAlign = 'center';
+  ctx.fillText('screen', sx + mW * 0.5, H * 0.88);
+  ctx.restore();
+}
+
+function drawParticle(p) {
+  const cr = rgb(p.obs);
+  const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 7);
+  g.addColorStop(0,    `rgba(${cr},${p.alpha})`);
+  g.addColorStop(0.45, `rgba(${cr},${p.alpha * 0.28})`);
+  g.addColorStop(1,    `rgba(${cr},0)`);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.fill();
+
+  ctx.beginPath(); ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${cr},${Math.min(p.alpha * 1.5, 1)})`; ctx.fill();
+}
+
+// ----- main loop -----
+function frame(now) {
+  drawBg();
+
+  if (!observed) {
+    waveTimer++;
+    if (waveTimer >= 34) { waveTimer = 0; spawnWave(); }
+    updateWaves(now);
+    drawWavefronts();
+  }
+
+  drawSource();
+  drawBarrier();
+  drawDetector();
+
+  frameCount++;
+  if (frameCount % (observed ? 9 : 12) === 0 && particles.length < 45) spawnParticle();
+  updateParticles();
+  particles.forEach(drawParticle);
+
+  requestAnimationFrame(frame);
+}
+
+// ----- observer toggle -----
+btn.addEventListener('click', () => {
+  observed = !observed;
+  detector.fill(0); detectorMax = 1;
+  particles = []; wavefronts = []; waveTimer = 0;
+
+  if (observed) {
+    btn.textContent = 'stop observing';
+    btn.classList.add('observed');
+    statusEl.textContent = 'observed — wave function collapsed to two bands';
+    statusEl.classList.add('observed');
+  } else {
+    btn.textContent = 'observe';
+    btn.classList.remove('observed');
+    statusEl.textContent = 'unobserved — interference pattern forming';
+    statusEl.classList.remove('observed');
+  }
+});
+
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
