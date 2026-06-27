@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>quantum entanglement — dewfog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.35); text-align: center;
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <div id="title-wrap">
+    <h1>quantum entanglement</h1>
+    <div class="subtitle">superposition · correlation · nonlocality</div>
+  </div>
+  <div id="status"></div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+// palette: teal = spin↑, amber = spin↓, white = superposition
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const WHITE = '255,248,195';
+
+// state machine
+const PHASES = ['idle','travel','collapse','show','reset'];
+const DUR    = { idle:55, travel:155, collapse:52, show:108, reset:32 };
+
+let phase = 'idle', phaseF = 0;
+let pA, pB;           // { x, trail: number[] }
+let resultA, resultB; // 'teal' | 'amber'
+
+const detDist = () => W * .34;
+const maxR    = () => Math.min(W, H) * .14;
+const colorOf = r  => r === 'teal' ? TEAL : AMBER;
+const spinOf  = r  => r === 'teal' ? '↑' : '↓'; // ↑ ↓
+
+function initPhase(p) {
+  phase = p; phaseF = 0;
+  if (p === 'idle') {
+    pA = null; pB = null;
+    status.textContent = 'source — entangled pair ready';
+  } else if (p === 'travel') {
+    pA = { x: cx, trail: [] };
+    pB = { x: cx, trail: [] };
+    status.textContent = 'superposition — spin undefined until measured';
+  } else if (p === 'collapse') {
+    resultA = Math.random() < .5 ? 'teal' : 'amber';
+    resultB = resultA === 'teal' ? 'amber' : 'teal'; // singlet: always opposite
+    status.textContent = 'measured — result instantly correlated across any distance';
+  } else if (p === 'show') {
+    status.textContent = `alice ${spinOf(resultA)}  ·  bob ${spinOf(resultB)}  —  always opposite`;
+  } else {
+    status.textContent = '';
+  }
+}
+
+function nextPhase() {
+  initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]);
+}
+
+// ---- draw helpers ----
+function drawBg() {
+  ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H);
+}
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,   `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5,  `rgba(${c},${(a*.18).toFixed(3)})`);
+  g.addColorStop(1,   `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function dot(x, y, r, c, a) {
+  if (a <= 0) return;
+  radGlow(x, y, r * 5.5, c, a * .5);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${c},${Math.min(a,1)})`; ctx.fill();
+}
+
+// trail is an array of x-numbers; draws horizontal segments at y=cy
+function drawHTrail(arr, c) {
+  if (arr.length < 2) return;
+  for (let i = 1; i < arr.length; i++) {
+    const t = i / arr.length;
+    ctx.strokeStyle = `rgba(${c},${t * .38})`;
+    ctx.lineWidth = t * 1.8;
+    ctx.beginPath(); ctx.moveTo(arr[i-1], cy); ctx.lineTo(arr[i], cy); ctx.stroke();
+  }
+}
+
+function pushX(arr, x, max) { arr.push(x); if (arr.length > max) arr.shift(); }
+
+function lbl(txt, x, y, c, a, size) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${size||8}px "Space Mono"`; ctx.textAlign = 'center';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+// Entanglement link: sinusoidal wave between two x positions at cy
+function drawEntLink(x1, x2, f, alpha) {
+  const span = x2 - x1;
+  if (span < 8 || alpha <= 0) return;
+  const steps = 80;
+  ctx.save(); ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const s = i / steps;
+    const x = x1 + span * s;
+    const y = cy + Math.sin(s * Math.PI * 4 + f * .09) * 14;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = `rgba(${TEAL},${alpha * .15})`;
+  ctx.lineWidth = 1; ctx.stroke(); ctx.restore();
+}
+
+function drawSource(a) {
+  if (a <= 0) return;
+  const t = performance.now() * .001;
+  const p = .5 + .5 * Math.sin(t * 2.2);
+  radGlow(cx, cy, (16 + p*6)*a, TEAL, (.2 + p*.08) * a);
+  ctx.beginPath(); ctx.arc(cx, cy, (2.5 + p*.6) * a, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${TEAL},${(.65 + p*.25) * a})`; ctx.fill();
+  lbl('source', cx, cy + 22, TEAL, .25 * a);
+}
+
+// Diamond-shaped detector node
+function drawDetector(x, label, resC, resA) {
+  const s = 15;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},0.22)`; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x, cy-s); ctx.lineTo(x+s, cy);
+  ctx.lineTo(x, cy+s); ctx.lineTo(x-s, cy);
+  ctx.closePath(); ctx.stroke();
+  if (resC && resA > 0) {
+    ctx.fillStyle = `rgba(${resC},${resA * .32})`; ctx.fill();
+    radGlow(x, cy, 52, resC, resA * .55);
+  }
+  lbl(label, x, cy + s + 17, TEAL, .30);
+  ctx.restore();
+}
+
+// ---- phase renderers ----
+
+function rIdle() {
+  const DD = detDist();
+  drawSource(1);
+  drawDetector(cx - DD, 'alice', null, 0);
+  drawDetector(cx + DD, 'bob',   null, 0);
+}
+
+function rTravel() {
+  const t  = phaseF / DUR.travel;
+  const DD = detDist();
+
+  // Creation flash — first 12%
+  if (t < .12) {
+    const ft = Math.sin(Math.PI * t / .12);
+    radGlow(cx, cy, maxR() * 1.4 * ft, '255,255,220', .72 * ft);
+  }
+
+  // Source dims as particles depart
+  drawSource(Math.max(0, 1 - t / .16));
+
+  // Particle positions
+  const moveT = t < .11 ? 0 : (t - .11) / .89;
+  pA.x = cx - DD * moveT;
+  pB.x = cx + DD * moveT;
+
+  if (moveT > .015) {
+    pushX(pA.trail, pA.x, 80);
+    pushX(pB.trail, pB.x, 80);
+    drawHTrail(pA.trail, TEAL);
+    drawHTrail(pB.trail, AMBER);
+
+    // Superposition: white core, anti-correlated teal/amber halos
+    // When pA leans teal, pB leans amber (and vice versa) — represents singlet state
+    const sp = Math.sin(phaseF * .19);
+    const tA = Math.max(0,  sp) * .5;
+    const aA = Math.max(0, -sp) * .5;
+
+    dot(pA.x, cy, 4.5, WHITE, .82);
+    radGlow(pA.x, cy, 28, TEAL,  tA);
+    radGlow(pA.x, cy, 28, AMBER, aA);
+
+    dot(pB.x, cy, 4.5, WHITE, .82);
+    radGlow(pB.x, cy, 28, TEAL,  aA); // anti-correlated
+    radGlow(pB.x, cy, 28, AMBER, tA);
+
+    // Entanglement link fades in after particles separate
+    drawEntLink(pA.x, pB.x, phaseF, Math.min(moveT / .3, 1));
+  }
+
+  drawDetector(cx - DD, 'alice', null, 0);
+  drawDetector(cx + DD, 'bob',   null, 0);
+}
+
+function rCollapse() {
+  const t  = phaseF / DUR.collapse;
+  const DD = detDist();
+  const cA = colorOf(resultA), cB = colorOf(resultB);
+
+  // Entanglement link dissolves
+  const linkA = Math.max(0, 1 - t / .28);
+  drawEntLink(cx - DD, cx + DD, phaseF, linkA);
+
+  // Flash envelope — peaks and fades
+  const flashA = Math.max(0, Math.sin(Math.PI * t * 1.1));
+
+  drawDetector(cx - DD, 'alice', cA, flashA);
+  drawDetector(cx + DD, 'bob',   cB, flashA);
+
+  // Particles snap to result colors
+  const pA2 = Math.min(t * 3.5, 1) * .9;
+  dot(cx - DD, cy, 4.5, cA, pA2);
+  dot(cx + DD, cy, 4.5, cB, pA2);
+}
+
+function rShow() {
+  const t  = phaseF / DUR.show;
+  const DD = detDist();
+  const cA = colorOf(resultA), cB = colorOf(resultB);
+
+  // Fade everything out in last 22%
+  const fa = t < .78 ? 1 : 1 - (t - .78) / .22;
+
+  drawDetector(cx - DD, 'alice', cA, fa * .52);
+  drawDetector(cx + DD, 'bob',   cB, fa * .52);
+
+  dot(cx - DD, cy, 4.5, cA, fa * .88);
+  dot(cx + DD, cy, 4.5, cB, fa * .88);
+
+  // Spin labels ↑ / ↓
+  const la = Math.min(t * 2.5, 1) * fa * .72;
+  lbl(spinOf(resultA), cx - DD, cy - 30, cA, la, 16);
+  lbl(spinOf(resultB), cx + DD, cy - 30, cB, la, 16);
+
+  // Subtle dashed correlation line between detectors
+  if (la > .1) {
+    ctx.save();
+    ctx.strokeStyle = `rgba(${TEAL},${la * .10})`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 8]);
+    ctx.beginPath();
+    ctx.moveTo(cx - DD + 20, cy);
+    ctx.lineTo(cx + DD - 20, cy);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// ---- main loop ----
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'idle':     rIdle();     break;
+      case 'travel':   rTravel();   break;
+      case 'collapse': rCollapse(); break;
+      case 'show':     rShow();     break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch (e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  initPhase('idle');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
