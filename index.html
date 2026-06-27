@@ -734,12 +734,22 @@
     function onMove(e) {
       if (e.type === 'pointerdown') {
         isDown = true;
-        // Build graph and call resume() from this trusted gesture so the
-        // context is running before pointermove fires. onstatechange is
-        // guarded by `touched` so a tap alone never starts the drone.
         buildAudioGraph();
-        if (audioCtx.state === 'suspended') audioCtx.resume().catch(function(){});
-        audioCtx.onstatechange = function() { if (touched) startRamp(); };
+        // resume().then() resolves when the context actually reaches 'running',
+        // regardless of whether this specific gesture was trusted on this iOS
+        // version. A later pointerup (always trusted) will also call resume()
+        // and resolve any pending .then() chains.
+        audioCtx.resume().then(function() { startRamp(); }).catch(function(){});
+        audioCtx.onstatechange = function() {
+          if (audioCtx.state === 'running') startRamp();
+        };
+        if (!touched) {
+          touched = true;
+          hintWrap.style.opacity = '0';
+          startRamp();
+          setTimeout(startRamp, 300);
+          setTimeout(startRamp, 800);
+        }
       }
 
       const p = (e.touches && e.touches[0]) || e;
@@ -759,22 +769,11 @@
             + (0.40 + 0.45*t).toFixed(2) + ')';
         });
 
-        if (isDown) {
+        if (isDown && e.type === 'pointermove') {
           const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
           wipeTo(x, y, radius);
 
-          if (!touched && e.type === 'pointermove') {
-            touched = true;
-            hintWrap.style.opacity = '0';
-            // Re-arm onstatechange now that touched is true — catches the case
-            // where context is still resuming from the pointerdown unlock.
-            if (audioCtx) audioCtx.onstatechange = function() {
-              if (audioCtx.state === 'running') startRamp();
-            };
-            startRamp();
-            setTimeout(startRamp, 200);
-            setTimeout(startRamp, 800);
-          } else if (touched && audioCtx && audioCtx.state === 'suspended') {
+          if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume().catch(function(){});
           }
         }
@@ -786,9 +785,9 @@
     stage.addEventListener('pointerup',    function () {
       isDown = false;
       last = null;
-      // pointerup is trusted on all iOS versions — use as a resume fallback
-      // for older devices where pointerdown/touchstart resume silently fails.
-      if (touched && audioCtx && audioCtx.state === 'suspended') {
+      // pointerup is trusted on all iOS — resolves any pending resume() promises
+      // from pointerdown, which activates the .then(startRamp) chains above.
+      if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume().then(startRamp).catch(function(){});
       }
     });
