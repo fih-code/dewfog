@@ -466,9 +466,22 @@
 
   let audioRampStarted = false;
 
+  // Defined at module scope so it remains reachable after context resumes
+  // following an iOS audio interruption (notification, Siri, phone call).
+  function startRamp() {
+    if (isMuted || !masterGain || audioRampStarted) return;
+    if (!audioCtx || audioCtx.state !== 'running') return;
+    audioRampStarted = true;
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.38, audioCtx.currentTime + 1.5);
+  }
+
   function initAudio() {
     if (audioCtx) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(startRamp).catch(function(){});
+      }
       return;
     }
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -502,18 +515,13 @@
       osc.start();
     });
 
-    function startRamp() {
-      if (isMuted || !masterGain || audioRampStarted) return;
-      if (audioCtx.state !== 'running') return;
-      audioRampStarted = true;
-      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-      masterGain.gain.linearRampToValueAtTime(0.38, audioCtx.currentTime + 1.5);
-    }
-
-    // Three paths to cover all browsers: immediate check, Promise, statechange event.
+    // Four paths: immediate check, Promise resolution, statechange event,
+    // and two timeouts as fallback for iOS versions where the event/Promise
+    // resolves after the call stack unwinds.
     audioCtx.onstatechange = startRamp;
-    audioCtx.resume().then(startRamp);
+    audioCtx.resume().then(startRamp).catch(function(){});
+    setTimeout(startRamp, 200);
+    setTimeout(startRamp, 700);
     startRamp();
   }
 
@@ -758,7 +766,7 @@
             hintWrap.style.opacity = '0';
             initAudio();
           } else if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
+            audioCtx.resume().then(startRamp).catch(function(){});
           }
         }
       }
@@ -782,7 +790,9 @@
 
   // iOS Safari only unlocks AudioContext on touchstart/click — not pointermove.
   // Add one-shot listeners so audio starts on the very first finger contact.
-  ['touchstart', 'mousedown'].forEach(function (evt) {
+  // 'click' is included as a final fallback for cases where touchstart fires
+  // but the AudioContext doesn't transition to 'running' until the click event.
+  ['touchstart', 'mousedown', 'click'].forEach(function (evt) {
     document.addEventListener(evt, function once() {
       initAudio();
       document.removeEventListener(evt, once);
