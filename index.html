@@ -518,7 +518,16 @@
   // the context; does NOT start the gain ramp.
   function unlockAudio() {
     buildAudioGraph();
-    if (audioCtx.state === 'suspended') audioCtx.resume().catch(function(){});
+    // iOS requires actually playing audio inside the trusted gesture — not just
+    // calling resume(). Play a one-sample silent buffer to fully unlock the session.
+    try {
+      var ub = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+      var us = audioCtx.createBufferSource();
+      us.buffer = ub;
+      us.connect(audioCtx.destination);
+      us.start(0);
+    } catch(e) {}
+    if (audioCtx.resume) audioCtx.resume().catch(function(){});
   }
 
   function resolveAudio() {
@@ -735,11 +744,18 @@
       if (e.type === 'pointerdown') {
         isDown = true;
         buildAudioGraph();
-        // resume().then() resolves when the context actually reaches 'running',
-        // regardless of whether this specific gesture was trusted on this iOS
-        // version. A later pointerup (always trusted) will also call resume()
-        // and resolve any pending .then() chains.
-        audioCtx.resume().then(function() { startRamp(); }).catch(function(){});
+        // Silent buffer inside this gesture — belt-and-suspenders unlock for iOS
+        // versions where the document touchstart didn't fully unlock the session.
+        try {
+          var pb = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+          var ps = audioCtx.createBufferSource();
+          ps.buffer = pb;
+          ps.connect(audioCtx.destination);
+          ps.start(0);
+        } catch(e) {}
+        if (audioCtx.resume) {
+          audioCtx.resume().then(function() { startRamp(); }).catch(function(){});
+        }
         audioCtx.onstatechange = function() {
           if (audioCtx.state === 'running') startRamp();
         };
