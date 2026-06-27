@@ -55,8 +55,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 clamp(20px,4vw,44px); height: 52px;
       pointer-events: none;
-      opacity: 0; transition: opacity 1.4s ease;
-      /* translateZ forces a GPU layer — prevents iOS from skipping the element */
+      /* translateZ forces a GPU compositing layer on iOS/Android */
       -webkit-transform: translateZ(0); transform: translateZ(0);
     }
     #dewLogo {
@@ -849,10 +848,6 @@
   var nav    = document.getElementById('dewNav');
   var burger = document.getElementById('dewBurger');
   if (!nav || !burger) return;
-
-  // JS-driven fade-in: reliable on iOS Safari where animation-fill-mode
-  // forwards on an opacity:0 element is sometimes silently dropped.
-  setTimeout(function () { nav.style.opacity = '1'; }, 1000);
 
   burger.addEventListener('click', function () {
     var open = nav.classList.toggle('open');
