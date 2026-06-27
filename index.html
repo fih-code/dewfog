@@ -468,13 +468,15 @@
 
   // Defined at module scope so it remains reachable after context resumes
   // following an iOS audio interruption (notification, Siri, phone call).
+  // Does not bail on isMuted — starts oscillators silently at 0 gain when
+  // muted so that a subsequent unmute toggle works correctly.
   function startRamp() {
-    if (isMuted || !masterGain || audioRampStarted) return;
+    if (!masterGain || audioRampStarted) return;
     if (!audioCtx || audioCtx.state !== 'running') return;
     audioRampStarted = true;
     masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
     masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(0.38, audioCtx.currentTime + 1.5);
+    masterGain.gain.linearRampToValueAtTime(isMuted ? 0 : 0.38, audioCtx.currentTime + 1.5);
   }
 
   function initAudio() {
@@ -547,11 +549,16 @@
     muteBtn.addEventListener('click', function () {
       isMuted = !isMuted;
       muteBtn.textContent = isMuted ? '○' : '◎';
-      if (masterGain && audioCtx) {
+      if (!audioCtx || !masterGain) return;
+      function applyGain() {
+        if (!audioRampStarted) { startRamp(); return; }
         masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        masterGain.gain.linearRampToValueAtTime(
-          isMuted ? 0 : 0.38, audioCtx.currentTime + 0.6
-        );
+        masterGain.gain.linearRampToValueAtTime(isMuted ? 0 : 0.38, audioCtx.currentTime + 0.6);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(applyGain).catch(function(){});
+      } else {
+        applyGain();
       }
     });
   }
