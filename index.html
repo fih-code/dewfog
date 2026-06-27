@@ -521,18 +521,6 @@
     if (audioCtx.state === 'suspended') audioCtx.resume().catch(function(){});
   }
 
-  // Phase 2 — called when the user actually starts wiping. By this point
-  // unlockAudio() has already been called from pointerdown (a trusted gesture),
-  // so the context should be running and startRamp() fires immediately.
-  // The onstatechange + timeouts are fallbacks for slow iOS transitions.
-  function initAudio() {
-    buildAudioGraph();
-    audioCtx.onstatechange = startRamp;
-    setTimeout(startRamp, 150);
-    setTimeout(startRamp, 600);
-    startRamp();
-  }
-
   function resolveAudio() {
     if (!audioCtx || !masterGain) return;
     masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
@@ -744,7 +732,15 @@
     let isDown = false;
 
     function onMove(e) {
-      if (e.type === 'pointerdown') isDown = true;
+      if (e.type === 'pointerdown') {
+        isDown = true;
+        // Build graph and call resume() from this trusted gesture so the
+        // context is running before pointermove fires. onstatechange is
+        // guarded by `touched` so a tap alone never starts the drone.
+        buildAudioGraph();
+        if (audioCtx.state === 'suspended') audioCtx.resume().catch(function(){});
+        audioCtx.onstatechange = function() { if (touched) startRamp(); };
+      }
 
       const p = (e.touches && e.touches[0]) || e;
       const x = p.clientX, y = p.clientY;
@@ -763,11 +759,6 @@
             + (0.40 + 0.45*t).toFixed(2) + ')';
         });
 
-        // Wipe while held. On pointerdown (trusted gesture) we call unlockAudio()
-        // so the context is already running by the time pointermove fires.
-        // The gain ramp starts only on the first actual wipe motion (pointermove).
-        if (e.type === 'pointerdown') unlockAudio();
-
         if (isDown) {
           const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
           wipeTo(x, y, radius);
@@ -775,10 +766,14 @@
           if (!touched && e.type === 'pointermove') {
             touched = true;
             hintWrap.style.opacity = '0';
-            initAudio();
+            // Context is running from pointerdown; call startRamp directly.
+            // Timeouts are fallbacks for slow iOS state transitions.
+            setTimeout(startRamp, 100);
+            setTimeout(startRamp, 500);
+            startRamp();
           } else if (touched && audioCtx && audioCtx.state === 'suspended') {
-            // Re-unlock after an interruption while wiping is in progress.
-            audioCtx.resume().then(startRamp).catch(function(){});
+            // Re-unlock after interruption; onstatechange will ramp when ready.
+            audioCtx.resume().catch(function(){});
           }
         }
       }
