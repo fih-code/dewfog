@@ -49,23 +49,23 @@
     @keyframes dewHint     { 0%,100% { opacity: .5 } 50% { opacity: 1 } }
     @keyframes dewMote     { 0% { transform: translate3d(0,0,0); opacity: 0 } 12% { opacity: .7 } 88% { opacity: .6 } 100% { transform: translate3d(14px,-120px,0); opacity: 0 } }
     @keyframes dewFrag     { 0%,100% { opacity: 1 } 50% { opacity: .72 } }
-    @keyframes dewNavIn    { from { opacity: 0 } to { opacity: 1 } }
-
     /* ── site nav ─────────────────────────────────────────────────────────── */
     #dewNav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 7;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 clamp(20px,4vw,44px); height: 52px;
       pointer-events: none;
-      opacity: 0; animation: dewNavIn 1.4s ease 1s forwards;
+      opacity: 0; transition: opacity 1.4s ease;
+      /* translateZ forces a GPU layer — prevents iOS from skipping the element */
+      -webkit-transform: translateZ(0); transform: translateZ(0);
     }
     #dewLogo {
       font-family: 'Space Mono',monospace; font-size: 11px;
       letter-spacing: .42em; text-transform: lowercase; text-decoration: none;
-      color: rgba(159,232,219,.38); pointer-events: auto;
+      color: rgba(159,232,219,.52); pointer-events: auto;
       transition: color 3s ease, text-shadow .25s ease;
     }
-    #dewLogo:hover { color: rgba(159,232,219,.8); text-shadow: 0 0 12px rgba(159,232,219,.35); }
+    #dewLogo:hover { color: rgba(159,232,219,.9); text-shadow: 0 0 12px rgba(159,232,219,.35); }
     #dewLinks {
       list-style: none; margin: 0; padding: 0;
       display: flex; align-items: center; gap: 2.6em; pointer-events: none;
@@ -73,7 +73,7 @@
     #dewLinks a {
       font-family: 'Space Mono',monospace; font-size: 9px;
       letter-spacing: .36em; text-transform: lowercase; text-decoration: none;
-      color: rgba(159,232,219,.28); pointer-events: auto;
+      color: rgba(159,232,219,.45); pointer-events: auto;
       transition: color 3s ease, text-shadow .25s ease;
     }
     #dewLinks a:hover { color: rgba(159,232,219,.8); text-shadow: 0 0 10px rgba(159,232,219,.35); }
@@ -849,6 +849,10 @@
   var nav    = document.getElementById('dewNav');
   var burger = document.getElementById('dewBurger');
   if (!nav || !burger) return;
+
+  // JS-driven fade-in: reliable on iOS Safari where animation-fill-mode
+  // forwards on an opacity:0 element is sometimes silently dropped.
+  setTimeout(function () { nav.style.opacity = '1'; }, 1000);
 
   burger.addEventListener('click', function () {
     var open = nav.classList.toggle('open');
