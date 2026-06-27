@@ -521,16 +521,15 @@
     if (audioCtx.state === 'suspended') audioCtx.resume().catch(function(){});
   }
 
-  // Phase 2 — called when the user actually starts wiping. Arms the ramp via
-  // four redundant paths to cover all iOS AudioContext timing quirks.
+  // Phase 2 — called when the user actually starts wiping. By this point
+  // unlockAudio() has already been called from pointerdown (a trusted gesture),
+  // so the context should be running and startRamp() fires immediately.
+  // The onstatechange + timeouts are fallbacks for slow iOS transitions.
   function initAudio() {
     buildAudioGraph();
     audioCtx.onstatechange = startRamp;
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume().then(startRamp).catch(function(){});
-    }
-    setTimeout(startRamp, 200);
-    setTimeout(startRamp, 700);
+    setTimeout(startRamp, 150);
+    setTimeout(startRamp, 600);
     startRamp();
   }
 
@@ -764,9 +763,11 @@
             + (0.40 + 0.45*t).toFixed(2) + ')';
         });
 
-        // Wipe while held. Audio starts only on the first pointermove (actual
-        // wipe motion), not on pointerdown (tap), so the drone begins with
-        // the gesture rather than the touch.
+        // Wipe while held. On pointerdown (trusted gesture) we call unlockAudio()
+        // so the context is already running by the time pointermove fires.
+        // The gain ramp starts only on the first actual wipe motion (pointermove).
+        if (e.type === 'pointerdown') unlockAudio();
+
         if (isDown) {
           const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
           wipeTo(x, y, radius);
@@ -775,9 +776,9 @@
             touched = true;
             hintWrap.style.opacity = '0';
             initAudio();
-          } else if (audioCtx && audioCtx.state === 'suspended') {
-            // Re-unlock after an interruption; only ramp if wiping has started.
-            audioCtx.resume().then(function() { if (touched) startRamp(); }).catch(function(){});
+          } else if (touched && audioCtx && audioCtx.state === 'suspended') {
+            // Re-unlock after an interruption while wiping is in progress.
+            audioCtx.resume().then(startRamp).catch(function(){});
           }
         }
       }
