@@ -766,13 +766,15 @@
           if (!touched && e.type === 'pointermove') {
             touched = true;
             hintWrap.style.opacity = '0';
-            // Context is running from pointerdown; call startRamp directly.
-            // Timeouts are fallbacks for slow iOS state transitions.
-            setTimeout(startRamp, 100);
-            setTimeout(startRamp, 500);
+            // Re-arm onstatechange now that touched is true — catches the case
+            // where context is still resuming from the pointerdown unlock.
+            if (audioCtx) audioCtx.onstatechange = function() {
+              if (audioCtx.state === 'running') startRamp();
+            };
             startRamp();
+            setTimeout(startRamp, 200);
+            setTimeout(startRamp, 800);
           } else if (touched && audioCtx && audioCtx.state === 'suspended') {
-            // Re-unlock after interruption; onstatechange will ramp when ready.
             audioCtx.resume().catch(function(){});
           }
         }
@@ -781,7 +783,15 @@
 
     stage.addEventListener('pointerdown',  onMove);
     stage.addEventListener('pointermove',  onMove);
-    stage.addEventListener('pointerup',    function () { isDown = false; last = null; });
+    stage.addEventListener('pointerup',    function () {
+      isDown = false;
+      last = null;
+      // pointerup is trusted on all iOS versions — use as a resume fallback
+      // for older devices where pointerdown/touchstart resume silently fails.
+      if (touched && audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().then(startRamp).catch(function(){});
+      }
+    });
     stage.addEventListener('pointercancel',function () { isDown = false; last = null; });
     stage.addEventListener('pointerleave', function () { last = null; tip.style.opacity = '0'; });
   }
