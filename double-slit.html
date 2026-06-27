@@ -372,37 +372,40 @@ function drawBarrier() {
 function drawDetector() {
   const sx  = screenX();
   const cr  = rgb(observed);
-  const mW  = W * 0.065;
+  const mW  = W - sx - 8;   // fill the full right side of the canvas
 
   ctx.save();
-  ctx.strokeStyle = `rgba(${cr},0.13)`;
-  ctx.lineWidth = 0.8;
+  ctx.strokeStyle = `rgba(${cr},0.18)`;
+  ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, H); ctx.stroke();
 
   if (detectorMax > 1) {
+    // Solid bars — one pixel tall per row, width ∝ intensity
     for (let y = 1; y < H - 1; y++) {
       const v = (detector[y - 1] + detector[y] * 2 + detector[y + 1]) * 0.25;
       const intens = Math.min(v / detectorMax, 1);
-      if (intens < 0.015) continue;
-      ctx.fillStyle = `rgba(${cr},${intens * 0.62})`;
-      ctx.fillRect(sx, y, intens * mW, 1);
+      if (intens < 0.008) continue;
+      ctx.fillStyle = `rgba(${cr},${(intens * 0.85).toFixed(3)})`;
+      ctx.fillRect(sx, y, Math.max(1, intens * mW), 1);
     }
+    // Wide soft glow — gives bright peaks their luminous quality
     for (let y = 2; y < H - 2; y++) {
       const v = (detector[y-2] + detector[y-1] + detector[y]*2 + detector[y+1] + detector[y+2]) / 7;
       const intens = Math.min(v / detectorMax, 1);
-      if (intens < 0.07) continue;
-      const g = ctx.createLinearGradient(sx, 0, sx + mW * 2.2, 0);
-      g.addColorStop(0, `rgba(${cr},${intens * 0.2})`);
-      g.addColorStop(1, `rgba(${cr},0)`);
+      if (intens < 0.04) continue;
+      const g = ctx.createLinearGradient(sx, 0, sx + mW, 0);
+      g.addColorStop(0,   `rgba(${cr},${(intens * 0.30).toFixed(3)})`);
+      g.addColorStop(0.6, `rgba(${cr},${(intens * 0.10).toFixed(3)})`);
+      g.addColorStop(1,   `rgba(${cr},0)`);
       ctx.fillStyle = g;
-      ctx.fillRect(sx, y - 1, mW * 2.2, 3);
+      ctx.fillRect(sx, y - 2, mW, 5);
     }
   }
 
   ctx.font = '8px "Space Mono"';
   ctx.fillStyle = `rgba(${cr},0.27)`;
-  ctx.textAlign = 'center';
-  ctx.fillText('screen', sx + mW * 0.5, H * 0.88);
+  ctx.textAlign = 'left';
+  ctx.fillText('screen', sx + 6, H * 0.9);
   ctx.restore();
 }
 
@@ -435,7 +438,13 @@ function frame(now) {
   drawDetector();
 
   frameCount++;
-  if (frameCount % (observed ? 9 : 12) === 0 && particles.length < 45) spawnParticle();
+  if (frameCount % (observed ? 4 : 6) === 0 && particles.length < 80) spawnParticle();
+  if (frameCount % 300 === 0 && detectorMax > 2) {
+    for (let i = 0; i < detector.length; i++) detector[i] *= 0.985;
+    let newMax = 1;
+    for (let i = 0; i < detector.length; i++) if (detector[i] > newMax) newMax = detector[i];
+    detectorMax = newMax;
+  }
   updateParticles();
   particles.forEach(drawParticle);
 
