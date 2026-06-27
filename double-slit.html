@@ -145,7 +145,7 @@ let waveTimer    = 0;
 const SRC_FX  = 0.10;
 const BAR_FX  = 0.40;
 const SCR_FX  = 0.76;
-const SLIT_GAP   = 0.10;   // slit centre-to-centre as fraction of H
+const SLIT_GAP   = 0.18;   // slit centre-to-centre as fraction of H
 const SLIT_HALF  = 0.022;  // half-height of each slit as fraction of H
 
 // ----- helpers -----
@@ -182,7 +182,7 @@ function buildCDFs() {
   const L      = screenX() - barrierX();
   const d      = H * SLIT_GAP;
   const a      = H * SLIT_HALF * 2;
-  const lambda = H * 0.046;
+  const lambda = H * 0.036;
   const cy     = H * 0.5;
 
   const wPDF = new Float32Array(H);
@@ -199,7 +199,7 @@ function buildCDFs() {
 
   const s1    = slit1Y();
   const s2    = slit2Y();
-  const sigma = H * 0.038;
+  const sigma = H * 0.016;
   const cPDF  = new Float32Array(H);
   for (let y = 0; y < H; y++) {
     const d1 = (y - s1) / sigma;
