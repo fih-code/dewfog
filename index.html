@@ -454,8 +454,10 @@
   }());
 
   // ── audio (Web Audio API only — no files, no libraries) ───────────────────
-  // Fades in on first pointer touch. At resolve, drone softens and a warm
-  // tone blooms. Mute glyph bottom-right remembers choice in localStorage.
+  // Two-phase design: unlock on first touch gesture anywhere (iOS requires
+  // AudioContext.resume() inside a trusted gesture), then start the gain ramp
+  // only when the user actually begins wiping. This way a tap on the mute
+  // button or anywhere outside the canvas doesn't start the drone.
 
   let audioCtx  = null;
   let masterGain = null;
@@ -466,10 +468,9 @@
 
   let audioRampStarted = false;
 
-  // Defined at module scope so it remains reachable after context resumes
-  // following an iOS audio interruption (notification, Siri, phone call).
-  // Does not bail on isMuted — starts oscillators silently at 0 gain when
-  // muted so that a subsequent unmute toggle works correctly.
+  // startRamp is module-scope so it's reachable from onstatechange callbacks
+  // after iOS audio interruptions (Siri, notifications, phone calls).
+  // Respects isMuted: starts at gain 0 when muted so a later unmute works.
   function startRamp() {
     if (!masterGain || audioRampStarted) return;
     if (!audioCtx || audioCtx.state !== 'running') return;
@@ -479,13 +480,8 @@
     masterGain.gain.linearRampToValueAtTime(isMuted ? 0 : 0.38, audioCtx.currentTime + 1.5);
   }
 
-  function initAudio() {
-    if (audioCtx) {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(startRamp).catch(function(){});
-      }
-      return;
-    }
+  function buildAudioGraph() {
+    if (audioCtx) return;
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     const compressor = audioCtx.createDynamicsCompressor();
@@ -516,12 +512,23 @@
       g.connect(filter);
       osc.start();
     });
+  }
 
-    // Four paths: immediate check, Promise resolution, statechange event,
-    // and two timeouts as fallback for iOS versions where the event/Promise
-    // resolves after the call stack unwinds.
+  // Phase 1 — called on first touch anywhere. Builds the graph and unlocks
+  // the context; does NOT start the gain ramp.
+  function unlockAudio() {
+    buildAudioGraph();
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(function(){});
+  }
+
+  // Phase 2 — called when the user actually starts wiping. Arms the ramp via
+  // four redundant paths to cover all iOS AudioContext timing quirks.
+  function initAudio() {
+    buildAudioGraph();
     audioCtx.onstatechange = startRamp;
-    audioCtx.resume().then(startRamp).catch(function(){});
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().then(startRamp).catch(function(){});
+    }
     setTimeout(startRamp, 200);
     setTimeout(startRamp, 700);
     startRamp();
@@ -549,17 +556,12 @@
     muteBtn.addEventListener('click', function () {
       isMuted = !isMuted;
       muteBtn.textContent = isMuted ? '○' : '◎';
-      if (!audioCtx || !masterGain) return;
-      function applyGain() {
-        if (!audioRampStarted) { startRamp(); return; }
-        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        masterGain.gain.linearRampToValueAtTime(isMuted ? 0 : 0.38, audioCtx.currentTime + 0.6);
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(applyGain).catch(function(){});
-      } else {
-        applyGain();
-      }
+      // Resume context if suspended (counts as a trusted gesture on iOS).
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(function(){});
+      // Only adjust gain if the drone is already running; do not start it here.
+      if (!audioRampStarted || !masterGain || !audioCtx) return;
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(isMuted ? 0 : 0.38, audioCtx.currentTime + 0.6);
     });
   }
 
@@ -762,18 +764,20 @@
             + (0.40 + 0.45*t).toFixed(2) + ')';
         });
 
-        // wipe only while button / finger is held — pointerdown is a trusted
-        // gesture so AudioContext always starts on the same event as the first wipe
+        // Wipe while held. Audio starts only on the first pointermove (actual
+        // wipe motion), not on pointerdown (tap), so the drone begins with
+        // the gesture rather than the touch.
         if (isDown) {
           const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
           wipeTo(x, y, radius);
 
-          if (!touched) {
+          if (!touched && e.type === 'pointermove') {
             touched = true;
             hintWrap.style.opacity = '0';
             initAudio();
           } else if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume().then(startRamp).catch(function(){});
+            // Re-unlock after an interruption; only ramp if wiping has started.
+            audioCtx.resume().then(function() { if (touched) startRamp(); }).catch(function(){});
           }
         }
       }
@@ -795,13 +799,12 @@
   refrostTimer = setInterval(refrostTick, 1400);
   window.addEventListener('resize', initCanvas);
 
-  // iOS Safari only unlocks AudioContext on touchstart/click — not pointermove.
-  // Add one-shot listeners so audio starts on the very first finger contact.
-  // 'click' is included as a final fallback for cases where touchstart fires
-  // but the AudioContext doesn't transition to 'running' until the click event.
+  // iOS requires AudioContext.resume() inside a trusted gesture handler.
+  // These one-shot listeners pre-warm the context on any first touch so the
+  // gain ramp is instant when wiping begins. They do NOT start the drone.
   ['touchstart', 'mousedown', 'click'].forEach(function (evt) {
     document.addEventListener(evt, function once() {
-      initAudio();
+      unlockAudio();
       document.removeEventListener(evt, once);
     }, { passive: true });
   });
