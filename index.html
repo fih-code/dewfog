@@ -52,20 +52,23 @@
     /* ── site nav ─────────────────────────────────────────────────────────── */
     #dewNav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 7;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 clamp(20px,4vw,44px); height: 52px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 24px; padding: 16px clamp(20px,4vw,44px);
       pointer-events: none;
     }
     #dewLogo {
       font-family: 'Space Mono',monospace; font-size: 11px;
       letter-spacing: .42em; text-transform: lowercase; text-decoration: none;
       color: rgba(159,232,219,.52); pointer-events: auto;
+      flex-shrink: 0;
       transition: color 3s ease, text-shadow .25s ease;
     }
     #dewLogo:hover { color: rgba(159,232,219,.9); text-shadow: 0 0 12px rgba(159,232,219,.35); }
     #dewLinks {
       list-style: none; margin: 0; padding: 0;
-      display: flex; align-items: center; gap: 2.6em; pointer-events: none;
+      flex: 1; display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: flex-end; column-gap: 2em; row-gap: 14px;
+      pointer-events: none;
     }
     #dewLinks a {
       font-family: 'Space Mono',monospace; font-size: 9px;
@@ -94,6 +97,7 @@
     #dewNav.resolved #dewBurger span   { background: rgba(74,54,38,.42); }
     /* mobile */
     @media (max-width: 620px) {
+      #dewNav { height: 52px; padding: 0 clamp(20px,4vw,44px); align-items: center; gap: 0; }
       #dewLinks {
         display: none; position: fixed; top: 52px; left: 0; right: 0; z-index: 7;
         flex-direction: column; gap: 22px;
@@ -221,6 +225,12 @@
     <a id="dewLogo" href="/">dewfog</a>
     <ul id="dewLinks">
       <li><a href="/double-slit.html">the double slit</a></li>
+      <li><a href="/emc2.html">e = mc²</a></li>
+      <li><a href="/entanglement.html">entanglement</a></li>
+      <li><a href="/near-death.html">near death</a></li>
+      <li><a href="/oneness.html">oneness</a></li>
+      <li><a href="/superposition.html">superposition</a></li>
+      <li><a href="/holographic.html">holographic universe</a></li>
     </ul>
     <button id="dewBurger" aria-label="menu" aria-expanded="false">
       <span></span><span></span>

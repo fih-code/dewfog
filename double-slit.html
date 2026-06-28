@@ -4,6 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>double slit — dewfog</title>
+  <meta name="description" content="Watch a particle become a wave. The double slit experiment — the strangest result in physics. Toggle the observer and watch the interference pattern appear and vanish.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/double-slit.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/double-slit.html">
+  <meta property="og:title" content="the double slit — dewfog">
+  <meta property="og:description" content="Watch a particle become a wave. The double slit experiment — the strangest result in physics. Toggle the observer and watch the interference pattern appear and vanish.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="the double slit — dewfog">
+  <meta name="twitter:description" content="Watch a particle become a wave. The double slit experiment — the strangest result in physics. Toggle the observer and watch the interference pattern appear and vanish.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
@@ -100,6 +113,18 @@
       box-shadow: 0 0 18px rgba(240,198,154,.18);
     }
 
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #info {
+      position: absolute; bottom: 6%; right: 5%;
+      max-width: 260px; font-size: 8px; line-height: 1.9;
+      letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right;
+    }
     #vignette {
       position: fixed;
       inset: 0;
@@ -113,6 +138,7 @@
 <canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
 
 <div id="ui">
+  <a id="home-btn" href="/">home</a>
   <div id="title-wrap">
     <h1>the double slit</h1>
     <div class="subtitle">wave &middot; particle &middot; observer</div>
@@ -121,6 +147,7 @@
     <div id="status">unobserved &mdash; interference pattern forming</div>
     <button id="observer-btn">observe</button>
   </div>
+  <div id="info">A single particle fired at two slits produces an interference pattern — as if it passes through both simultaneously. Observing which slit the particle uses causes the pattern to collapse to two classical bands. The act of measurement determines the outcome.</div>
 </div>
 
 <div id="vignette"></div>
@@ -145,7 +172,7 @@ let waveTimer    = 0;
 const SRC_FX  = 0.10;
 const BAR_FX  = 0.40;
 const SCR_FX  = 0.76;
-const SLIT_GAP   = 0.10;   // slit centre-to-centre as fraction of H
+const SLIT_GAP   = 0.18;   // slit centre-to-centre as fraction of H
 const SLIT_HALF  = 0.022;  // half-height of each slit as fraction of H
 
 // ----- helpers -----
@@ -182,7 +209,7 @@ function buildCDFs() {
   const L      = screenX() - barrierX();
   const d      = H * SLIT_GAP;
   const a      = H * SLIT_HALF * 2;
-  const lambda = H * 0.046;
+  const lambda = H * 0.036;
   const cy     = H * 0.5;
 
   const wPDF = new Float32Array(H);
@@ -199,7 +226,7 @@ function buildCDFs() {
 
   const s1    = slit1Y();
   const s2    = slit2Y();
-  const sigma = H * 0.038;
+  const sigma = H * 0.016;
   const cPDF  = new Float32Array(H);
   for (let y = 0; y < H; y++) {
     const d1 = (y - s1) / sigma;
@@ -370,39 +397,38 @@ function drawBarrier() {
 }
 
 function drawDetector() {
-  const sx  = screenX();
-  const cr  = rgb(observed);
-  const mW  = W * 0.065;
+  const sx = screenX();
+  const cr = rgb(observed);
+  const mW = W - sx - 8;
 
   ctx.save();
-  ctx.strokeStyle = `rgba(${cr},0.13)`;
-  ctx.lineWidth = 0.8;
+  ctx.strokeStyle = `rgba(${cr},0.18)`;
+  ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, H); ctx.stroke();
 
   if (detectorMax > 1) {
+    // Wide halo — full-width bar, low alpha
     for (let y = 1; y < H - 1; y++) {
-      const v = (detector[y - 1] + detector[y] * 2 + detector[y + 1]) * 0.25;
+      const v = (detector[y-1] + detector[y]*2 + detector[y+1]) * 0.25;
       const intens = Math.min(v / detectorMax, 1);
-      if (intens < 0.015) continue;
-      ctx.fillStyle = `rgba(${cr},${intens * 0.62})`;
+      if (intens < 0.01) continue;
+      ctx.fillStyle = `rgba(${cr},${(intens * 0.20).toFixed(3)})`;
       ctx.fillRect(sx, y, intens * mW, 1);
     }
-    for (let y = 2; y < H - 2; y++) {
-      const v = (detector[y-2] + detector[y-1] + detector[y]*2 + detector[y+1] + detector[y+2]) / 7;
+    // Bright core — narrow bar, high alpha
+    for (let y = 1; y < H - 1; y++) {
+      const v = (detector[y-1] + detector[y]*2 + detector[y+1]) * 0.25;
       const intens = Math.min(v / detectorMax, 1);
-      if (intens < 0.07) continue;
-      const g = ctx.createLinearGradient(sx, 0, sx + mW * 2.2, 0);
-      g.addColorStop(0, `rgba(${cr},${intens * 0.2})`);
-      g.addColorStop(1, `rgba(${cr},0)`);
-      ctx.fillStyle = g;
-      ctx.fillRect(sx, y - 1, mW * 2.2, 3);
+      if (intens < 0.01) continue;
+      ctx.fillStyle = `rgba(${cr},${(intens * 0.92).toFixed(3)})`;
+      ctx.fillRect(sx, y, Math.max(2, intens * mW * 0.28), 1);
     }
   }
 
   ctx.font = '8px "Space Mono"';
   ctx.fillStyle = `rgba(${cr},0.27)`;
-  ctx.textAlign = 'center';
-  ctx.fillText('screen', sx + mW * 0.5, H * 0.88);
+  ctx.textAlign = 'left';
+  ctx.fillText('screen', sx + 6, H * 0.9);
   ctx.restore();
 }
 
@@ -421,23 +447,31 @@ function drawParticle(p) {
 
 // ----- main loop -----
 function frame(now) {
-  drawBg();
+  try {
+    drawBg();
 
-  if (!observed) {
-    waveTimer++;
-    if (waveTimer >= 34) { waveTimer = 0; spawnWave(); }
-    updateWaves(now);
-    drawWavefronts();
-  }
+    if (!observed) {
+      waveTimer++;
+      if (waveTimer >= 34) { waveTimer = 0; spawnWave(); }
+      updateWaves(now);
+      drawWavefronts();
+    }
 
-  drawSource();
-  drawBarrier();
-  drawDetector();
+    drawSource();
+    drawBarrier();
+    drawDetector();
 
-  frameCount++;
-  if (frameCount % (observed ? 9 : 12) === 0 && particles.length < 45) spawnParticle();
-  updateParticles();
-  particles.forEach(drawParticle);
+    frameCount++;
+    if (frameCount % (observed ? 4 : 6) === 0 && particles.length < 80) spawnParticle();
+    if (frameCount % 300 === 0 && detectorMax > 2) {
+      for (let i = 0; i < detector.length; i++) detector[i] *= 0.985;
+      let newMax = 1;
+      for (let i = 0; i < detector.length; i++) if (detector[i] > newMax) newMax = detector[i];
+      detectorMax = newMax;
+    }
+    updateParticles();
+    particles.forEach(drawParticle);
+  } catch (e) { /* keep loop alive */ }
 
   requestAnimationFrame(frame);
 }

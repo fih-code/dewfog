@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>holographic universe — dewfog</title>
+  <meta name="description" content="What if three-dimensional reality is a projection from a two-dimensional surface? An interactive visualization of the holographic principle — the universe as information on a boundary.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/holographic.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/holographic.html">
+  <meta property="og:title" content="holographic universe — dewfog">
+  <meta property="og:description" content="What if three-dimensional reality is a projection from a two-dimensional surface? An interactive visualization of the holographic principle — the universe as information on a boundary.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="holographic universe — dewfog">
+  <meta name="twitter:description" content="What if three-dimensional reality is a projection from a two-dimensional surface? An interactive visualization of the holographic principle — the universe as information on a boundary.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.35); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 6%; right: 5%;
+      max-width: 260px; font-size: 8px; line-height: 1.9;
+      letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right;
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>holographic universe</h1>
+    <div class="subtitle">boundary · information · projection</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">The holographic principle, derived from black hole thermodynamics by Bekenstein and Hawking, states that the maximum information in any region of space scales with its surface area — not its volume. One bit per ~10⁻⁶⁶ cm². A 3D region is fully described by data on its 2D boundary, the way a hologram encodes depth on a flat surface.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const WHITE = '255,248,195';
+const DIM   = '90,155,150';
+
+const FOCAL = 380;
+const GRID  = 12;
+
+const PHASES = ['boundary', 'encode', 'project', 'reality', 'dissolve', 'rest'];
+const DUR    = { boundary:88, encode:110, project:145, reality:150, dissolve:115, rest:60 };
+
+let phase = 'boundary', phaseF = 0;
+
+const MSGS = {
+  boundary: 'the 2d boundary — all information stored on a surface',
+  encode:   'information encoded — every point holds the whole',
+  project:  'reality emerges from the boundary',
+  reality:  'three dimensions — a projection of what lies beneath',
+  dissolve: 'collapsing back — reality becomes information',
+  rest:     '',
+};
+
+function initPhase(p) {
+  phase = p; phaseF = 0;
+  status.textContent = MSGS[p] || '';
+}
+
+function nextPhase() {
+  initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]);
+}
+
+let pts = [];
+
+function buildPts() {
+  const sp = Math.min(W, H) * .062;
+  pts = [];
+  for (let i = 0; i < GRID; i++) {
+    for (let j = 0; j < GRID; j++) {
+      const u   = (i - (GRID - 1) / 2) * sp;
+      const v   = (j - (GRID - 1) / 2) * sp;
+      const ang = Math.random() * Math.PI * 2;
+      const rad = 30 + Math.random() * Math.min(W, H) * .26;
+      pts.push({
+        u, v,
+        x3:   Math.cos(ang) * rad,
+        y3:   Math.sin(ang) * rad,
+        z3:   90 + Math.random() * 340,
+        lit:  Math.random() < .32,
+        br:   .28 + Math.random() * .48,
+        ph:   Math.random() * Math.PI * 2,
+      });
+    }
+  }
+}
+
+// ----- helpers -----
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a*.14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+// mode 0 = flat 2D grid, mode 1 = full 3D projection
+function ptPos(p, mode) {
+  const e   = mode * mode * (3 - 2 * mode);  // smoothstep
+  const x2  = cx + p.u;
+  const y2  = cy + p.v;
+  const sc3 = FOCAL / p.z3;
+  const wobX = e * Math.sin(phaseF * .022 + p.ph) * 7;
+  const wobY = e * Math.cos(phaseF * .019 + p.ph + 1) * 7;
+  const x3  = cx + (p.x3 + wobX) * sc3;
+  const y3  = cy + (p.y3 + wobY) * sc3;
+  return {
+    x:    x2 + (x3 - x2) * e,
+    y:    y2 + (y3 - y2) * e,
+    size: 1.4 + (Math.max(.4, sc3 * 1.6) - 1.4) * e,
+  };
+}
+
+function drawGrid(a) {
+  if (a <= 0) return;
+  const sp   = Math.min(W, H) * .062;
+  const half = (GRID - 1) / 2 * sp;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},${(a * .055).toFixed(3)})`;
+  ctx.lineWidth = .5;
+  for (let i = 0; i < GRID; i++) {
+    const u = (i - (GRID - 1) / 2) * sp;
+    ctx.beginPath(); ctx.moveTo(cx - half, cy + u); ctx.lineTo(cx + half, cy + u); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + u, cy - half); ctx.lineTo(cx + u, cy + half); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawPts(mode, aScale, litBoost) {
+  for (const p of pts) {
+    const pos   = ptPos(p, mode);
+    const pulse = p.br * (.82 + .18 * Math.sin(phaseF * .08 + p.ph));
+    const boost = p.lit ? (litBoost || 0) : 0;
+    const a     = (pulse + boost) * aScale;
+    if (a < .01) continue;
+    if (p.lit && mode < .6) {
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, pos.size * 4.5, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${TEAL},${(a * .16).toFixed(3)})`; ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(pos.x, pos.y, pos.size, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${p.lit ? TEAL : DIM},${Math.min(a, .95)})`; ctx.fill();
+  }
+}
+
+// ----- phase renderers -----
+function rBoundary() {
+  const a = Math.min(phaseF / (DUR.boundary * .45), 1);
+  drawGrid(a);
+  drawPts(0, a * .62, 0);
+}
+
+function rEncode() {
+  const t = phaseF / DUR.encode;
+  const lb = Math.min(t * 2, 1) * .45;
+  drawGrid(1);
+  drawPts(0, .70, lb);
+  radGlow(cx, cy, Math.min(W,H) * .09, TEAL, Math.min(t * 2.5, 1) * .28);
+}
+
+function rProject() {
+  const t = phaseF / DUR.project;
+  drawGrid(Math.max(0, 1 - t * 2.2) * .85);
+  drawPts(t, .76, (1 - t) * .35);
+  radGlow(cx, cy, Math.min(W,H) * .14 * t, WHITE, t * .22);
+}
+
+function rReality() {
+  drawPts(1, .80, 0);
+  radGlow(cx, cy, Math.min(W,H) * .12, WHITE, .18);
+}
+
+function rDissolve() {
+  const t = phaseF / DUR.dissolve;
+  drawGrid(Math.min(t * 2.8, 1) * .82);
+  drawPts(1 - t, .76, t * .25);
+}
+
+function rRest() {
+  const pulse = .5 + .5 * Math.sin(phaseF * .09);
+  drawGrid(.72 + .08 * pulse);
+  drawPts(0, .62 + .08 * pulse, .12 * pulse);
+  radGlow(cx, cy, 14, TEAL, .05 * pulse);
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'boundary': rBoundary(); break;
+      case 'encode':   rEncode();   break;
+      case 'project':  rProject();  break;
+      case 'reality':  rReality();  break;
+      case 'dissolve': rDissolve(); break;
+      case 'rest':     rRest();     break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  buildPts();
+  initPhase('boundary');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>oneness — dewfog</title>
+  <meta name="description" content="Seven traditions, one mystery. Christianity, Islam, Hinduism, Buddhism, Judaism, Taoism, Sikhism — an interactive exploration of the question at the heart of every tradition: what is the ground of all things?">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/oneness.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/oneness.html">
+  <meta property="og:title" content="oneness — dewfog">
+  <meta property="og:description" content="Seven traditions, one mystery. Christianity, Islam, Hinduism, Buddhism, Judaism, Taoism, Sikhism — an interactive exploration of the question at the heart of every tradition: what is the ground of all things?">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="oneness — dewfog">
+  <meta name="twitter:description" content="Seven traditions, one mystery. Christianity, Islam, Hinduism, Buddhism, Judaism, Taoism, Sikhism — an interactive exploration of the question at the heart of every tradition: what is the ground of all things?">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.35); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 6%; right: 5%;
+      max-width: 260px; font-size: 8px; line-height: 1.9;
+      letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right;
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>oneness</h1>
+    <div class="subtitle">many paths · one question</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Hindu Advaita Vedanta, Christian mysticism, Sufi Islam, Buddhist śūnyatā, Taoism, Kabbalah, and Sikhism each describe a single undivided ground beneath all apparent multiplicity. The convergence appears across traditions with no historical contact. Whether it reflects metaphysical structure or a shared feature of human consciousness remains unresolved.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const FAITHS = [
+  { name: 'christianity', c: '228,212,168' },
+  { name: 'islam',        c: '140,208,196' },
+  { name: 'hinduism',     c: '242,172,88'  },
+  { name: 'buddhism',     c: '228,152,72'  },
+  { name: 'judaism',      c: '198,192,128' },
+  { name: 'taoism',       c: '172,224,212' },
+  { name: 'sikhism',      c: '212,172,96'  },
+];
+
+const N   = FAITHS.length;
+const TAU = Math.PI * 2;
+
+function fpRad() { return Math.min(W, H) * 0.33; }
+
+function fPos(i) {
+  const a = -Math.PI / 2 + (i / N) * TAU;
+  const r = fpRad();
+  return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), a };
+}
+
+// ----- state machine -----
+const PHASES = ['emerge', 'connect', 'flow', 'unite', 'radiate', 'rest'];
+const DUR    = { emerge:110, connect:130, flow:190, unite:88, radiate:115, rest:55 };
+
+let phase = 'emerge', phaseF = 0;
+
+const MSGS = {
+  emerge:  'seven traditions — each pointing at the boundless',
+  connect: 'different names for something beyond naming',
+  flow:    'each path turning inward',
+  unite:   'oneness',
+  radiate: 'many forms — one mystery',
+  rest:    '',
+};
+
+function initPhase(p) {
+  phase = p; phaseF = 0;
+  status.textContent = MSGS[p] || '';
+  particles = [];
+}
+
+function nextPhase() {
+  initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]);
+}
+
+// ----- particles -----
+let particles = [];
+
+function spawnParticle(fi) {
+  const fp = fPos(fi);
+  particles.push({
+    fi,
+    sx: fp.x + (Math.random() - .5) * 10,
+    sy: fp.y + (Math.random() - .5) * 10,
+    life: 0,
+    maxLife: 60 + Math.random() * 55,
+    arc: (Math.random() - .5) * 24,
+  });
+}
+
+// ----- helpers -----
+function drawBg() {
+  ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H);
+}
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a, 1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+}
+
+function dot(x, y, r, c, a) {
+  if (a <= 0) return;
+  radGlow(x, y, r * 5.5, c, a * .42);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+  ctx.fillStyle = `rgba(${c},${Math.min(a, 1)})`; ctx.fill();
+}
+
+function lbl(txt, x, y, c, a) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = '8px "Space Mono"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+function drawNode(i, dotA, lblA) {
+  const fp = fPos(i);
+  const f  = FAITHS[i];
+  const pulse = .78 + .22 * Math.sin(phaseF * .11 + i * .9);
+  if (dotA > 0) dot(fp.x, fp.y, 3.5, f.c, dotA * pulse);
+  const lr = fpRad() + 26;
+  const lx = cx + lr * Math.cos(fp.a);
+  const ly = cy + lr * Math.sin(fp.a);
+  if (lblA > 0) lbl(f.name, lx, ly, f.c, lblA);
+}
+
+// ----- phase renderers -----
+
+function rEmerge() {
+  const t = phaseF / DUR.emerge;
+  for (let i = 0; i < N; i++) {
+    const delay = i / N * 0.6;
+    const fa = Math.max(0, Math.min((t - delay) / 0.25, 1));
+    drawNode(i, fa, fa * .42);
+  }
+}
+
+function rConnect() {
+  const t = phaseF / DUR.connect;
+  for (let i = 0; i < N; i++) {
+    const fp = fPos(i);
+    const f  = FAITHS[i];
+    const frac = Math.min(t * 1.6, 1);
+    ctx.save();
+    ctx.strokeStyle = `rgba(${f.c},0.12)`;
+    ctx.lineWidth = .8;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + (fp.x - cx) * frac, cy + (fp.y - cy) * frac);
+    ctx.stroke();
+    ctx.restore();
+    drawNode(i, 1, .42);
+  }
+  const cA = Math.min(t * 3, 1) * .5;
+  radGlow(cx, cy, 18, '159,232,219', cA);
+  dot(cx, cy, 2, '255,252,240', cA * .7);
+}
+
+function rFlow() {
+  const t = phaseF / DUR.flow;
+  if (phaseF % 3 === 0) {
+    for (let i = 0; i < N; i++) spawnParticle(i);
+  }
+  for (let i = 0; i < N; i++) {
+    const fp = fPos(i);
+    const f  = FAITHS[i];
+    ctx.save();
+    ctx.strokeStyle = `rgba(${f.c},0.09)`;
+    ctx.lineWidth = .8;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(fp.x, fp.y); ctx.stroke();
+    ctx.restore();
+    const na = Math.max(.18, 1 - t * .65);
+    drawNode(i, na, na * .42);
+  }
+  // update & draw particles
+  const alive = [];
+  for (const p of particles) {
+    p.life++;
+    if (p.life >= p.maxLife) continue;
+    alive.push(p);
+    const pt = p.life / p.maxLife;
+    const ease = pt * pt * (3 - 2 * pt);
+    const dx = cx - p.sx, dy = cy - p.sy;
+    const len = Math.hypot(dx, dy);
+    const nx = -dy / len, ny = dx / len;
+    const x = p.sx + dx * ease + nx * p.arc * Math.sin(pt * Math.PI);
+    const y = p.sy + dy * ease + ny * p.arc * Math.sin(pt * Math.PI);
+    const alpha = Math.sin(pt * Math.PI) * .72;
+    ctx.beginPath(); ctx.arc(x, y, 1.8, 0, TAU);
+    ctx.fillStyle = `rgba(${FAITHS[p.fi].c},${alpha})`; ctx.fill();
+  }
+  particles = alive;
+  // center glow builds
+  const cg = t * t;
+  radGlow(cx, cy, 10 + 30 * cg, '200,238,228', .18 + .42 * cg);
+  dot(cx, cy, 2 + 1.5 * cg, '255,252,240', .65 + .3 * cg);
+}
+
+function rUnite() {
+  const t   = phaseF / DUR.unite;
+  const env = Math.sin(Math.PI * t);   // 0 → 1 → 0
+  const r   = Math.min(W, H) * .72 * env;
+  if (env > 0) {
+    ctx.fillStyle = `rgba(255,250,232,${env * .38})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+  radGlow(cx, cy, r,       '255,250,232', .88 * env);
+  radGlow(cx, cy, r * .18, '255,255,255', Math.min(env * 1.5, 1));
+  for (let i = 0; i < N; i++) {
+    const a = -Math.PI / 2 + (i / N) * TAU;
+    const hr = r * .48;
+    radGlow(cx + hr * Math.cos(a), cy + hr * Math.sin(a),
+            r * .24, FAITHS[i].c, .08 * env);
+  }
+}
+
+function rRadiate() {
+  const t       = phaseF / DUR.radiate;
+  const expandR = Math.min(W, H) * .88 * t;
+  const ringA   = Math.pow(1 - t, 1.5) * .28;
+  if (ringA > 0) {
+    ctx.save();
+    ctx.strokeStyle = `rgba(200,238,228,${ringA})`;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(cx, cy, expandR, 0, TAU); ctx.stroke();
+    ctx.restore();
+  }
+  const cA = Math.max(0, 1 - t * 2.2) * .45;
+  radGlow(cx, cy, 30, '255,250,232', cA);
+  for (let i = 0; i < N; i++) {
+    const fp   = fPos(i);
+    const dist = Math.hypot(fp.x - cx, fp.y - cy);
+    const emerged = Math.max(0, Math.min((expandR - dist + 40) / 40, 1));
+    drawNode(i, emerged * .88, emerged * .42);
+  }
+}
+
+function rRest() {
+  for (let i = 0; i < N; i++) drawNode(i, 1, .42);
+  const pulse = .5 + .5 * Math.sin(phaseF * .09);
+  radGlow(cx, cy, 15, '159,232,219', .06 * pulse);
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'emerge':  rEmerge();  break;
+      case 'connect': rConnect(); break;
+      case 'flow':    rFlow();    break;
+      case 'unite':   rUnite();   break;
+      case 'radiate': rRadiate(); break;
+      case 'rest':    rRest();    break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch (e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  initPhase('emerge');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
