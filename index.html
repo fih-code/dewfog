@@ -105,6 +105,46 @@
     #dewNav.resolved #dewLinks { background: rgba(58,42,34,.92); border-color: rgba(74,54,38,.12); }
     #dewNav.resolved #dewLinks a { color: rgba(74,54,38,.45); }
     #dewNav.resolved #dewLinks a:hover { color: rgba(74,54,38,.85); text-shadow: 0 0 10px rgba(201,122,74,.22); }
+    #dewNav.resolved #dewCase { color: rgba(74,54,38,.32); }
+    #dewNav.resolved #dewCase:hover { color: rgba(74,54,38,.72); }
+    /* ── "the case" button + overlay ────────────────────────────────────────── */
+    #dewNavLeft { display: flex; align-items: center; gap: 1.5em; }
+    #dewCase {
+      font-family: 'Space Mono',monospace; font-size: 9px;
+      letter-spacing: .36em; text-transform: lowercase;
+      color: rgba(159,232,219,.32); background: none; border: none;
+      cursor: pointer; padding: 0; pointer-events: auto;
+      transition: color .25s ease;
+    }
+    #dewCase:hover { color: rgba(159,232,219,.7); }
+    #dewCaseOverlay {
+      display: none; position: fixed; inset: 0; z-index: 9;
+      align-items: center; justify-content: center;
+      background: rgba(6,12,14,.58);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    #dewCaseOverlay.open { display: flex; animation: dewDrop .22s ease; }
+    #dewCasePanel {
+      position: relative; max-width: 520px; width: 90%;
+      padding: 36px 40px;
+      background: rgba(7,13,16,.96);
+      border: 1px solid rgba(159,232,219,.10);
+      border-radius: 3px;
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    }
+    #dewCaseClose {
+      position: absolute; top: 14px; right: 18px;
+      font-family: 'Space Mono',monospace; font-size: 13px;
+      color: rgba(159,232,219,.28); background: none; border: none;
+      cursor: pointer; padding: 4px; line-height: 1;
+      transition: color .2s ease;
+    }
+    #dewCaseClose:hover { color: rgba(159,232,219,.7); }
+    #dewCasePanel p {
+      font-family: 'Space Mono',monospace; font-size: 10px;
+      line-height: 2.1; letter-spacing: .05em;
+      color: rgba(159,232,219,.82); margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -216,7 +256,10 @@
 
   <!-- SITE NAV (z:7 — inside stage so iOS compositing always puts it on top) -->
   <nav id="dewNav">
-    <a id="dewLogo" href="/">dewfog</a>
+    <div id="dewNavLeft">
+      <a id="dewLogo" href="/">dewfog</a>
+      <button id="dewCase">the case</button>
+    </div>
     <ul id="dewLinks">
       <li><a href="/double-slit.html">the double slit</a></li>
       <li><a href="/emc2.html">e = mc²</a></li>
@@ -238,6 +281,13 @@
       <span></span><span></span>
     </button>
   </nav>
+</div>
+
+<div id="dewCaseOverlay" aria-hidden="true">
+  <div id="dewCasePanel" role="dialog">
+    <button id="dewCaseClose" aria-label="close">×</button>
+    <p>independent lines of evidence — quantum measurement, the explanatory gap, twenty-five centuries of contemplative report, and anomalous experience near death — converge, without colluding, on the same possibility: that awareness is fundamental and the separate self is a process, not a thing.</p>
+  </div>
 </div>
 
 <!-- crawlers and no-JS visitors see the full content below -->
@@ -892,6 +942,34 @@
       burger.setAttribute('aria-expanded', 'false');
       burger.setAttribute('aria-label', 'menu');
     }
+  });
+}());
+</script>
+<script>
+(function () {
+  var caseBtn     = document.getElementById('dewCase');
+  var caseOverlay = document.getElementById('dewCaseOverlay');
+  var caseClose   = document.getElementById('dewCaseClose');
+  if (!caseBtn || !caseOverlay) return;
+
+  function openCase() {
+    caseOverlay.classList.add('open');
+    caseOverlay.setAttribute('aria-hidden', 'false');
+    caseClose.focus();
+  }
+  function closeCase() {
+    caseOverlay.classList.remove('open');
+    caseOverlay.setAttribute('aria-hidden', 'true');
+    caseBtn.focus();
+  }
+
+  caseBtn.addEventListener('click', function (e) { e.stopPropagation(); openCase(); });
+  caseClose.addEventListener('click', closeCase);
+  caseOverlay.addEventListener('pointerdown', function (e) {
+    if (e.target === caseOverlay) closeCase();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && caseOverlay.classList.contains('open')) closeCase();
   });
 }());
 </script>
