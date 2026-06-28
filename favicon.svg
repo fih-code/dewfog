@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- background -->
+  <rect width="32" height="32" rx="6" fill="#0b1316"/>
+  <!-- subtle border -->
+  <rect width="32" height="32" rx="6" fill="none" stroke="rgba(159,232,219,0.14)" stroke-width="1"/>
+  <!-- glow halo behind letter -->
+  <text x="16" y="23"
+    font-family="'Courier New', Courier, monospace"
+    font-size="22" font-weight="400"
+    text-anchor="middle"
+    fill="rgba(159,232,219,0.22)"
+    filter="url(#glow)">d</text>
+  <!-- main letter -->
+  <text x="16" y="23"
+    font-family="'Courier New', Courier, monospace"
+    font-size="22" font-weight="400"
+    text-anchor="middle"
+    fill="rgba(159,232,219,0.92)">d</text>
+</svg>
