@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>many worlds — dewfog</title>
+  <meta name="description" content="Every quantum measurement splits reality into parallel branches — each outcome real, each unaware of the others. An interactive visualization of the Everett many-worlds interpretation.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/many-worlds.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/many-worlds.html">
+  <meta property="og:title" content="many worlds — dewfog">
+  <meta property="og:description" content="Every quantum measurement splits reality into parallel branches — each outcome real, each unaware of the others. An interactive visualization of the Everett many-worlds interpretation.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="many worlds — dewfog">
+  <meta name="twitter:description" content="Every quantum measurement splits reality into parallel branches — each outcome real, each unaware of the others.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.35); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 6%; right: 5%;
+      max-width: 260px; font-size: 8px; line-height: 1.9;
+      letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right;
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>many worlds</h1>
+    <div class="subtitle">branch · diverge · persist</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Hugh Everett III's 1957 relative state formulation proposes that the wave function never collapses. Every quantum measurement branches the universal wave function into non-interacting copies — each containing an observer who sees a definite outcome. All branches are equally real. None is privileged.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const WHITE = '255,248,195';
+
+const PHASES = ['superpose', 'branch', 'diverge', 'persist', 'fade'];
+const DUR    = { superpose: 90, branch: 55, diverge: 150, persist: 110, fade: 48 };
+
+const MSGS = {
+  superpose: 'a quantum event — all outcomes exist simultaneously',
+  branch:    'the wave function branches — reality forks',
+  diverge:   'two worlds diverge — each real, each complete',
+  persist:   'branch α: |↑⟩  ·  branch β: |↓⟩  — both persist',
+  fade:      '',
+};
+
+let phase = 'superpose', phaseF = 0;
+
+function initPhase(p) { phase = p; phaseF = 0; status.textContent = MSGS[p] || ''; }
+function nextPhase()   { initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]); }
+
+// field particles — offsets from branch center, shared between branches
+let fieldPts = [];
+function buildField() {
+  fieldPts = [];
+  const r = Math.min(W, H) * .22;
+  for (let i = 0; i < 36; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const d   = Math.sqrt(Math.random()) * r;
+    fieldPts.push({
+      dx: Math.cos(ang) * d,
+      dy: Math.sin(ang) * d * .55,
+      r:  .7 + Math.random() * 1.3,
+      br: .06 + Math.random() * .1,
+      ph: Math.random() * Math.PI * 2,
+    });
+  }
+}
+
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function dot(x, y, r, c, a) {
+  if (a <= 0) return;
+  radGlow(x, y, r * 5.5, c, a * .42);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(${c},${Math.min(a,1)})`; ctx.fill();
+}
+
+function lbl(txt, x, y, c, a, sz) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${sz||8}px "Space Mono"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+// Draw one branch world, clipped to its half of screen
+function drawWorld(yc, isTop, c, label, pa, la) {
+  const MR = Math.min(W, H) * .1;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, isTop ? 0 : cy, W, isTop ? cy : H - cy);
+  ctx.clip();
+
+  for (const p of fieldPts) {
+    const a = pa * (p.br + .03 * Math.sin(phaseF * .065 + p.ph));
+    if (a < .005) continue;
+    ctx.beginPath(); ctx.arc(cx + p.dx, yc + p.dy, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${c},${a.toFixed(3)})`; ctx.fill();
+  }
+
+  radGlow(cx, yc, MR, c, pa * .58);
+  dot(cx, yc, 4.5, c, pa * .9);
+  lbl(label, cx, yc + (isTop ? -(MR + 24) : (MR + 24)), c, la, 9);
+  ctx.restore();
+}
+
+// Branch lines from origin to each world center
+function drawBranchLines(splitY, a) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.lineWidth = .8;
+  ctx.strokeStyle = `rgba(${TEAL},${(a * .18).toFixed(3)})`;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - splitY); ctx.stroke();
+  ctx.strokeStyle = `rgba(${AMBER},${(a * .18).toFixed(3)})`;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy + splitY); ctx.stroke();
+  // seam dot at origin
+  ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(${WHITE},${a * .45})`; ctx.fill();
+  ctx.restore();
+}
+
+// ----- phase renderers -----
+function rSuperpose() {
+  const MR  = Math.min(W, H) * .15;
+  const osc = Math.sin(phaseF * .12);
+  const aA  = .5 + .38 * osc;
+  const aB  = .5 - .38 * osc;
+  radGlow(cx, cy, MR, TEAL,  aA * .62);
+  radGlow(cx, cy, MR, AMBER, aB * .62);
+  dot(cx, cy, 4.5, WHITE, .85);
+  lbl('|↑⟩ + |↓⟩', cx, cy - Math.min(W,H) * .1, WHITE, .22, 12);
+}
+
+function rBranch() {
+  const t = phaseF / DUR.branch;
+  const flash = Math.max(0, 1 - t * 2.8);
+  if (flash > 0) {
+    ctx.fillStyle = `rgba(255,252,240,${flash * .16})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+  const fa = Math.max(0, 1 - t * 1.6);
+  radGlow(cx, cy, Math.min(W,H) * .15, WHITE, fa * .55);
+  dot(cx, cy, 4.5, WHITE, fa * .82);
+  // seam crack appears
+  const sa = Math.min(t * 2.5, 1) * .3;
+  if (sa > 0) {
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,252,240,${sa})`;
+    ctx.lineWidth = .8;
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function rDiverge() {
+  const t    = phaseF / DUR.diverge;
+  const e    = t * t * (3 - 2 * t);
+  const maxS = Math.min(W, H) * .22;
+  const sY   = e * maxS;
+  const wa   = Math.min(t * 2, 1);
+
+  drawBranchLines(sY, wa * .7);
+  drawWorld(cy - sY, true,  TEAL,  'branch α — spin up',   wa * .75, wa * .4);
+  drawWorld(cy + sY, false, AMBER, 'branch β — spin down', wa * .75, wa * .4);
+}
+
+function rPersist() {
+  const t    = phaseF / DUR.persist;
+  const maxS = Math.min(W, H) * .22;
+  const pulse = .88 + .12 * Math.sin(phaseF * .1);
+
+  drawBranchLines(maxS, .55);
+  drawWorld(cy - maxS, true,  TEAL,  'branch α — spin up',   .78 * pulse, .44);
+  drawWorld(cy + maxS, false, AMBER, 'branch β — spin down', .78 * pulse, .44);
+
+  const la = Math.min(t * 3, 1);
+  lbl('observer sees |↑⟩', cx, cy - maxS + Math.min(W,H) * .07, TEAL,  la * .22, 8);
+  lbl('observer sees |↓⟩', cx, cy + maxS - Math.min(W,H) * .07, AMBER, la * .22, 8);
+}
+
+function rFade() {
+  const a    = 1 - phaseF / DUR.fade;
+  const maxS = Math.min(W, H) * .22;
+  drawBranchLines(maxS, a * .55);
+  drawWorld(cy - maxS, true,  TEAL,  '', a * .78, 0);
+  drawWorld(cy + maxS, false, AMBER, '', a * .78, 0);
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'superpose': rSuperpose(); break;
+      case 'branch':    rBranch();    break;
+      case 'diverge':   rDiverge();   break;
+      case 'persist':   rPersist();   break;
+      case 'fade':      rFade();      break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  buildField();
+  initPhase('superpose');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
