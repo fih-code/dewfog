@@ -152,7 +152,7 @@
 <div id="stage" style="position:fixed;inset:0;overflow:hidden;cursor:none;background:#0b1316;font-family:'Space Mono',monospace;touch-action:none;">
 
   <!-- DAWN / RESOLUTION (z:1 — bottom, revealed on resolve) -->
-  <div id="dawn" style="position:absolute;inset:0;z-index:1;opacity:0;transition:opacity 3s ease;background:radial-gradient(135% 120% at 50% 9%, #fdf4e8 0%, #f6dcc0 26%, #f0c69a 46%, #d8a37e 64%, #9a705a 82%, #3a2a22 100%);">
+  <div id="dawn" style="position:absolute;inset:0;z-index:1;opacity:0;transition:opacity 1.6s ease;background:radial-gradient(135% 120% at 50% 9%, #fdf4e8 0%, #f6dcc0 26%, #f0c69a 46%, #d8a37e 64%, #9a705a 82%, #3a2a22 100%);">
     <div style="position:absolute;left:50%;top:8%;width:80vw;height:80vw;max-width:900px;max-height:900px;transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(255,244,228,.85) 0%, rgba(240,198,154,.35) 36%, rgba(240,198,154,0) 66%);pointer-events:none;"></div>
     <div style="position:absolute;left:8%;top:60%;width:5px;height:5px;border-radius:50%;background:rgba(255,250,240,.9);box-shadow:0 0 8px rgba(255,245,225,.9);animation:dewMote 13s linear infinite;animation-delay:-2s;"></div>
     <div style="position:absolute;left:22%;top:72%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 16s linear infinite;animation-delay:-7s;"></div>
@@ -160,7 +160,7 @@
     <div style="position:absolute;left:86%;top:78%;width:3px;height:3px;border-radius:50%;background:rgba(255,250,240,.8);box-shadow:0 0 6px rgba(255,245,225,.7);animation:dewMote 18s linear infinite;animation-delay:-11s;"></div>
     <div style="position:absolute;left:48%;top:80%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 14s linear infinite;animation-delay:-9s;"></div>
     <!-- resolution message: outer owns state opacity, inner owns keyframe — so transition can override animation -->
-    <div id="resMsgWrap" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6vw;opacity:0;transform:translateY(16px);transition:opacity 2.2s ease .9s,transform 2.2s ease .9s;">
+    <div id="resMsgWrap" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6vw;opacity:0;transform:translateY(16px);transition:opacity 1.6s ease .3s,transform 1.6s ease .3s;">
       <div style="width:clamp(108px,14vw,162px);aspect-ratio:1;margin:0 0 clamp(24px,4.5vh,52px);filter:drop-shadow(0 0 8px rgba(201,122,74,.28));">
         <svg viewBox="0 0 200 200" style="display:block;width:100%;height:100%;overflow:visible;">
           <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(74,54,38,.5)" stroke-width="1.1"></circle>
@@ -208,7 +208,7 @@
   </div>
 
   <!-- MYSTERY (z:2 — deep teal scene, sits behind the frost canvas) -->
-  <div id="mystery" style="position:absolute;inset:0;z-index:2;background:radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%);opacity:1;transition:opacity 2.8s ease;">
+  <div id="mystery" style="position:absolute;inset:0;z-index:2;background:radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%);opacity:1;transition:opacity 1.4s ease;">
     <!-- time-of-day tint overlay — color set by JS based on local hour -->
     <div id="timeTint" style="position:absolute;inset:0;pointer-events:none;"></div>
     <div style="position:absolute;left:30%;top:30%;width:46vw;height:46vw;border-radius:50%;filter:blur(70px);background:radial-gradient(circle, rgba(159,232,219,.10) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 17s ease-in-out infinite;"></div>
@@ -216,7 +216,7 @@
 
     <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
     <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
-    <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.6s ease;color:rgba(173,240,228,.92);white-space:nowrap;">
+    <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.0s ease;color:rgba(173,240,228,.92);white-space:nowrap;">
       <div id="frag0" style="position:absolute;left:10%;top:19%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
       <div id="frag1" style="position:absolute;left:58%;top:26%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
       <div id="frag2" style="position:absolute;left:13%;top:34%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
@@ -236,7 +236,7 @@
   </div>
 
   <!-- FROST CANVAS (z:3 — the glass you wipe) -->
-  <canvas id="fog" style="position:absolute;inset:0;z-index:3;width:100%;height:100%;opacity:1;transition:opacity 2.8s ease;"></canvas>
+  <canvas id="fog" style="position:absolute;inset:0;z-index:3;width:100%;height:100%;opacity:1;transition:opacity 1.4s ease;"></canvas>
 
   <!-- HUD (z:4 — timestamp + hint, pointer-events:none) -->
   <div id="clock" style="position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.22em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);pointer-events:none;opacity:1;transition:opacity 1.4s ease;">observed: 03:14:07</div>
