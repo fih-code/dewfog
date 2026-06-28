@@ -51,10 +51,11 @@
     @keyframes dewMote     { 0% { transform: translate3d(0,0,0); opacity: 0 } 12% { opacity: .7 } 88% { opacity: .6 } 100% { transform: translate3d(14px,-120px,0); opacity: 0 } }
     @keyframes dewFrag     { 0%,100% { opacity: 1 } 50% { opacity: .72 } }
     /* ── site nav ─────────────────────────────────────────────────────────── */
+    @keyframes dewDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     #dewNav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 7;
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 24px; padding: 16px clamp(20px,4vw,44px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px clamp(20px,4vw,44px);
       pointer-events: none;
     }
     #dewLogo {
@@ -66,52 +67,44 @@
     }
     #dewLogo:hover { color: rgba(159,232,219,.9); text-shadow: 0 0 12px rgba(159,232,219,.35); }
     #dewLinks {
-      list-style: none; margin: 0; padding: 0;
-      flex: 1; display: flex; flex-wrap: wrap; align-items: center;
-      justify-content: flex-end; column-gap: 2em; row-gap: 14px;
-      pointer-events: none;
+      list-style: none; margin: 0;
+      padding: 20px 26px 24px;
+      display: none;
+      position: fixed; top: 50px; right: clamp(20px,4vw,44px); z-index: 7;
+      flex-direction: column; gap: 18px;
+      background: rgba(7,13,16,.94);
+      border: 1px solid rgba(159,232,219,.08);
+      border-radius: 3px;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      pointer-events: auto;
     }
+    #dewNav.open #dewLinks { display: flex; animation: dewDrop .2s ease; }
     #dewLinks a {
       font-family: 'Space Mono',monospace; font-size: 9px;
       letter-spacing: .36em; text-transform: lowercase; text-decoration: none;
       color: rgba(159,232,219,.45); pointer-events: auto;
-      transition: color 3s ease, text-shadow .25s ease;
+      transition: color .25s ease, text-shadow .25s ease;
     }
-    #dewLinks a:hover { color: rgba(159,232,219,.8); text-shadow: 0 0 10px rgba(159,232,219,.35); }
+    #dewLinks a:hover { color: rgba(159,232,219,.88); text-shadow: 0 0 10px rgba(159,232,219,.35); }
     #dewBurger {
-      display: none; flex-direction: column; justify-content: center;
+      display: flex; flex-direction: column; justify-content: center;
       gap: 5px; background: none; border: none;
       padding: 8px 4px; cursor: pointer; pointer-events: auto;
     }
     #dewBurger span {
       display: block; width: 18px; height: 1px;
       background: rgba(159,232,219,.4); transform-origin: center;
-      transition: transform .32s ease, background 3s ease;
+      transition: transform .28s ease, background 3s ease;
     }
     #dewNav.open #dewBurger span:first-child { transform: translateY(3px) rotate(45deg); }
     #dewNav.open #dewBurger span:last-child  { transform: translateY(-3px) rotate(-45deg); }
-    /* resolved palette — warm amber, transitions over 3 s matching the dawn */
-    #dewNav.resolved #dewLogo,
-    #dewNav.resolved #dewLinks a       { color: rgba(74,54,38,.42); }
-    #dewNav.resolved #dewLogo:hover,
+    /* resolved palette — warm amber */
+    #dewNav.resolved #dewLogo { color: rgba(74,54,38,.42); }
+    #dewNav.resolved #dewLogo:hover { color: rgba(74,54,38,.85); text-shadow: 0 0 10px rgba(201,122,74,.22); }
+    #dewNav.resolved #dewBurger span { background: rgba(74,54,38,.42); }
+    #dewNav.resolved #dewLinks { background: rgba(58,42,34,.92); border-color: rgba(74,54,38,.12); }
+    #dewNav.resolved #dewLinks a { color: rgba(74,54,38,.45); }
     #dewNav.resolved #dewLinks a:hover { color: rgba(74,54,38,.85); text-shadow: 0 0 10px rgba(201,122,74,.22); }
-    #dewNav.resolved #dewBurger span   { background: rgba(74,54,38,.42); }
-    /* mobile */
-    @media (max-width: 620px) {
-      #dewNav { height: 52px; padding: 0 clamp(20px,4vw,44px); align-items: center; gap: 0; }
-      #dewLinks {
-        display: none; position: fixed; top: 52px; left: 0; right: 0; z-index: 7;
-        flex-direction: column; gap: 22px;
-        padding: 22px clamp(20px,4vw,44px) 30px;
-        background: rgba(7,13,16,.92); border-top: 1px solid rgba(159,232,219,.08);
-        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-        pointer-events: auto;
-      }
-      #dewLinks a { font-size: 13px; color: rgba(159,232,219,.5); }
-      #dewNav.open #dewLinks { display: flex; }
-      #dewNav.resolved #dewLinks { background: rgba(58,42,34,.9); border-top-color: rgba(74,54,38,.12); }
-      #dewBurger { display: flex; }
-    }
   </style>
 </head>
 <body>
