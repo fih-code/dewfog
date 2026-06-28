@@ -120,6 +120,11 @@
       pointer-events: auto; transition: color .4s ease;
     }
     #home-btn:hover { color: rgba(159,232,219,.75); }
+    #info {
+      position: absolute; bottom: 6%; right: 5%;
+      max-width: 260px; font-size: 8px; line-height: 1.9;
+      letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right;
+    }
     #vignette {
       position: fixed;
       inset: 0;
@@ -142,6 +147,7 @@
     <div id="status">unobserved &mdash; interference pattern forming</div>
     <button id="observer-btn">observe</button>
   </div>
+  <div id="info">A single particle fired at two slits produces an interference pattern — as if it passes through both simultaneously. Observing which slit the particle uses causes the pattern to collapse to two classical bands. The act of measurement determines the outcome.</div>
 </div>
 
 <div id="vignette"></div>
