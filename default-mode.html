@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>default mode network — dewfog</title>
+  <meta name="description" content="The default mode network hums whenever attention turns inward — remembering, planning, narrating the story of 'me'. Experienced meditators show reduced activity. An interactive visualization of the DMN and the quieting of the separate self.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/default-mode.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/default-mode.html">
+  <meta property="og:title" content="default mode network — dewfog">
+  <meta property="og:description" content="The default mode network hums whenever attention turns inward — remembering, planning, narrating the story of 'me'. Experienced meditators show reduced activity. An interactive visualization of the DMN and the quieting of the separate self.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="default mode network — dewfog">
+  <meta name="twitter:description" content="The default mode network hums when the mind wanders. Experienced meditators show reduced activity — the separate self quieting.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.95); text-align: center;
+    }
+    #focus-wrap {
+      position: absolute; bottom: 14%; left: 5%;
+      pointer-events: auto;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    }
+    #focus-label {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.55);
+    }
+    #focus-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 110px; height: 2px;
+      background: rgba(159,232,219,.18); outline: none; border-radius: 1px;
+      cursor: pointer;
+    }
+    #focus-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: rgba(159,232,219,.82); cursor: pointer;
+    }
+    #focus-slider::-moz-range-thumb {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: rgba(159,232,219,.82); cursor: pointer; border: none;
+    }
+    #info {
+      position: absolute; bottom: 16%; right: 5%;
+      max-width: 240px; font-size: 10px; line-height: 1.9;
+      letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
+      background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
+      padding: 12px 14px; border-radius: 3px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>default mode network</h1>
+    <div class="subtitle">narrative · quieting · presence</div>
+  </div>
+  <div id="status"></div>
+  <div id="focus-wrap">
+    <div id="focus-label">focus</div>
+    <input type="range" id="focus-slider" min="0" max="100" value="0">
+  </div>
+  <div id="info">The default mode network — a cluster of brain regions centered on the medial prefrontal and posterior cingulate cortex — becomes active whenever attention turns inward to the self: remembering, planning, narrating the story of 'me'. Experienced meditators show reduced activity in this network, and the quieting of the posterior cingulate in particular tracks the felt sense of effortless awareness. The separate self appears not as a fixed thing but as a process — a network humming. When attention settles, the humming dims, and what remains is awareness without a center.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+const slider = document.getElementById('focus-slider');
+
+let W, H, cx, cy;
+
+const TEAL = '159,232,219';
+
+// Network nodes — positions as fractions of scale radius
+const NODE_DEFS = [
+  { rx:  0,     ry: -0.30, label: 'mPFC', br: 1.00 },  // medial prefrontal cortex
+  { rx:  0,     ry:  0.12, label: 'PCC',  br: 1.00 },  // posterior cingulate cortex
+  { rx: -0.22,  ry: -0.06, label: 'AG',   br: 0.75 },  // angular gyrus L
+  { rx:  0.22,  ry: -0.06, label: 'AG',   br: 0.75 },  // angular gyrus R
+  { rx: -0.18,  ry:  0.26, label: 'HC',   br: 0.68 },  // hippocampus L
+  { rx:  0.18,  ry:  0.26, label: 'HC',   br: 0.68 },  // hippocampus R
+  { rx: -0.30,  ry: -0.24, label: 'lPFC', br: 0.58 },  // lateral PFC L
+  { rx:  0.30,  ry: -0.24, label: 'lPFC', br: 0.58 },  // lateral PFC R
+];
+
+const EDGES = [
+  [0, 1],         // mPFC — PCC  (core hub)
+  [0, 2], [0, 3], // mPFC — AG
+  [1, 2], [1, 3], // PCC  — AG
+  [1, 4], [1, 5], // PCC  — HC
+  [2, 4], [3, 5], // AG   — HC
+  [0, 6], [0, 7], // mPFC — lPFC
+  [6, 2], [7, 3], // lPFC — AG
+];
+
+let nodes = [];
+
+function buildNodes() {
+  const sc = Math.min(W, H) * 0.34;
+  nodes = NODE_DEFS.map((d, i) => ({
+    x:  cx + d.rx * sc,
+    y:  cy + d.ry * sc,
+    br: d.br,
+    label: d.label,
+    ph: (i / NODE_DEFS.length) * Math.PI * 2,
+  }));
+}
+
+// ---- focus state ----
+let focusLevel  = 0;
+let userDriving = false;
+let userTimer   = null;
+let autoT       = 0;
+
+slider.addEventListener('input', () => {
+  focusLevel  = slider.value / 100;
+  userDriving = true;
+  clearTimeout(userTimer);
+  userTimer = setTimeout(() => { userDriving = false; }, 8000);
+});
+
+// Auto-demo: 0 → 1 → 0 on a slow trapezoid (≈18 s total at 60 fps)
+const AUTO_PERIOD = 1080;
+
+function autoTarget(t) {
+  const p = (t % AUTO_PERIOD) / AUTO_PERIOD;
+  const e = x => x * x * (3 - 2 * x);
+  if (p < 0.33) return e(p / 0.33);
+  if (p < 0.55) return 1;
+  if (p < 0.88) return 1 - e((p - 0.55) / 0.33);
+  return 0;
+}
+
+// ---- breath cycle (≈ 5.5 s per phase at 60 fps) ----
+const BREATH_HALF = 330;
+let breathT = 0;
+
+// ---- helpers ----
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function ease(t) { return t * t * (3 - 2 * t); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,   `rgba(${c},${Math.min(a, 1)})`);
+  g.addColorStop(0.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,   `rgba(${c},0)`);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+}
+
+// ---- breath ring ----
+function drawBreath(t, focus) {
+  const q     = ease(focus);
+  const phase = Math.floor(t / BREATH_HALF) % 2; // 0 = inhale, 1 = exhale
+  const prog  = ease((t % BREATH_HALF) / BREATH_HALF);
+  const minR  = Math.min(W, H) * 0.055;
+  const maxR  = Math.min(W, H) * 0.090;
+  const ringR = phase === 0 ? minR + (maxR - minR) * prog : maxR - (maxR - minR) * prog;
+
+  // Ring always present, grows more visible as focus rises
+  const ringA = 0.06 + q * 0.28;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},${ringA.toFixed(3)})`;
+  ctx.lineWidth   = 0.8;
+  ctx.beginPath(); ctx.arc(cx, cy, ringR, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+
+  // Breath label — appears as focus rises
+  const lblA = Math.max(0, q - 0.2) * 0.65;
+  if (lblA > 0.01) {
+    ctx.save();
+    ctx.font = '8px "Space Mono"'; ctx.textAlign = 'center';
+    ctx.fillStyle = `rgba(${TEAL},${lblA.toFixed(3)})`;
+    ctx.fillText(phase === 0 ? 'inhale' : 'exhale', cx, cy + ringR + 15);
+    ctx.restore();
+  }
+}
+
+// ---- network ----
+function drawNetwork(t, focus) {
+  const q  = ease(focus);
+  const MR = Math.min(W, H) * 0.032;
+
+  // Edges
+  for (const [ai, bi] of EDGES) {
+    const na = nodes[ai], nb = nodes[bi];
+    const pulse = 0.55 + 0.45 * Math.sin(t * 0.024 + na.ph + nb.ph);
+    const edgeA = (1 - q * 0.88) * 0.20 * pulse;
+    if (edgeA < 0.004) continue;
+    ctx.save();
+    ctx.strokeStyle = `rgba(${TEAL},${edgeA.toFixed(3)})`;
+    ctx.lineWidth   = 0.6;
+    ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Nodes
+  for (const n of nodes) {
+    const pulse = 0.5 + 0.5 * Math.sin(t * 0.034 + n.ph);
+    const actA  = n.br * (1 - q * 0.92) * (0.52 + 0.48 * pulse);
+    const ambA  = n.br * q * 0.10;
+    const nodeA = Math.max(actA, ambA);
+    const r     = MR * (0.55 + 0.45 * n.br);
+    const rPulse = r * (0.85 + 0.15 * pulse * (1 - q * 0.7));
+
+    radGlow(n.x, n.y, r * 5, TEAL, nodeA * 0.52);
+    ctx.beginPath(); ctx.arc(n.x, n.y, rPulse, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${TEAL},${Math.min(nodeA, 0.92)})`; ctx.fill();
+
+    const lblA = nodeA * 0.40;
+    if (lblA > 0.02) {
+      ctx.save();
+      ctx.font = '7px "Space Mono"'; ctx.textAlign = 'center';
+      ctx.fillStyle = `rgba(${TEAL},${lblA.toFixed(3)})`;
+      ctx.fillText(n.label, n.x, n.y - r * 2.0);
+      ctx.restore();
+    }
+  }
+}
+
+// ---- status ----
+const STATUS_STEPS = [
+  { at: 0.00, txt: 'mind wandering — default mode active' },
+  { at: 0.28, txt: 'attention settling — network quieting' },
+  { at: 0.62, txt: 'the posterior cingulate quiets' },
+  { at: 0.88, txt: 'effortless awareness — no center' },
+];
+
+function updateStatus(f) {
+  let msg = STATUS_STEPS[0].txt;
+  for (const s of STATUS_STEPS) { if (f >= s.at) msg = s.txt; }
+  status.textContent = msg;
+}
+
+// ---- main loop ----
+let globalT = 0;
+
+function frame() {
+  try {
+    drawBg();
+
+    if (!userDriving) {
+      const target = autoTarget(autoT);
+      focusLevel = focusLevel + (target - focusLevel) * 0.010;
+      slider.value = Math.round(focusLevel * 100);
+    }
+    autoT++;
+    breathT++;
+
+    drawBreath(breathT, focusLevel);
+    drawNetwork(globalT, focusLevel);
+    updateStatus(focusLevel);
+
+    globalT++;
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  buildNodes();
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
