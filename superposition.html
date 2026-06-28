@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>quantum superposition — dewfog</title>
+  <meta name="description" content="A quantum system existing in all states at once — until you look. An interactive visualization of superposition, wave function collapse, and the observer effect.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/superposition.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/superposition.html">
+  <meta property="og:title" content="quantum superposition — dewfog">
+  <meta property="og:description" content="A quantum system existing in all states at once — until you look. An interactive visualization of superposition, wave function collapse, and the observer effect.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="quantum superposition — dewfog">
+  <meta name="twitter:description" content="A quantum system existing in all states at once — until you look. An interactive visualization of superposition, wave function collapse, and the observer effect.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.35); text-align: center;
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>superposition</h1>
+    <div class="subtitle">state · uncertainty · collapse</div>
+  </div>
+  <div id="status"></div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const WHITE = '255,248,195';
+const COLS  = [TEAL, AMBER];
+
+const PHASES = ['superpose', 'measure', 'collapsed', 'reset'];
+const DUR    = { superpose:220, measure:65, collapsed:120, reset:32 };
+
+let phase = 'superpose', phaseF = 0;
+let result = null; // 0 = teal/up, 1 = amber/down
+
+function initPhase(p) {
+  phase = p; phaseF = 0;
+  if (p === 'superpose')  status.textContent = 'undefined — both states coexist simultaneously';
+  else if (p === 'measure') { result = Math.random() < .5 ? 0 : 1; status.textContent = 'observing — wave function collapsing'; }
+  else status.textContent = '';
+}
+
+function nextPhase() {
+  initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]);
+}
+
+// particles orbiting each state
+const NP = 90;
+let pts  = [];
+
+function makePt(s) {
+  return {
+    s,
+    r:     14 + Math.random() * 34,
+    theta: Math.random() * Math.PI * 2,
+    spd:   (.025 + Math.random() * .04) * (Math.random() < .5 ? 1 : -1),
+    ph:    Math.random() * Math.PI * 2,
+  };
+}
+
+function stateY(s) { return cy + (s === 0 ? -1 : 1) * Math.min(W, H) * .2; }
+
+// ----- helpers -----
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a*.14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function dot(x, y, r, c, a) {
+  if (a <= 0) return;
+  radGlow(x, y, r*5.5, c, a*.42);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(${c},${Math.min(a,1)})`; ctx.fill();
+}
+
+function lbl(txt, x, y, c, a, sz) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${sz||8}px "Space Mono"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+function drawWave(ya, yb, a) {
+  if (a <= 0) return;
+  ctx.save(); ctx.beginPath();
+  const steps = 80;
+  for (let i = 0; i <= steps; i++) {
+    const s = i / steps;
+    const y = ya + (yb - ya) * s;
+    const x = cx + Math.sin(s * Math.PI * 4 + phaseF * .09) * 16;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = `rgba(${WHITE},${(a*.22).toFixed(3)})`;
+  ctx.lineWidth = 1; ctx.stroke(); ctx.restore();
+}
+
+function drawOrbit(s, a) {
+  if (a <= 0) return;
+  const ys = stateY(s);
+  for (const p of pts) {
+    if (p.s !== s) continue;
+    p.theta += p.spd;
+    const x  = cx + Math.cos(p.theta) * p.r;
+    const y  = ys + Math.sin(p.theta) * p.r * .42;
+    const pa = a * (.18 + .13 * Math.sin(p.ph + phaseF * .1));
+    ctx.beginPath(); ctx.arc(x, y, 1.4, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${COLS[s]},${pa})`; ctx.fill();
+  }
+}
+
+// ----- phase renderers -----
+function rSuperpose() {
+  const MR  = Math.min(W,H) * .17;
+  const ya  = stateY(0), yb = stateY(1);
+  const osc = Math.sin(phaseF * .12);
+  const aA  = .5 + .38 * osc;
+  const aB  = .5 - .38 * osc;
+
+  drawWave(ya, yb, 1);
+  radGlow(cx, ya, MR, TEAL,  aA * .65);
+  radGlow(cx, yb, MR, AMBER, aB * .65);
+  dot(cx, ya, 4, TEAL,  aA);
+  dot(cx, yb, 4, AMBER, aB);
+  drawOrbit(0, aA);
+  drawOrbit(1, aB);
+  lbl('|↑⟩', cx, ya - 52, TEAL,  .28, 14);
+  lbl('|↓⟩', cx, yb + 52, AMBER, .28, 14);
+}
+
+function rMeasure() {
+  const t   = phaseF / DUR.measure;
+  const MR  = Math.min(W,H) * .17;
+  const ya  = stateY(0), yb = stateY(1);
+  const win = result, los = 1 - result;
+
+  const winA = .5 + .5 * t;
+  const losA = Math.max(0, 1 - t * 3.2);
+
+  drawWave(ya, yb, Math.max(0, 1 - t * 2));
+
+  radGlow(cx, stateY(win), MR * (1 + .4*t), COLS[win], winA * .65);
+  dot(cx, stateY(win), 4 + t*2, COLS[win], winA);
+  drawOrbit(win, winA * .85);
+
+  radGlow(cx, stateY(los), MR, COLS[los], losA * .65);
+  dot(cx, stateY(los), 4, COLS[los], losA);
+  drawOrbit(los, losA * .85);
+
+  if (t > .65) {
+    const fa = (t - .65) / .35;
+    radGlow(cx, stateY(win), MR * 1.8 * fa, COLS[win], .5 * fa);
+  }
+}
+
+function rCollapsed() {
+  const t    = phaseF / DUR.collapsed;
+  const MR   = Math.min(W,H) * .17;
+  const yw   = stateY(result);
+  const c    = COLS[result];
+  const pulse = .9 + .1 * Math.sin(phaseF * .12);
+
+  radGlow(cx, yw, MR * 1.1, c, .65 * pulse);
+  dot(cx, yw, 5, c, pulse);
+  drawOrbit(result, .55 * pulse);
+
+  const label = result === 0 ? '|↑⟩' : '|↓⟩';
+  const name  = result === 0 ? 'spin up' : 'spin down';
+  const la = Math.min(t * 4, 1);
+  lbl(label, cx, yw - 58, c, la * .72, 22);
+  lbl(name,  cx, yw + 58, c, la * .38,  8);
+  if (t > .15) status.textContent = `${label} — ${name}`;
+}
+
+function rReset() {
+  const t  = phaseF / DUR.reset;
+  const MR = Math.min(W,H) * .17;
+  const yw = stateY(result);
+  const a  = 1 - t;
+  radGlow(cx, yw, MR * 1.1, COLS[result], .65 * a);
+  dot(cx, yw, 5, COLS[result], a);
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'superpose': rSuperpose(); break;
+      case 'measure':   rMeasure();   break;
+      case 'collapsed': rCollapsed(); break;
+      case 'reset':     rReset();     break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  pts = [];
+  for (let s = 0; s < 2; s++)
+    for (let i = 0; i < NP / 2; i++) pts.push(makePt(s));
+  initPhase('superpose');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
