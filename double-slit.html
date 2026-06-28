@@ -249,18 +249,26 @@ function spawnParticle() {
   const cy = H * 0.5;
   const endY = observed ? sampleCDF(classicCDF) : sampleCDF(waveCDF);
   const s1 = slit1Y(), s2 = slit2Y();
-  const midY = observed
-    ? (Math.abs(endY - s1) < Math.abs(endY - s2) ? s1 : s2)
-    : (Math.random() < 0.5 ? s1 : s2);
 
-  particles.push({
-    phase: 0, t: 0,
-    speed: 0.013 + Math.random() * 0.005,
-    x0: sx, y0: cy,
-    x1: bx, y1: midY,
-    x2: ex, y2: endY,
-    obs: observed, x: sx, y: cy, alpha: 0,
-  });
+  if (observed) {
+    const slitY = Math.abs(endY - s1) < Math.abs(endY - s2) ? s1 : s2;
+    particles.push({
+      phase: 0, t: 0,
+      speed: 0.013 + Math.random() * 0.005,
+      x0: sx, y0: cy, x1: bx, y1: slitY, x2: ex, y2: endY,
+      obs: true, dual: false, x: sx, y: cy, alpha: 0,
+    });
+  } else {
+    // Unobserved: particle travels as wave through both slits simultaneously
+    particles.push({
+      phase: 0, t: 0,
+      speed: 0.013 + Math.random() * 0.005,
+      x0: sx, y0: cy, x1: bx, y1: cy, x2: ex, y2: endY,
+      y1a: s1, y1b: s2,
+      obs: false, dual: true, x: sx, y: cy, alpha: 0,
+      xa: sx, ya: cy, xb: sx, yb: cy,
+    });
+  }
 }
 
 function ease(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
@@ -274,12 +282,23 @@ function updateParticles() {
       p.x = p.x0 + (p.x1 - p.x0) * ease(t);
       p.y = p.y0 + (p.y1 - p.y0) * t;
       p.alpha = Math.sin(t * Math.PI) * 0.72;
+      if (p.dual) { p.xa = p.x; p.ya = p.y; p.xb = p.x; p.yb = p.y; }
       if (p.t >= 1) { p.phase = 1; p.t = 0; }
     } else {
       const t = Math.min(p.t, 1);
-      p.x = p.x1 + (p.x2 - p.x1) * ease(t);
-      p.y = p.y1 + (p.y2 - p.y1) * t;
       p.alpha = Math.sin(t * Math.PI) * 0.72;
+      if (p.dual) {
+        // Two simultaneous paths — one from each slit — both arriving at endY
+        const ex = ease(t);
+        p.xa = p.x1 + (p.x2 - p.x1) * ex;
+        p.ya = p.y1a + (p.y2 - p.y1a) * t;
+        p.xb = p.x1 + (p.x2 - p.x1) * ex;
+        p.yb = p.y1b + (p.y2 - p.y1b) * t;
+        p.x = p.xa; p.y = p.ya;
+      } else {
+        p.x = p.x1 + (p.x2 - p.x1) * ease(t);
+        p.y = p.y1 + (p.y2 - p.y1) * t;
+      }
       if (p.t >= 1) {
         const row = Math.round(p.y2);
         if (row >= 0 && row < detector.length) {
@@ -434,15 +453,37 @@ function drawDetector() {
 
 function drawParticle(p) {
   const cr = rgb(p.obs);
-  const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 7);
-  g.addColorStop(0,    `rgba(${cr},${p.alpha})`);
-  g.addColorStop(0.45, `rgba(${cr},${p.alpha * 0.28})`);
-  g.addColorStop(1,    `rgba(${cr},0)`);
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.fill();
 
-  ctx.beginPath(); ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(${cr},${Math.min(p.alpha * 1.5, 1)})`; ctx.fill();
+  if (p.dual && p.phase === 1) {
+    // Draw two simultaneous ghost paths — one through each slit
+    const a = p.alpha * 0.72;
+    [[p.xa, p.ya], [p.xb, p.yb]].forEach(([px, py]) => {
+      const g = ctx.createRadialGradient(px, py, 0, px, py, 7);
+      g.addColorStop(0,    `rgba(${cr},${a.toFixed(3)})`);
+      g.addColorStop(0.45, `rgba(${cr},${(a * 0.28).toFixed(3)})`);
+      g.addColorStop(1,    `rgba(${cr},0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${cr},${Math.min(a * 1.5, 1).toFixed(3)})`; ctx.fill();
+    });
+    // Faint dashed link connecting both simultaneous positions
+    ctx.save();
+    ctx.strokeStyle = `rgba(${cr},${(a * 0.14).toFixed(3)})`;
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([3, 7]);
+    ctx.beginPath(); ctx.moveTo(p.xa, p.ya); ctx.lineTo(p.xb, p.yb); ctx.stroke();
+    ctx.restore();
+  } else {
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 7);
+    g.addColorStop(0,    `rgba(${cr},${p.alpha})`);
+    g.addColorStop(0.45, `rgba(${cr},${p.alpha * 0.28})`);
+    g.addColorStop(1,    `rgba(${cr},0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${cr},${Math.min(p.alpha * 1.5, 1)})`; ctx.fill();
+  }
 }
 
 // ----- main loop -----
