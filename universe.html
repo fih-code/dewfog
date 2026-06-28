@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>scale of the universe — dewfog</title>
+  <meta name="description" content="From our solar system to the observable universe — 93 billion light years, 2 trillion galaxies, 10²⁴ stars. An interactive journey through cosmic scale.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/universe.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/universe.html">
+  <meta property="og:title" content="scale of the universe — dewfog">
+  <meta property="og:description" content="From our solar system to the observable universe — 93 billion light years, 2 trillion galaxies, 10²⁴ stars. An interactive journey through cosmic scale.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="scale of the universe — dewfog">
+  <meta name="twitter:description" content="From our solar system to the observable universe — 93 billion light years, 2 trillion galaxies, 10²⁴ stars.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.35); text-align: center;
+    }
+    #scale-label {
+      position: absolute; top: 5%; right: 5%;
+      font-size: 8px; letter-spacing: .28em; text-transform: uppercase;
+      color: rgba(159,232,219,.28); text-align: right;
+      transition: opacity .8s ease;
+    }
+    #info {
+      position: absolute; bottom: 6%; right: 5%;
+      max-width: 260px; font-size: 8px; line-height: 1.9;
+      letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right;
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>scale of the universe</h1>
+    <div class="subtitle">solar system · milky way · cosmos</div>
+  </div>
+  <div id="status"></div>
+  <div id="scale-label"></div>
+  <div id="info">The observable universe spans ~93 billion light years and contains an estimated 2 trillion galaxies. Each galaxy holds on average 100–400 billion stars. The total number of stars — roughly 10²⁴ — exceeds the number of grains of sand on all of Earth's beaches by a factor of ten million.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas   = document.getElementById('c');
+const ctx      = canvas.getContext('2d');
+const status   = document.getElementById('status');
+const scaleLbl = document.getElementById('scale-label');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const WHITE = '255,248,195';
+const DIM   = '90,155,150';
+
+// ----- state machine -----
+const PHASES = ['solar', 'stars', 'milky_way', 'cosmos', 'rest'];
+const DUR    = { solar: 95, stars: 120, milky_way: 155, cosmos: 175, rest: 65 };
+
+const MSGS = {
+  solar:     '1 star · 8 planets · the solar system',
+  stars:     'the solar neighborhood · ~6,000 stars within 100 light years',
+  milky_way: 'the milky way · 100,000 light years · ~300 billion stars',
+  cosmos:    '~2 trillion galaxies · each 100–400 billion stars · ~10²⁴ stars total',
+  rest:      '',
+};
+const SCALES = {
+  solar:     '≈ 12 light hours across',
+  stars:     '≈ 100 light years across',
+  milky_way: '≈ 100,000 light years across',
+  cosmos:    '≈ 93 billion light years across',
+  rest:      '',
+};
+
+let phase = 'solar', phaseF = 0;
+
+function initPhase(p) {
+  phase = p; phaseF = 0;
+  status.textContent  = MSGS[p]  || '';
+  scaleLbl.textContent = SCALES[p] || '';
+}
+function nextPhase() { initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]); }
+
+// ----- particle sets (rebuilt on resize) -----
+let starPts = [], mwPts = [], cosmPts = [];
+
+// Orbital planets for solar phase
+const PLANETS = [
+  { ff: 0.08, T: 22,  sz: 1.2, c: DIM   },  // Mercury
+  { ff: 0.13, T: 56,  sz: 1.5, c: AMBER },  // Venus
+  { ff: 0.18, T: 100, sz: 1.6, c: TEAL  },  // Earth ← you are here
+  { ff: 0.24, T: 188, sz: 1.2, c: AMBER },  // Mars
+  { ff: 0.35, T: 400, sz: 3.0, c: AMBER },  // Jupiter
+  { ff: 0.46, T: 560, sz: 2.4, c: AMBER },  // Saturn
+  { ff: 0.57, T: 760, sz: 1.9, c: TEAL  },  // Uranus
+  { ff: 0.68, T: 940, sz: 1.7, c: TEAL  },  // Neptune
+];
+
+function orbitR(ff) { return Math.min(W, H) * 0.44 * ff; }
+
+function buildPts() {
+  // --- Star neighborhood (~28 stars) ---
+  starPts = [];
+  const NR = Math.min(W, H) * 0.4;
+  // Our sun at center
+  starPts.push({ x: cx, y: cy, br: 0.88, r: 2.8, sun: true, ph: 0 });
+  for (let i = 1; i < 28; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const r   = (0.12 + Math.pow(Math.random(), 0.6) * 0.88) * NR;
+    starPts.push({
+      x: cx + r * Math.cos(ang),
+      y: cy + r * Math.sin(ang),
+      br: 0.18 + Math.random() * 0.55,
+      r:  0.9 + Math.random() * 1.4,
+      sun: false,
+      ph: Math.random() * Math.PI * 2,
+    });
+  }
+
+  // --- Milky Way (~1300 stars) ---
+  mwPts = [];
+  const MR = Math.min(W, H) * 0.43;
+  for (let i = 0; i < 1300; i++) {
+    const r     = Math.pow(Math.random(), 0.58) * MR;
+    const frac  = r / MR;
+    // Two-arm spiral: blend angle toward arm positions
+    const armSel    = Math.floor(Math.random() * 2);
+    const armAng    = armSel * Math.PI + frac * Math.PI * 2.6;
+    const randAng   = Math.random() * Math.PI * 2;
+    const armBlend  = Math.pow(Math.random(), 1.8);
+    const ang       = randAng * (1 - armBlend) + armAng * armBlend + (Math.random() - .5) * 0.7;
+    const core      = Math.exp(-frac / 0.22);
+    mwPts.push({
+      x:  cx + r * Math.cos(ang),
+      y:  cy + r * Math.sin(ang) * 0.38,   // flattened disk
+      br: 0.04 + core * 0.42 + Math.random() * 0.1,
+      r:  0.4 + core * 0.85 + Math.random() * 0.45,
+      ph: Math.random() * Math.PI * 2,
+    });
+  }
+
+  // --- Cosmic web (~1500 galaxies) ---
+  cosmPts = [];
+  const seeds = [];
+  for (let i = 0; i < 22; i++) {
+    seeds.push({ x: W * 0.06 + Math.random() * W * 0.88, y: H * 0.06 + Math.random() * H * 0.88 });
+  }
+  const margin = Math.min(W, H) * 0.04;
+  for (let i = 0; i < 1500; i++) {
+    let x, y;
+    if (Math.random() < 0.68) {
+      // cluster member
+      const s = seeds[Math.floor(Math.random() * seeds.length)];
+      const r = Math.pow(Math.random(), 0.38) * Math.min(W, H) * 0.16;
+      const a = Math.random() * Math.PI * 2;
+      x = s.x + r * Math.cos(a);
+      y = s.y + r * Math.sin(a);
+    } else {
+      // filament between two seeds
+      const s1 = seeds[Math.floor(Math.random() * seeds.length)];
+      const s2 = seeds[Math.floor(Math.random() * seeds.length)];
+      const t  = Math.random();
+      const sc = Math.min(W, H) * 0.03;
+      x = s1.x + (s2.x - s1.x) * t + (Math.random() - .5) * sc;
+      y = s1.y + (s2.y - s1.y) * t + (Math.random() - .5) * sc;
+    }
+    x = Math.max(margin, Math.min(W - margin, x));
+    y = Math.max(margin, Math.min(H - margin, y));
+    cosmPts.push({ x, y, br: 0.05 + Math.random() * 0.18, r: 0.4 + Math.random() * 0.8, ph: Math.random() * Math.PI * 2 });
+  }
+}
+
+// ----- helpers -----
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function lbl(txt, x, y, c, a, sz) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${sz||8}px "Space Mono"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+// Fade envelope: fade in over first 30f, out over last 20f
+function phaseAlpha() {
+  const inA  = Math.min(phaseF / 30, 1);
+  const outA = Math.max(0, 1 - Math.max(0, phaseF - DUR[phase] + 20) / 20);
+  return Math.min(inA, outA);
+}
+
+// Gentle zoom: very subtle scale pulse to suggest movement
+function applyZoom(scale) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale, scale);
+  ctx.translate(-cx, -cy);
+}
+
+// ----- phase renderers -----
+
+function rSolar() {
+  const a  = phaseAlpha();
+  const sc = 1 + (1 - a) * 0.12;   // zoom out slightly as phase fades
+  applyZoom(sc);
+
+  // Orbit rings
+  PLANETS.forEach(p => {
+    const r = orbitR(p.ff);
+    ctx.save();
+    ctx.strokeStyle = `rgba(${TEAL},${(a * 0.06).toFixed(3)})`;
+    ctx.lineWidth = .5;
+    ctx.beginPath(); ctx.ellipse(cx, cy, r, r * 0.92, 0, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+  });
+
+  // Sun
+  radGlow(cx, cy, Math.min(W,H) * 0.1, '255,230,140', a * 0.55);
+  radGlow(cx, cy, Math.min(W,H) * 0.04, WHITE, a * 0.8);
+  ctx.beginPath(); ctx.arc(cx, cy, Math.min(W,H) * 0.016, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(255,240,180,${a})`; ctx.fill();
+
+  // Planets
+  PLANETS.forEach((p, i) => {
+    const r   = orbitR(p.ff);
+    const ang = phaseF / p.T * Math.PI * 2 + i * 0.7;
+    const px  = cx + r * Math.cos(ang);
+    const py  = cy + r * Math.sin(ang) * 0.92;
+    radGlow(px, py, p.sz * 6, p.c, a * 0.28);
+    ctx.beginPath(); ctx.arc(px, py, p.sz, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${p.c},${a})`; ctx.fill();
+    // Earth label
+    if (i === 2) lbl('earth', px, py - p.sz - 10, TEAL, a * 0.38, 7);
+  });
+
+  lbl('the sun', cx, cy - Math.min(W,H) * 0.07, '255,230,140', a * 0.32, 7);
+  ctx.restore();
+}
+
+function rStars() {
+  const a  = phaseAlpha();
+  const sc = 1 + (1 - a) * 0.1;
+  applyZoom(sc);
+
+  const la = Math.min(phaseF / 50, 1) * a;
+  for (const p of starPts) {
+    const pulse = p.br + 0.06 * Math.sin(phaseF * 0.07 + p.ph);
+    const pa    = a * pulse;
+    if (pa < 0.01) continue;
+    radGlow(p.x, p.y, p.r * (p.sun ? 7 : 5), p.sun ? '255,240,180' : TEAL, pa * (p.sun ? 0.5 : 0.28));
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${p.sun ? '255,240,180' : TEAL},${Math.min(pa, 0.92)})`; ctx.fill();
+  }
+  lbl('our star', cx, cy - Math.min(W,H) * 0.06, '255,240,180', la * 0.42, 7);
+  lbl('each point · one stellar system', cx, cy + Math.min(W,H) * 0.38, TEAL, la * 0.22, 7);
+  ctx.restore();
+}
+
+function rMilkyWay() {
+  const a  = phaseAlpha();
+  const sc = 1 + (1 - a) * 0.08;
+  applyZoom(sc);
+
+  const la = Math.min(phaseF / 55, 1) * a;
+
+  // Galactic core glow
+  radGlow(cx, cy, Math.min(W,H) * 0.14, '255,240,180', a * 0.18);
+  radGlow(cx, cy, Math.min(W,H) * 0.06, '255,248,210', a * 0.32);
+
+  for (const p of mwPts) {
+    const pulse = p.br + 0.04 * Math.sin(phaseF * 0.05 + p.ph);
+    const pa    = a * pulse;
+    if (pa < 0.008) continue;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${TEAL},${Math.min(pa, 0.85)})`; ctx.fill();
+  }
+
+  // Sun position marker
+  const sunR  = Math.min(W, H) * 0.18;
+  const sunX  = cx + sunR;
+  const sunY  = cy - sunR * 0.12;
+  radGlow(sunX, sunY, 10, '255,240,180', la * 0.55);
+  ctx.beginPath(); ctx.arc(sunX, sunY, 2.5, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(255,240,180,${la * 0.9})`; ctx.fill();
+  lbl('our star', sunX + 28, sunY, '255,240,180', la * 0.38, 7);
+
+  lbl('each point · one star', cx, cy + Math.min(W,H) * 0.25, TEAL, la * 0.2, 7);
+  ctx.restore();
+}
+
+function rCosmos() {
+  const a  = phaseAlpha();
+  const sc = 1 + (1 - a) * 0.06;
+  applyZoom(sc);
+
+  const la = Math.min(phaseF / 60, 1) * a;
+
+  for (const p of cosmPts) {
+    const pulse = p.br + 0.03 * Math.sin(phaseF * 0.04 + p.ph);
+    const pa    = a * pulse;
+    if (pa < 0.007) continue;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${TEAL},${Math.min(pa, 0.78)})`; ctx.fill();
+  }
+
+  // Big number labels that appear gradually
+  if (la > 0.1) {
+    const na = Math.min((phaseF - 60) / 40, 1) * a;
+    if (na > 0) {
+      lbl('each point · one galaxy · ~100–400 billion stars', cx, cy + Math.min(W,H) * 0.34, TEAL, na * 0.24, 7);
+      lbl('~10²⁴ stars in the observable universe', cx, cy - Math.min(W,H) * 0.38, WHITE, na * 0.28, 8);
+    }
+  }
+  ctx.restore();
+}
+
+function rRest() {
+  const pulse = 0.72 + 0.12 * Math.sin(phaseF * 0.09);
+  for (const p of cosmPts) {
+    const pa = pulse * (p.br + 0.03 * Math.sin(phaseF * 0.04 + p.ph));
+    if (pa < 0.007) continue;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${TEAL},${Math.min(pa, 0.78)})`; ctx.fill();
+  }
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'solar':     rSolar();     break;
+      case 'stars':     rStars();     break;
+      case 'milky_way': rMilkyWay();  break;
+      case 'cosmos':    rCosmos();    break;
+      case 'rest':      rRest();      break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  buildPts();
+  initPhase('solar');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
