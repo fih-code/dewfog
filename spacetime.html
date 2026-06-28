@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>spacetime curvature — dewfog</title>
+  <meta name="description" content="Mass bends the fabric of spacetime — and that curvature is what we call gravity. An interactive visualization of general relativity, geodesics, and gravitational time dilation.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/spacetime.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/spacetime.html">
+  <meta property="og:title" content="spacetime curvature — dewfog">
+  <meta property="og:description" content="Mass bends the fabric of spacetime — and that curvature is what we call gravity. An interactive visualization of general relativity, geodesics, and gravitational time dilation.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="spacetime curvature — dewfog">
+  <meta name="twitter:description" content="Mass bends the fabric of spacetime — and that curvature is what we call gravity.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+    h1 { font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase; color: rgba(223,240,236,.65); font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0; text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25); }
+    .subtitle { font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.32); margin: .45em 0 0; }
+    #home-btn { position: absolute; top: 5%; left: 5%; font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.32); text-decoration: none; pointer-events: auto; transition: color .4s ease; }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status { position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: .28em; color: rgba(159,232,219,.35); text-align: center; }
+    #info { position: absolute; bottom: 6%; right: 5%; max-width: 260px; font-size: 8px; line-height: 1.9; letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right; }
+    #vignette { position: fixed; inset: 0; pointer-events: none; box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55); }
+  </style>
+</head>
+<body>
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>spacetime curvature</h1>
+    <div class="subtitle">mass · geodesic · dilation</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Einstein's general relativity describes gravity not as a force but as the curvature of spacetime caused by mass and energy. Objects follow geodesics — the straightest paths through curved spacetime. Clocks run slower in stronger gravitational fields: GPS satellites must correct for this effect to remain accurate.</div>
+</div>
+<div id="vignette"></div>
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const WHITE = '255,248,220';
+const DIM   = '90,155,150';
+
+const PHASES = ['flat', 'mass', 'orbit', 'light', 'dilation', 'rest'];
+const DUR    = { flat: 72, mass: 115, orbit: 165, light: 105, dilation: 120, rest: 58 };
+
+const MSGS = {
+  flat:     'flat spacetime — no mass, no curvature',
+  mass:     'mass curves spacetime — the heavier, the deeper the well',
+  orbit:    'objects follow geodesics — straight lines through curved spacetime',
+  light:    'light bends around mass — gravitational lensing',
+  dilation: 'time runs slower near mass — gravitational time dilation',
+  rest:     '',
+};
+
+let phase = 'flat', phaseF = 0;
+function initPhase(p) { phase = p; phaseF = 0; status.textContent = MSGS[p] || ''; }
+function nextPhase()   { initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]); }
+
+// Grid parameters
+const GCOLS = 18, GROWS = 14;
+let orbiters = [];
+
+function makeOrbiters() {
+  orbiters = [
+    { r: 0, baseR: 0.18, theta: 0,           speed: 0.028, sz: 2.5, c: TEAL,  clockTick: 0, clockFace: 0 },
+    { r: 0, baseR: 0.29, theta: Math.PI * .7, speed: 0.016, sz: 2,   c: AMBER, clockTick: 0, clockFace: 0 },
+    { r: 0, baseR: 0.42, theta: Math.PI * 1.4,speed: 0.009, sz: 1.6, c: DIM,   clockTick: 0, clockFace: 0 },
+  ];
+}
+
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function lbl(txt, x, y, c, a, sz) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${sz||8}px "Space Mono"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+// Warp a point toward cx,cy based on how close it is to the mass
+function warpPt(x, y, strength) {
+  const dx = x - cx, dy = y - cy;
+  const r2 = dx*dx + dy*dy;
+  const s2 = strength * strength;
+  const pull = s2 / (r2 + s2);
+  return { x: x - dx * pull * 0.72, y: y - dy * pull * 0.72 };
+}
+
+// Draw the spacetime grid, warped toward the mass by `strength`
+function drawGrid(strength, alpha) {
+  if (alpha <= 0) return;
+  const spX = W / GCOLS;
+  const spY = H / GROWS;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},${(alpha * 0.12).toFixed(3)})`;
+  ctx.lineWidth = 0.6;
+
+  // Horizontal lines
+  for (let j = 0; j <= GROWS; j++) {
+    const y0 = j * spY;
+    ctx.beginPath();
+    let first = true;
+    for (let i = 0; i <= GCOLS * 4; i++) {
+      const x0 = i * (W / (GCOLS * 4));
+      const p  = strength > 0 ? warpPt(x0, y0, strength) : { x: x0, y: y0 };
+      if (first) { ctx.moveTo(p.x, p.y); first = false; }
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+  }
+
+  // Vertical lines
+  for (let i = 0; i <= GCOLS; i++) {
+    const x0 = i * spX;
+    ctx.beginPath();
+    let first = true;
+    for (let j = 0; j <= GROWS * 4; j++) {
+      const y0 = j * (H / (GROWS * 4));
+      const p  = strength > 0 ? warpPt(x0, y0, strength) : { x: x0, y: y0 };
+      if (first) { ctx.moveTo(p.x, p.y); first = false; }
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Central mass
+function drawMass(a, scale) {
+  const s = scale || 1;
+  const MR = Math.min(W, H) * 0.048 * s;
+  radGlow(cx, cy, MR * 4, AMBER, a * 0.28);
+  radGlow(cx, cy, MR * 1.8, WHITE, a * 0.45);
+  ctx.beginPath(); ctx.arc(cx, cy, MR, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(${AMBER},${a})`; ctx.fill();
+}
+
+// Light ray that bends around the mass
+function drawLightRay(a) {
+  if (a <= 0) return;
+  const R = Math.min(W, H) * 0.32;
+  const impact = Math.min(W, H) * 0.085; // impact parameter
+  // Sample the deflected path: straight horizontal line passing at y = cy - impact,
+  // bent quadratically near cx
+  ctx.save();
+  ctx.strokeStyle = `rgba(${AMBER},${(a * 0.55).toFixed(3)})`;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 6]);
+  ctx.beginPath();
+  const steps = 120;
+  for (let i = 0; i <= steps; i++) {
+    const t  = i / steps;
+    const x  = cx - R + t * 2 * R;
+    const dx = x - cx;
+    const deflect = -impact * 0.38 / (1 + (dx * dx) / (R * R * 0.05));
+    const y  = cy - impact + deflect;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // Undeflected reference
+  ctx.save();
+  ctx.strokeStyle = `rgba(${DIM},${(a * 0.18).toFixed(3)})`;
+  ctx.lineWidth = 0.6;
+  ctx.setLineDash([2, 8]);
+  ctx.beginPath();
+  ctx.moveTo(cx - R, cy - impact);
+  ctx.lineTo(cx + R, cy - impact);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  lbl('deflected by gravity', cx + R * 0.45, cy - impact - 14, AMBER, a * 0.28, 7);
+}
+
+// Clock face for time dilation
+function drawClock(x, y, faceAngle, tickRate, a, c, label) {
+  if (a <= 0) return;
+  const R = 12;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${c},${(a * 0.55).toFixed(3)})`;
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI*2); ctx.stroke();
+
+  // Clock hand
+  ctx.strokeStyle = `rgba(${c},${(a * 0.85).toFixed(3)})`;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + Math.cos(faceAngle) * R * 0.75, y + Math.sin(faceAngle) * R * 0.75);
+  ctx.stroke();
+
+  // Tick marks
+  ctx.strokeStyle = `rgba(${c},${(a * 0.35).toFixed(3)})`;
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < 12; i++) {
+    const ang = (i / 12) * Math.PI * 2;
+    const r1 = R * 0.82, r2 = R;
+    ctx.beginPath();
+    ctx.moveTo(x + Math.cos(ang)*r1, y + Math.sin(ang)*r1);
+    ctx.lineTo(x + Math.cos(ang)*r2, y + Math.sin(ang)*r2);
+    ctx.stroke();
+  }
+  lbl(label, x, y + R + 14, c, a * 0.38, 7);
+  ctx.restore();
+}
+
+function fadeA(extra) {
+  const d = extra || DUR[phase];
+  const i = Math.min(phaseF / 30, 1);
+  const o = Math.max(0, 1 - Math.max(0, phaseF - d + 22) / 22);
+  return Math.min(i, o);
+}
+
+// ---- phase renderers ----
+
+function rFlat() {
+  const a = fadeA();
+  drawGrid(0, a);
+}
+
+function rMass() {
+  const t = phaseF / DUR.mass;
+  const e = t * t * (3 - 2 * t);
+  const strength = e * Math.min(W, H) * 0.22;
+  const a = fadeA();
+  drawGrid(strength, a);
+  drawMass(e * a, e);
+}
+
+function rOrbit() {
+  const a = fadeA();
+  const t = phaseF / DUR.orbit;
+  const strength = Math.min(W, H) * 0.22;
+  drawGrid(strength, a * 0.65);
+  drawMass(a, 1);
+
+  for (const ob of orbiters) {
+    ob.r = Math.min(W, H) * ob.baseR;
+    ob.theta += ob.speed;
+    ob.clockTick += ob.speed * (1 - 0.6 * ob.baseR / 0.45);
+    ob.clockFace = ob.clockTick;
+
+    const x = cx + ob.r * Math.cos(ob.theta);
+    const y = cy + ob.r * Math.sin(ob.theta);
+
+    const oa = Math.min(t * 2.5, 1) * a;
+    radGlow(x, y, ob.sz * 7, ob.c, oa * 0.35);
+    ctx.beginPath(); ctx.arc(x, y, ob.sz, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${ob.c},${oa})`; ctx.fill();
+  }
+
+  if (t > 0.3) {
+    lbl('geodesic orbits', cx, cy + Math.min(W,H)*0.48, TEAL, Math.min((t-0.3)*3,1)*a*0.32, 7);
+  }
+}
+
+function rLight() {
+  const a = fadeA();
+  const strength = Math.min(W, H) * 0.22;
+  drawGrid(strength, a * 0.55);
+  drawMass(a, 1);
+  drawLightRay(fadeA());
+}
+
+function rDilation() {
+  const a = fadeA();
+  const t = phaseF / DUR.dilation;
+  const strength = Math.min(W, H) * 0.22;
+  drawGrid(strength, a * 0.5);
+  drawMass(a * 0.8, 1);
+
+  // Inner clock (near mass) — ticks slower
+  const innerR = Math.min(W, H) * 0.18;
+  const outerR = Math.min(W, H) * 0.38;
+
+  const innerTick = phaseF * 0.022;  // slower
+  const outerTick = phaseF * 0.055;  // faster (farther from mass)
+
+  const la = Math.min(t * 2.5, 1) * a;
+
+  drawClock(cx + innerR, cy, innerTick, 0.022, la, AMBER, 'near mass — slow');
+  drawClock(cx + outerR, cy, outerTick, 0.055, la, TEAL,  'far — faster');
+
+  // Connecting radial line
+  if (la > 0.1) {
+    ctx.save();
+    ctx.strokeStyle = `rgba(${DIM},${(la * 0.18).toFixed(3)})`;
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([3, 6]);
+    ctx.beginPath();
+    ctx.moveTo(cx + innerR + 14, cy);
+    ctx.lineTo(cx + outerR - 14, cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  if (t > 0.5) {
+    lbl('time runs slower in stronger gravity', cx, cy - Math.min(W,H)*0.32, WHITE, Math.min((t-0.5)*3,1)*a*0.28, 7);
+  }
+}
+
+function rRest() {
+  const pulse = 0.7 + 0.18 * Math.sin(phaseF * 0.09);
+  const strength = Math.min(W, H) * 0.22;
+  drawGrid(strength, 0.45 * pulse);
+  drawMass(pulse * 0.55, 1);
+}
+
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'flat':     rFlat();     break;
+      case 'mass':     rMass();     break;
+      case 'orbit':    rOrbit();    break;
+      case 'light':    rLight();    break;
+      case 'dilation': rDilation(); break;
+      case 'rest':     rRest();     break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  makeOrbiters();
+  initPhase('flat');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
