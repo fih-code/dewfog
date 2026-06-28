@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>the present moment — dewfog</title>
+  <meta name="description" content="In the block universe, past, present, and future all equally exist — time is a dimension, not a flow. An interactive visualization of eternalism and why the present moment feels special.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/present-moment.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/present-moment.html">
+  <meta property="og:title" content="the present moment — dewfog">
+  <meta property="og:description" content="In the block universe, past, present, and future all equally exist — time is a dimension, not a flow. An interactive visualization of eternalism and why the present moment feels special.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="the present moment — dewfog">
+  <meta name="twitter:description" content="In the block universe, past, present, and future all equally exist — time is a dimension, not a flow.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+    h1 { font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase; color: rgba(223,240,236,.65); font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0; text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25); }
+    .subtitle { font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.32); margin: .45em 0 0; }
+    #home-btn { position: absolute; top: 5%; left: 5%; font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.32); text-decoration: none; pointer-events: auto; transition: color .4s ease; }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status { position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: .28em; color: rgba(159,232,219,.35); text-align: center; }
+    #info { position: absolute; bottom: 6%; right: 5%; max-width: 260px; font-size: 8px; line-height: 1.9; letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right; }
+    #vignette { position: fixed; inset: 0; pointer-events: none; box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55); }
+  </style>
+</head>
+<body>
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>the present moment</h1>
+    <div class="subtitle">flow · block · now</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">The block universe interpretation of special relativity holds that all moments in time — past, present, future — exist with equal reality. Time is a dimension, like space. What we call "now" is simply where we are in that block. The experience of flow, of a moving present, has no counterpart in the equations. Physics describes the block. It does not say why any of it feels like anything.</div>
+</div>
+<div id="vignette"></div>
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const WHITE = '255,248,220';
+const DIM   = '90,155,150';
+
+const PHASES = ['flow', 'expand', 'block', 'spotlight', 'rest'];
+const DUR    = { flow: 110, expand: 130, block: 155, spotlight: 120, rest: 60 };
+
+const MSGS = {
+  flow:      'particles move through time — the familiar present',
+  expand:    'the future already exists — traces reaching forward',
+  block:     'the block universe — all of time laid out at once',
+  spotlight: 'what we call "now" is just where the light falls',
+  rest:      '',
+};
+
+let phase = 'flow', phaseF = 0;
+let globalT = 0;
+
+function initPhase(p) { phase = p; phaseF = 0; status.textContent = MSGS[p] || ''; }
+function nextPhase()   { initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]); }
+
+// 6 Lissajous particles
+const NP = 6;
+let particles = [];
+
+function buildParticles() {
+  const Ax = Math.min(W, H) * 0.34;
+  const Ay = Math.min(W, H) * 0.28;
+  particles = [];
+  const COLORS = [TEAL, AMBER, WHITE, DIM, TEAL, AMBER];
+  for (let i = 0; i < NP; i++) {
+    const wx = 1 + (i % 3) * 0.5;
+    const wy = 0.8 + Math.floor(i / 2) * 0.4;
+    particles.push({
+      Ax, Ay,
+      wx, wy,
+      ph:  (i / NP) * Math.PI * 2,
+      c:   COLORS[i],
+      br:  0.55 + Math.random() * 0.35,
+    });
+  }
+}
+
+function ptAt(p, t) {
+  return {
+    x: cx + p.Ax * Math.sin(p.wx * t + p.ph),
+    y: cy + p.Ay * Math.cos(p.wy * t + p.ph),
+  };
+}
+
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function lbl(txt, x, y, c, a, sz) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${sz||8}px "Space Mono"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+function fadeA() {
+  const i = Math.min(phaseF / 30, 1);
+  const o = Math.max(0, 1 - Math.max(0, phaseF - DUR[phase] + 22) / 22);
+  return Math.min(i, o);
+}
+
+// Draw past trail for a particle up to `nowT`
+function drawPastTrail(p, nowT, steps, alpha) {
+  if (alpha <= 0 || steps < 2) return;
+  ctx.save();
+  ctx.setLineDash([]);
+  for (let i = 1; i < steps; i++) {
+    const t0 = nowT - (steps - i + 1) * 0.018;
+    const t1 = nowT - (steps - i)     * 0.018;
+    const a0 = ptAt(p, t0);
+    const a1 = ptAt(p, t1);
+    const fade = (i / steps) * alpha * p.br * 0.72;
+    ctx.strokeStyle = `rgba(${p.c},${fade.toFixed(3)})`;
+    ctx.lineWidth = 0.8 * (i / steps);
+    ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Draw future trail for a particle from `nowT`
+function drawFutureTrail(p, nowT, steps, alpha) {
+  if (alpha <= 0 || steps < 2) return;
+  ctx.save();
+  ctx.setLineDash([3, 6]);
+  for (let i = 0; i < steps - 1; i++) {
+    const t0 = nowT + i       * 0.018;
+    const t1 = nowT + (i + 1) * 0.018;
+    const a0 = ptAt(p, t0);
+    const a1 = ptAt(p, t1);
+    const fade = ((steps - 1 - i) / steps) * alpha * p.br * 0.38;
+    ctx.strokeStyle = `rgba(${p.c},${fade.toFixed(3)})`;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+// Draw particle dot at time t
+function drawDot(p, t, alpha, sz) {
+  if (alpha <= 0) return;
+  const pos = ptAt(p, t);
+  radGlow(pos.x, pos.y, (sz || 3) * 5, p.c, alpha * p.br * 0.35);
+  ctx.beginPath(); ctx.arc(pos.x, pos.y, sz || 3, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(${p.c},${alpha * p.br})`; ctx.fill();
+}
+
+// ----- phase renderers -----
+
+function rFlow() {
+  const a = fadeA();
+  for (const p of particles) {
+    drawPastTrail(p, globalT, 55, a);
+    drawDot(p, globalT, a, 3);
+  }
+  lbl('past', cx - Math.min(W,H)*0.42, cy, DIM, a * 0.22, 7);
+}
+
+function rExpand() {
+  const t = phaseF / DUR.expand;
+  const a = fadeA();
+  const futureSteps = Math.round(t * 55);
+  for (const p of particles) {
+    drawPastTrail(p, globalT, 55, a);
+    if (futureSteps > 1) drawFutureTrail(p, globalT, futureSteps, a);
+    drawDot(p, globalT, a, 3);
+  }
+  if (t > 0.4) {
+    const la = Math.min((t - 0.4) * 3, 1) * a;
+    lbl('future', cx + Math.min(W,H)*0.42, cy, AMBER, la * 0.28, 7);
+    lbl('past',   cx - Math.min(W,H)*0.42, cy, DIM,   la * 0.22, 7);
+  }
+}
+
+function rBlock() {
+  const t = phaseF / DUR.block;
+  const a = fadeA();
+  // Show full past and future trails — the whole block
+  const totalSteps = 72;
+  for (const p of particles) {
+    drawPastTrail(p, globalT, totalSteps, a * 0.9);
+    drawFutureTrail(p, globalT, totalSteps, a * 0.9);
+    drawDot(p, globalT, a, 3.2);
+  }
+
+  const la = Math.min(t * 2.5, 1) * a;
+  lbl('past', cx - Math.min(W,H)*0.42, cy, DIM,   la * 0.22, 7);
+  lbl('now',  cx,                       cy - Math.min(W,H)*0.38, WHITE, la * 0.28, 7);
+  lbl('future', cx + Math.min(W,H)*0.42, cy, AMBER, la * 0.22, 7);
+}
+
+function rSpotlight() {
+  const t = phaseF / DUR.spotlight;
+  const a = fadeA();
+  const totalSteps = 72;
+
+  // Spotlight time oscillates — reveals a "now" slice moving through block
+  const spotT = globalT + Math.min(W, H) * 0.006 * Math.sin(phaseF * 0.042);
+  const spotR = Math.min(W, H) * (0.04 + 0.06 * Math.abs(Math.sin(phaseF * 0.042)));
+
+  for (const p of particles) {
+    drawPastTrail(p, globalT, totalSteps, a * 0.45);
+    drawFutureTrail(p, globalT, totalSteps, a * 0.45);
+    // Particles at the spotlight time
+    const spos = ptAt(p, spotT);
+    radGlow(spos.x, spos.y, 22, p.c, a * 0.28);
+    ctx.beginPath(); ctx.arc(spos.x, spos.y, 3.5, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${p.c},${a * 0.8})`; ctx.fill();
+  }
+
+  // "Now" label follows the spotlight
+  const la = Math.min(t * 3, 1) * a;
+  lbl('now', cx, cy - Math.min(W,H)*0.38, WHITE, la * 0.32, 8);
+
+  if (t > 0.5) {
+    lbl('"now" is just where the light falls', cx, cy + Math.min(W,H)*0.44, DIM, Math.min((t-0.5)*3,1)*a*0.26, 7);
+  }
+}
+
+function rRest() {
+  const pulse = 0.7 + 0.18 * Math.sin(phaseF * 0.09);
+  const totalSteps = 52;
+  for (const p of particles) {
+    drawPastTrail(p, globalT, totalSteps, 0.38 * pulse);
+    drawFutureTrail(p, globalT, totalSteps, 0.38 * pulse);
+    drawDot(p, globalT, 0.5 * pulse, 2.5);
+  }
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    globalT += 0.018;
+    drawBg();
+    switch (phase) {
+      case 'flow':      rFlow();      break;
+      case 'expand':    rExpand();    break;
+      case 'block':     rBlock();     break;
+      case 'spotlight': rSpotlight(); break;
+      case 'rest':      rRest();      break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  buildParticles();
+  initPhase('flow');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

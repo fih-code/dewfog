@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>black hole — dewfog</title>
+  <meta name="description" content="Accretion, Hawking radiation, and the information paradox. An interactive visualization of the strangest object in the universe — and the question it leaves open.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/black-hole.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/black-hole.html">
+  <meta property="og:title" content="black hole — dewfog">
+  <meta property="og:description" content="Accretion, Hawking radiation, and the information paradox. An interactive visualization of the strangest object in the universe — and the question it leaves open.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="black hole — dewfog">
+  <meta name="twitter:description" content="Accretion, Hawking radiation, and the information paradox.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+    h1 { font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase; color: rgba(223,240,236,.65); font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0; text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25); }
+    .subtitle { font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.32); margin: .45em 0 0; }
+    #home-btn { position: absolute; top: 5%; left: 5%; font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.32); text-decoration: none; pointer-events: auto; transition: color .4s ease; }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status { position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: .28em; color: rgba(159,232,219,.35); text-align: center; }
+    #info { position: absolute; bottom: 6%; right: 5%; max-width: 260px; font-size: 8px; line-height: 1.9; letter-spacing: .05em; color: rgba(159,232,219,.25); text-align: right; }
+    #vignette { position: fixed; inset: 0; pointer-events: none; box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55); }
+  </style>
+</head>
+<body>
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>black hole</h1>
+    <div class="subtitle">horizon · radiation · paradox</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Rotating black holes heat accreted matter to millions of degrees. At the event horizon, escape velocity exceeds the speed of light. Hawking showed in 1974 that quantum effects near the horizon produce a slow thermal radiation — causing the black hole to gradually evaporate. Whether information falling in is destroyed or re-emitted remains unresolved.</div>
+</div>
+<div id="vignette"></div>
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const WHITE = '255,248,220';
+
+const PHASES = ['disk', 'radiate', 'paradox', 'rest'];
+const DUR    = { disk: 155, radiate: 145, paradox: 95, rest: 58 };
+const MSGS   = {
+  disk:    'matter spirals inward — heating to millions of degrees',
+  radiate: 'hawking radiation — quantum pairs at the horizon',
+  paradox: 'what happens to information when it falls in?',
+  rest:    '',
+};
+
+let phase = 'disk', phaseF = 0;
+function initPhase(p) { phase = p; phaseF = 0; status.textContent = MSGS[p] || ''; }
+function nextPhase()   { initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]); }
+
+const BHR    = () => Math.min(W, H) * 0.092;
+const PHOTO  = () => BHR() * 1.52;
+
+// Accretion disk particles
+const ND = 88;
+let disk = [];
+
+function diskColor(r) {
+  const f = Math.max(0, Math.min((r / BHR() - 1.8) / 3.8, 1));
+  return `${255},${Math.round(248 - 148 * f)},${Math.round(220 - 220 * f)}`;
+}
+
+function makeDiskPt() {
+  const rMin = BHR() * 1.85, rMax = BHR() * 5.4;
+  const r     = rMin + Math.pow(Math.random(), 1.4) * (rMax - rMin);
+  return {
+    r,
+    theta:  Math.random() * Math.PI * 2,
+    omega:  0.7 / Math.pow(r / BHR(), 1.5),  // Keplerian
+    infall: 0.00018 + Math.random() * 0.00022,
+    br:     0.35 + Math.random() * 0.5,
+    ph:     Math.random() * Math.PI * 2,
+  };
+}
+
+// Hawking radiation escaping particles
+let hawks = [];
+function spawnHawk() {
+  const theta = Math.random() * Math.PI * 2;
+  const r0    = BHR() * 1.04;
+  hawks.push({
+    x: cx + r0 * Math.cos(theta), y: cy + r0 * Math.sin(theta),
+    vx: Math.cos(theta) * (1.1 + Math.random() * 0.7),
+    vy: Math.sin(theta) * (1.1 + Math.random() * 0.7),
+    life: 0, maxLife: 52 + Math.random() * 30,
+  });
+}
+
+function drawBg() {
+  ctx.fillStyle = '#0b1316';
+  ctx.fillRect(0, 0, W, H);
+}
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function lbl(txt, x, y, c, a, sz) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${sz||8}px "Space Mono"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+function fadeA() {
+  const i = Math.min(phaseF / 30, 1);
+  const o = Math.max(0, 1 - Math.max(0, phaseF - DUR[phase] + 22) / 22);
+  return Math.min(i, o);
+}
+
+function drawHorizon(a) {
+  const BH = BHR();
+  // Photon sphere glow
+  const pg = ctx.createRadialGradient(cx, cy, BH * 0.95, cx, cy, PHOTO() * 1.6);
+  pg.addColorStop(0,   `rgba(255,220,140,${a * 0.55})`);
+  pg.addColorStop(0.4, `rgba(255,160,60,${a * 0.28})`);
+  pg.addColorStop(1,   `rgba(255,100,20,0)`);
+  ctx.fillStyle = pg;
+  ctx.beginPath(); ctx.arc(cx, cy, PHOTO() * 1.6, 0, Math.PI*2); ctx.fill();
+
+  // Photon ring — bright ring at photon sphere
+  ctx.save();
+  ctx.strokeStyle = `rgba(255,200,100,${a * 0.65})`;
+  ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.arc(cx, cy, PHOTO(), 0, Math.PI*2); ctx.stroke();
+  ctx.restore();
+
+  // Black hole shadow — solid black
+  ctx.beginPath(); ctx.arc(cx, cy, BH, 0, Math.PI*2);
+  ctx.fillStyle = '#000'; ctx.fill();
+
+  // Subtle inner ring
+  ctx.save();
+  ctx.strokeStyle = `rgba(255,180,80,${a * 0.18})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, BH * 1.12, 0, Math.PI*2); ctx.stroke();
+  ctx.restore();
+}
+
+function drawDisk(a) {
+  for (const p of disk) {
+    p.theta += p.omega;
+    p.r     -= p.infall * p.r;
+    if (p.r < BHR() * 1.05) {
+      p.r     = BHR() * (3.5 + Math.random() * 2);
+      p.theta = Math.random() * Math.PI * 2;
+    }
+
+    const x = cx + p.r * Math.cos(p.theta);
+    const y = cy + p.r * Math.sin(p.theta);
+
+    // Relativistic beaming: approaching side (sin > 0) brighter
+    const beam = 1 + 0.5 * Math.sin(p.theta);
+    const pulse = p.br + 0.08 * Math.sin(phaseF * 0.09 + p.ph);
+    const pa    = Math.min(a * pulse * beam, 0.94);
+    if (pa < 0.01) continue;
+
+    const c = diskColor(p.r);
+    const sz = Math.max(0.7, (1 - (p.r / BHR() - 1.8) / 4.5) * 2.8);
+    radGlow(x, y, sz * 6, c, pa * 0.25);
+    ctx.beginPath(); ctx.arc(x, y, sz, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${c},${pa})`; ctx.fill();
+  }
+}
+
+function drawHawks(a) {
+  for (let i = hawks.length - 1; i >= 0; i--) {
+    const h = hawks[i];
+    h.x += h.vx; h.y += h.vy; h.life++;
+    if (h.life >= h.maxLife) { hawks.splice(i, 1); continue; }
+    const t  = h.life / h.maxLife;
+    const ha = Math.sin(t * Math.PI) * a * 0.72;
+    radGlow(h.x, h.y, 10, TEAL, ha * 0.35);
+    ctx.beginPath(); ctx.arc(h.x, h.y, 1.5, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${TEAL},${ha})`; ctx.fill();
+  }
+}
+
+// ----- phase renderers -----
+function rDisk() {
+  const a = fadeA();
+  drawDisk(a);
+  drawHorizon(a);
+  lbl('event horizon', cx, cy + BHR() + 20, WHITE, a * 0.28, 7);
+}
+
+function rRadiate() {
+  const a  = fadeA();
+  const t  = phaseF / DUR.radiate;
+  if (phaseF % 22 === 0) spawnHawk();
+  drawDisk(a * 0.62);
+  drawHorizon(a);
+  drawHawks(a);
+
+  const la = Math.min(t * 3, 1) * a;
+  lbl('hawking radiation — one particle escapes', cx, cy - PHOTO() - 28, TEAL, la * 0.36, 7);
+  lbl('its partner falls in', cx, cy + BHR() + 22, WHITE, la * 0.26, 7);
+}
+
+function rParadox() {
+  const a  = fadeA();
+  const t  = phaseF / DUR.paradox;
+  drawHorizon(a);
+
+  const la = Math.min(t * 3, 1) * a;
+  lbl('information cannot escape', cx, cy - PHOTO() - 32, WHITE, la * 0.32, 7);
+  lbl('yet quantum mechanics forbids its destruction', cx, cy + BHR() + 24, AMBER, la * 0.28, 7);
+
+  // Pulsing question glow around the BH
+  const pulse = 0.5 + 0.5 * Math.sin(phaseF * 0.14);
+  radGlow(cx, cy, BHR() * 4, TEAL, a * 0.04 * pulse);
+}
+
+function rRest() {
+  const pulse = 0.7 + 0.16 * Math.sin(phaseF * 0.09);
+  drawHorizon(pulse);
+  radGlow(cx, cy, BHR() * 6, TEAL, 0.04 * pulse);
+}
+
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'disk':    rDisk();    break;
+      case 'radiate': rRadiate(); break;
+      case 'paradox': rParadox(); break;
+      case 'rest':    rRest();    break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  disk   = Array.from({ length: ND }, makeDiskPt);
+  hawks  = [];
+  initPhase('disk');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
