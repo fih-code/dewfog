@@ -257,7 +257,7 @@ function spawnParticle() {
     const slitY = Math.abs(endY - s1) < Math.abs(endY - s2) ? s1 : s2;
     particles.push({
       phase: 0, t: 0,
-      speed: 0.013 + Math.random() * 0.005,
+      speed: 0.007 + Math.random() * 0.003,
       x0: sx, y0: cy, x1: bx, y1: slitY, x2: ex, y2: endY,
       obs: true, dual: false, x: sx, y: cy, alpha: 0,
     });
@@ -265,7 +265,7 @@ function spawnParticle() {
     // Unobserved: particle travels as wave through both slits simultaneously
     particles.push({
       phase: 0, t: 0,
-      speed: 0.013 + Math.random() * 0.005,
+      speed: 0.007 + Math.random() * 0.003,
       x0: sx, y0: cy, x1: bx, y1: cy, x2: ex, y2: endY,
       y1a: s1, y1b: s2,
       obs: false, dual: true, x: sx, y: cy, alpha: 0,
