@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>interface theory — dewfog</title>
+  <meta name="description" content="What if natural selection favors useful perception over true perception? Donald Hoffman's interface theory: color, shape, and space are icons on a species-specific interface — not reality itself.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/interface-theory.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/interface-theory.html">
+  <meta property="og:title" content="interface theory — dewfog">
+  <meta property="og:description" content="What if natural selection favors useful perception over true perception? Donald Hoffman's interface theory: color, shape, and space are icons on a species-specific interface — not reality itself.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="interface theory — dewfog">
+  <meta name="twitter:description" content="What if natural selection favors useful perception over true perception? Color, shape, and space are icons — not a window onto reality itself.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.95); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 13%; right: 5%;
+      max-width: min(280px, 84vw); font-size: 10px; line-height: 1.6;
+      letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
+      background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
+      padding: 10px 12px; border-radius: 3px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>interface theory</h1>
+    <div class="subtitle">fitness · icon · interface</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Donald Hoffman's fitness-beats-truth theorem — built from evolutionary game theory and genetic-algorithm simulations — shows that organisms tuned to perceive fitness payoffs consistently outcompete organisms tuned to perceive objective reality: selection optimizes for usefulness, not accuracy. Hoffman models the result as an interface — color, shape, and three-dimensional objects in space are icons, useful simplifications rather than a window onto the world's true structure, and space and time themselves are part of the desktop, not the code running beneath it. His stronger claim: consciousness, modeled as a network of interacting "conscious agents," is more fundamental than spacetime — spacetime is what that network's activity looks like from inside a species-specific interface. The game theory is rigorous; the metaphysics is not settled, and most cognitive scientists treat fitness-beats-truth as a caveat about perception rather than evidence that consciousness precedes spacetime.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const CREAM = '255,248,228';
+
+const PHASES = ['landscape', 'selection', 'interface', 'agents', 'rest'];
+const DUR    = { landscape: 170, selection: 230, interface: 210, agents: 250, rest: 110 };
+
+const MSGS = {
+  landscape: 'two populations, one shared world',
+  selection: 'which survives — the true perception, or the useful one?',
+  interface: 'fitness wins — perception renders icons, not truth',
+  agents:    'beneath the icons: a network of conscious agents',
+  rest:      '',
+};
+
+let phase = 'landscape', phaseF = 0;
+
+let organisms = [], icons = [], BOX = { hw: 0, hh: 0 };
+let nodes = [], edges = [], fires = [];
+const NN = 16;
+
+function buildIcons() {
+  const sp = Math.min(W, H) * .17;
+  icons = [
+    { x: cx - sp, y: cy, shape: 'circle',   label: 'color'  },
+    { x: cx,      y: cy, shape: 'square',   label: 'shape'  },
+    { x: cx + sp, y: cy, shape: 'triangle', label: 'object' },
+  ];
+}
+
+function buildOrganisms() {
+  organisms = [];
+  BOX.hw = Math.min(W, H) * .32;
+  BOX.hh = Math.min(W, H) * .22;
+  const N = 32;
+  for (let i = 0; i < N; i++) {
+    const type = i % 2 === 0 ? 'truth' : 'fitness';
+    const x = cx + (Math.random() * 2 - 1) * BOX.hw;
+    const y = cy + (Math.random() * 2 - 1) * BOX.hh;
+    organisms.push({
+      x, y, ox: x, oy: y, type,
+      alpha: 0, boost: 0,
+      size: 2 + Math.random() * 1.2,
+      ph: Math.random() * Math.PI * 2,
+      deathT: .15 + Math.random() * .7,
+      iconIdx: 0,
+    });
+  }
+  const fit = organisms.filter(o => o.type === 'fitness');
+  fit.forEach((o, i) => { o.iconIdx = i % 3; });
+}
+
+function buildNet() {
+  nodes = []; edges = []; fires = [];
+  const sp = Math.min(W, H) * .34;
+  for (let i = 0; i < NN; i++) {
+    nodes.push({
+      x:  cx + (Math.random() - .5) * sp,
+      y:  cy + (Math.random() - .5) * sp * .85,
+      lit: 0, ph: Math.random() * Math.PI * 2,
+    });
+  }
+  const thresh = sp * .44;
+  for (let i = 0; i < NN; i++) {
+    for (let j = i + 1; j < NN; j++) {
+      const d = Math.hypot(nodes[j].x - nodes[i].x, nodes[j].y - nodes[i].y);
+      if (d < thresh && Math.random() < .5) edges.push({ a: i, b: j });
+    }
+  }
+}
+
+function initPhase(p) {
+  phase = p; phaseF = 0;
+  if (p === 'landscape') buildOrganisms();
+  status.textContent = MSGS[p] || '';
+}
+function nextPhase() { initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]); }
+
+// ----- helpers -----
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a * .14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function lbl(txt, x, y, c, a, sz) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.font = `${sz||8}px "Space Mono"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = `rgba(${c},${a})`; ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+function drawWorldBox(a) {
+  if (a <= 0) return;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},${(a * .14).toFixed(3)})`;
+  ctx.lineWidth = .7;
+  ctx.setLineDash([3, 10]);
+  ctx.strokeRect(cx - BOX.hw, cy - BOX.hh, BOX.hw * 2, BOX.hh * 2);
+  ctx.restore();
+  lbl('the world', cx, cy - BOX.hh - 14, TEAL, a * .5, 7);
+}
+
+function drawOrganisms() {
+  organisms.forEach(o => {
+    if (o.alpha <= .01) return;
+    const col   = o.type === 'truth' ? TEAL : AMBER;
+    const pulse = .6 + .4 * Math.sin(phaseF * .08 + o.ph);
+    const r     = o.size * (1 + o.boost * .9) * pulse;
+    if (o.boost > .3) radGlow(o.x, o.y, r * 4, col, o.alpha * o.boost * .25);
+    ctx.beginPath(); ctx.arc(o.x, o.y, r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${col},${Math.min(o.alpha, .92)})`; ctx.fill();
+  });
+}
+
+function drawIconShape(icon, a) {
+  if (a <= 0) return;
+  const r = Math.min(W, H) * .052;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${AMBER},${(a * .55).toFixed(3)})`;
+  ctx.fillStyle   = `rgba(${AMBER},${(a * .12).toFixed(3)})`;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  if (icon.shape === 'circle') {
+    ctx.arc(icon.x, icon.y, r, 0, Math.PI*2);
+  } else if (icon.shape === 'square') {
+    ctx.rect(icon.x - r, icon.y - r, r * 2, r * 2);
+  } else {
+    ctx.moveTo(icon.x, icon.y - r);
+    ctx.lineTo(icon.x + r * .87, icon.y + r * .5);
+    ctx.lineTo(icon.x - r * .87, icon.y + r * .5);
+    ctx.closePath();
+  }
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+  radGlow(icon.x, icon.y, r * 1.7, AMBER, a * .18);
+  lbl(icon.label, icon.x, icon.y + r + 14, AMBER, a * .6, 8);
+}
+
+function spawnFire() {
+  if (!edges.length) return;
+  const e   = edges[Math.floor(Math.random() * edges.length)];
+  const rev = Math.random() < .5;
+  const from = nodes[rev ? e.b : e.a];
+  const to   = nodes[rev ? e.a : e.b];
+  const ti   = rev ? e.a : e.b;
+  fires.push({ x0: from.x, y0: from.y, x1: to.x, y1: to.y, t: 0, ti });
+}
+
+function updateFires() {
+  for (const f of fires) {
+    f.t += .038;
+    if (f.t >= 1) nodes[f.ti].lit = 1;
+  }
+  fires = fires.filter(f => f.t < 1.3);
+  nodes.forEach(n => { n.lit *= .86; });
+}
+
+function drawNet(a) {
+  if (a <= 0) return;
+  edges.forEach(e => {
+    ctx.save();
+    ctx.strokeStyle = `rgba(${CREAM},${(a * .08).toFixed(3)})`;
+    ctx.lineWidth = .7;
+    ctx.beginPath();
+    ctx.moveTo(nodes[e.a].x, nodes[e.a].y);
+    ctx.lineTo(nodes[e.b].x, nodes[e.b].y);
+    ctx.stroke();
+    ctx.restore();
+  });
+  fires.forEach(f => {
+    if (f.t >= 1) return;
+    const x  = f.x0 + (f.x1 - f.x0) * f.t;
+    const y  = f.y0 + (f.y1 - f.y0) * f.t;
+    const fa = Math.sin(f.t * Math.PI) * a;
+    radGlow(x, y, 14, CREAM, fa * .32);
+    ctx.beginPath(); ctx.arc(x, y, 2.2, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${CREAM},${fa})`; ctx.fill();
+  });
+  nodes.forEach(n => {
+    const pulse = .5 + .5 * Math.sin(phaseF * .09 + n.ph);
+    const base  = (.12 + .05 * pulse) * a;
+    const glow  = n.lit * a;
+    radGlow(n.x, n.y, 14, CREAM, base + glow * .55);
+    ctx.beginPath(); ctx.arc(n.x, n.y, 2.6, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${CREAM},${Math.min(base + glow, .88)})`; ctx.fill();
+  });
+}
+
+// ----- phase renderers -----
+function rLandscape() {
+  const a = Math.min(phaseF / (DUR.landscape * .5), 1);
+  organisms.forEach(o => { o.alpha = a; });
+  drawWorldBox(a * .6);
+  drawOrganisms();
+}
+
+function rSelection() {
+  const t = phaseF / DUR.selection;
+  drawWorldBox(.6);
+  organisms.forEach(o => {
+    if (o.type === 'truth') {
+      if (t > o.deathT) o.alpha = Math.max(0, o.alpha - .05);
+    } else {
+      o.boost = Math.min(1, o.boost + .012);
+    }
+  });
+  drawOrganisms();
+}
+
+function rInterface() {
+  const t  = Math.min(phaseF / (DUR.interface * .7), 1);
+  const et = t * t * (3 - 2 * t);
+  organisms.filter(o => o.type === 'fitness').forEach(o => {
+    const icon = icons[o.iconIdx];
+    o.x = o.ox + (icon.x - o.ox) * et;
+    o.y = o.oy + (icon.y - o.oy) * et;
+    o.alpha = Math.max(.12, 1 - et * .75);
+  });
+  drawWorldBox(.6 * (1 - et));
+  drawOrganisms();
+  const iconA = Math.min(Math.max(0, (phaseF - DUR.interface * .35) / (DUR.interface * .5)), 1);
+  icons.forEach(icon => drawIconShape(icon, iconA));
+}
+
+function rAgents() {
+  const t = phaseF / DUR.agents;
+  const fadeOut = Math.max(0, 1 - t * 2.2);
+  organisms.filter(o => o.type === 'fitness').forEach(o => { o.alpha = Math.min(o.alpha, fadeOut); });
+  drawOrganisms();
+  icons.forEach(icon => drawIconShape(icon, fadeOut));
+  const netA = Math.min(Math.max(0, (t - .12) * 1.5), 1);
+  if (phaseF % 16 === 0) spawnFire();
+  updateFires();
+  drawNet(netA);
+  lbl('conscious agents', cx, cy + Math.min(W,H) * .30, CREAM, netA * .38, 8);
+}
+
+function rRest() {
+  const p = .7 + .3 * Math.sin(phaseF * .09);
+  if (phaseF % 20 === 0) spawnFire();
+  updateFires();
+  drawNet(p * .68);
+  lbl('conscious agents', cx, cy + Math.min(W,H) * .30, CREAM, p * .28, 8);
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    drawBg();
+    switch (phase) {
+      case 'landscape': rLandscape(); break;
+      case 'selection':  rSelection();  break;
+      case 'interface':  rInterface();  break;
+      case 'agents':     rAgents();     break;
+      case 'rest':       rRest();       break;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  buildIcons();
+  buildNet();
+  initPhase('landscape');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+<noscript>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(7,13,16,.96);border-top:1px solid rgba(159,232,219,.08);padding:12px clamp(16px,4vw,40px);font-family:monospace;font-size:10px;color:rgba(159,232,219,.55);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.8rem;">
+  <a href="/" style="color:rgba(159,232,219,.7);">dewfog</a>
+  <a href="/double-slit.html" style="color:rgba(159,232,219,.55);">double slit</a>
+  <a href="/emc2.html" style="color:rgba(159,232,219,.55);">e=mc²</a>
+  <a href="/entanglement.html" style="color:rgba(159,232,219,.55);">entanglement</a>
+  <a href="/near-death.html" style="color:rgba(159,232,219,.55);">near death</a>
+  <a href="/oneness.html" style="color:rgba(159,232,219,.55);">oneness</a>
+  <a href="/superposition.html" style="color:rgba(159,232,219,.55);">superposition</a>
+  <a href="/holographic.html" style="color:rgba(159,232,219,.55);">holographic</a>
+  <a href="/many-worlds.html" style="color:rgba(159,232,219,.55);">many worlds</a>
+  <a href="/hard-problem.html" style="color:rgba(159,232,219,.55);">hard problem</a>
+  <a href="/entropy.html" style="color:rgba(159,232,219,.55);">entropy</a>
+  <a href="/universe.html" style="color:rgba(159,232,219,.55);">universe</a>
+  <a href="/black-hole.html" style="color:rgba(159,232,219,.55);">black hole</a>
+  <a href="/spacetime.html" style="color:rgba(159,232,219,.55);">spacetime</a>
+  <a href="/present-moment.html" style="color:rgba(159,232,219,.55);">present moment</a>
+  <a href="/default-mode.html" style="color:rgba(159,232,219,.55);">default mode</a>
+  <a href="/interface-theory.html" style="color:rgba(159,232,219,.55);">interface theory</a>
+</div>
+</noscript>
+</body>
+</html>
