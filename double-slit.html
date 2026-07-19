@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>double slit — dewfog</title>
-  <meta name="description" content="Watch a particle become a wave. The double slit experiment — the strangest result in physics. Toggle the observer and watch the interference pattern appear and vanish.">
+  <title>The double slit experiment, explained simply — dewfog</title>
+  <meta name="description" content="Fire a single particle at two slits and it behaves like a wave — until you watch which slit it goes through. See the strangest experiment in physics, animated.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://dewfog.com/double-slit.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dewfog.com/double-slit.html">
-  <meta property="og:title" content="the double slit — dewfog">
-  <meta property="og:description" content="Watch a particle become a wave. The double slit experiment — the strangest result in physics. Toggle the observer and watch the interference pattern appear and vanish.">
+  <meta property="og:title" content="The double slit experiment, explained simply — dewfog">
+  <meta property="og:description" content="Fire a single particle at two slits and it behaves like a wave — until you watch which slit it goes through. See the strangest experiment in physics, animated.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="the double slit — dewfog">
-  <meta name="twitter:description" content="Watch a particle become a wave. The double slit experiment — the strangest result in physics. Toggle the observer and watch the interference pattern appear and vanish.">
+  <meta name="twitter:title" content="The double slit experiment, explained simply — dewfog">
+  <meta name="twitter:description" content="Watch a particle turn into a wave — the double slit experiment, animated and explained simply.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,10 +148,10 @@
     <div class="subtitle">wave &middot; particle &middot; observer</div>
   </div>
   <div id="bottom-ui">
-    <div id="status">unobserved &mdash; interference pattern forming</div>
+    <div id="status">not watched &mdash; a wave pattern is building up</div>
     <button id="observer-btn">observe</button>
   </div>
-  <div id="info">A single particle fired at two slits produces an interference pattern — as if it passes through both simultaneously. Observing which slit the particle uses causes the pattern to collapse to two classical bands. The act of measurement determines the outcome.</div>
+  <div id="info">Fire a single particle at two slits, and it lands like a wave that went through both at once — building up a striped pattern over time. But watch which slit it actually uses, and that pattern disappears, leaving two plain bands instead. Just the act of watching changes the result.</div>
 </div>
 
 <div id="vignette"></div>
@@ -530,12 +530,12 @@ btn.addEventListener('click', () => {
   if (observed) {
     btn.textContent = 'stop observing';
     btn.classList.add('observed');
-    statusEl.textContent = 'observed — wave function collapsed to two bands';
+    statusEl.textContent = 'watched — the pattern collapses to two bands';
     statusEl.classList.add('observed');
   } else {
     btn.textContent = 'observe';
     btn.classList.remove('observed');
-    statusEl.textContent = 'unobserved — interference pattern forming';
+    statusEl.textContent = 'not watched — a wave pattern is building up';
     statusEl.classList.remove('observed');
   }
 });

@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>quantum superposition — dewfog</title>
-  <meta name="description" content="A quantum system existing in all states at once — until you look. An interactive visualization of superposition, wave function collapse, and the observer effect.">
+  <title>Quantum superposition, explained simply — dewfog</title>
+  <meta name="description" content="A quantum object can exist in two states at once — until the moment you measure it and it has to pick one. A simple animated look at quantum superposition.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://dewfog.com/superposition.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dewfog.com/superposition.html">
-  <meta property="og:title" content="quantum superposition — dewfog">
-  <meta property="og:description" content="A quantum system existing in all states at once — until you look. An interactive visualization of superposition, wave function collapse, and the observer effect.">
+  <meta property="og:title" content="Quantum superposition, explained simply — dewfog">
+  <meta property="og:description" content="A quantum object can exist in two states at once — until the moment you measure it and it has to pick one. A simple animated look at quantum superposition.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="quantum superposition — dewfog">
-  <meta name="twitter:description" content="A quantum system existing in all states at once — until you look. An interactive visualization of superposition, wave function collapse, and the observer effect.">
+  <meta name="twitter:title" content="Quantum superposition, explained simply — dewfog">
+  <meta name="twitter:description" content="How can something be two things at once until you look? Quantum superposition, explained simply.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,7 +78,7 @@
     <div class="subtitle">state · uncertainty · collapse</div>
   </div>
   <div id="status"></div>
-  <div id="info">A quantum system simultaneously occupies multiple states, described by a wave function governed by Schrödinger's equation. Upon measurement, the wave function collapses to one outcome — the probability of each given by the square of its amplitude. How and why collapse occurs remains one of the central unresolved questions in physics.</div>
+  <div id="info">A quantum object doesn't have to be in just one state — it can exist in a mix of multiple states at the same time. But the instant you measure it, that mix collapses down to a single, definite outcome, with some outcomes more likely than others. Why measuring something forces it to pick just one state — and how that actually happens — is still one of the biggest open questions in physics.</div>
 </div>
 
 <div id="vignette"></div>
@@ -103,8 +103,8 @@ let result = null; // 0 = teal/up, 1 = amber/down
 
 function initPhase(p) {
   phase = p; phaseF = 0;
-  if (p === 'superpose')  status.textContent = 'undefined — both states coexist simultaneously';
-  else if (p === 'measure') { result = Math.random() < .5 ? 0 : 1; status.textContent = 'observing — wave function collapsing'; }
+  if (p === 'superpose')  status.textContent = 'undefined — both states exist at once';
+  else if (p === 'measure') { result = Math.random() < .5 ? 0 : 1; status.textContent = "measuring — it's collapsing to one state"; }
   else status.textContent = '';
 }
 

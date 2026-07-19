@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>spacetime curvature — dewfog</title>
-  <meta name="description" content="Mass bends the fabric of spacetime — and that curvature is what we call gravity. An interactive visualization of general relativity, geodesics, and gravitational time dilation.">
+  <title>How gravity really works: spacetime curvature — dewfog</title>
+  <meta name="description" content="Gravity isn't a force pulling things together — it's mass bending the shape of space and time itself. A simple animated explanation of general relativity.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://dewfog.com/spacetime.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dewfog.com/spacetime.html">
-  <meta property="og:title" content="spacetime curvature — dewfog">
-  <meta property="og:description" content="Mass bends the fabric of spacetime — and that curvature is what we call gravity. An interactive visualization of general relativity, geodesics, and gravitational time dilation.">
+  <meta property="og:title" content="How gravity really works: spacetime curvature — dewfog">
+  <meta property="og:description" content="Gravity isn't a force pulling things together — it's mass bending the shape of space and time itself. A simple animated explanation of general relativity.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="spacetime curvature — dewfog">
-  <meta name="twitter:description" content="Mass bends the fabric of spacetime — and that curvature is what we call gravity.">
+  <meta name="twitter:title" content="How gravity really works: spacetime curvature — dewfog">
+  <meta name="twitter:description" content="Gravity isn't a pull — it's curved space. General relativity, explained simply and animated.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,7 +44,7 @@
     <div class="subtitle">mass · geodesic · dilation</div>
   </div>
   <div id="status"></div>
-  <div id="info">Einstein's general relativity describes gravity not as a force but as the curvature of spacetime caused by mass and energy. Objects follow geodesics — the straightest paths through curved spacetime. Clocks run slower in stronger gravitational fields: GPS satellites must correct for this effect to remain accurate.</div>
+  <div id="info">Einstein's theory of general relativity says gravity isn't really a force at all — it's the bending of space and time caused by mass. Objects don't get pulled toward each other; they simply follow the straightest possible path through space that's been curved by something heavy nearby. One strange result: clocks run slightly slower the closer they are to a massive object. GPS satellites have to correct for this tiny effect, or their location data would drift off within minutes.</div>
 </div>
 <div id="vignette"></div>
 <script>
@@ -65,7 +65,7 @@ const DUR    = { flat: 130, mass: 205, orbit: 295, light: 190, dilation: 215, re
 const MSGS = {
   flat:     'flat spacetime — no mass, no curvature',
   mass:     'mass curves spacetime — the heavier, the deeper the well',
-  orbit:    'objects follow geodesics — straight lines through curved spacetime',
+  orbit:    'orbits are just straight paths through curved space',
   light:    'light bends around mass — gravitational lensing',
   dilation: 'time runs slower near mass — gravitational time dilation',
   rest:     '',
@@ -282,7 +282,7 @@ function rOrbit() {
   }
 
   if (t > 0.3) {
-    lbl('geodesic orbits', cx, cy + Math.min(W,H)*0.48, TEAL, Math.min((t-0.3)*3,1)*a*0.32, 7);
+    lbl('straight paths through curved space', cx, cy + Math.min(W,H)*0.48, TEAL, Math.min((t-0.3)*3,1)*a*0.32, 7);
   }
 }
 

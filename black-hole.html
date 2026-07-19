@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>black hole — dewfog</title>
-  <meta name="description" content="Accretion, Hawking radiation, and the information paradox. An interactive visualization of the strangest object in the universe — and the question it leaves open.">
+  <title>What happens if you fall into a black hole? — dewfog</title>
+  <meta name="description" content="See how a black hole traps light, heats matter to millions of degrees, and slowly leaks radiation — a simple animated explanation of what happens if you fall in.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://dewfog.com/black-hole.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dewfog.com/black-hole.html">
-  <meta property="og:title" content="black hole — dewfog">
-  <meta property="og:description" content="Accretion, Hawking radiation, and the information paradox. An interactive visualization of the strangest object in the universe — and the question it leaves open.">
+  <meta property="og:title" content="What happens if you fall into a black hole? — dewfog">
+  <meta property="og:description" content="See how a black hole traps light, heats matter to millions of degrees, and slowly leaks radiation — a simple animated explanation of what happens if you fall in.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="black hole — dewfog">
-  <meta name="twitter:description" content="Accretion, Hawking radiation, and the information paradox.">
+  <meta name="twitter:title" content="What happens if you fall into a black hole? — dewfog">
+  <meta name="twitter:description" content="How black holes trap light, heat matter, and slowly evaporate — explained simply, animated.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,7 +44,7 @@
     <div class="subtitle">horizon · radiation · paradox</div>
   </div>
   <div id="status"></div>
-  <div id="info">Rotating black holes heat accreted matter to millions of degrees. At the event horizon, escape velocity exceeds the speed of light. Hawking showed in 1974 that quantum effects near the horizon produce a slow thermal radiation — causing the black hole to gradually evaporate. Whether information falling in is destroyed or re-emitted remains unresolved.</div>
+  <div id="info">As matter spirals into a black hole, it heats up to millions of degrees. Past a boundary called the event horizon, gravity is so strong that not even light can escape. In 1974, physicist Stephen Hawking showed that black holes leak a faint stream of radiation and slowly shrink over time. What actually happens to anything that falls in — destroyed forever, or somehow preserved — is still an open question.</div>
 </div>
 <div id="vignette"></div>
 <script>
@@ -62,7 +62,7 @@ const PHASES = ['disk', 'radiate', 'paradox', 'rest'];
 const DUR    = { disk: 280, radiate: 260, paradox: 170, rest: 105 };
 const MSGS   = {
   disk:    'matter spirals inward — heating to millions of degrees',
-  radiate: 'hawking radiation — quantum pairs at the horizon',
+  radiate: 'hawking radiation — particle pairs appear at the edge',
   paradox: 'what happens to information when it falls in?',
   rest:    '',
 };
@@ -233,7 +233,7 @@ function rParadox() {
 
   const la = Math.min(t * 3, 1) * a;
   lbl('information cannot escape', cx, cy - PHOTO() - 32, WHITE, la * 0.32, 7);
-  lbl('yet quantum mechanics forbids its destruction', cx, cy + BHR() + 24, AMBER, la * 0.28, 7);
+  lbl("but physics says it can't simply vanish", cx, cy + BHR() + 24, AMBER, la * 0.28, 7);
 
   // Pulsing question glow around the BH
   const pulse = 0.5 + 0.5 * Math.sin(phaseF * 0.14);

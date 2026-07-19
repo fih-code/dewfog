@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>e = mc² — dewfog</title>
-  <meta name="description" content="A gamma photon becomes matter, then matter becomes light again. An interactive visualization of pair production and annihilation — Einstein's most famous equation made visible.">
+  <title>e = mc²: how mass and energy are the same — dewfog</title>
+  <meta name="description" content="Watch a burst of light turn into matter, then back into light again — a simple animated explanation of Einstein's famous equation, e = mc².">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://dewfog.com/emc2.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dewfog.com/emc2.html">
-  <meta property="og:title" content="e = mc² — dewfog">
-  <meta property="og:description" content="A gamma photon becomes matter, then matter becomes light again. An interactive visualization of pair production and annihilation — Einstein's most famous equation made visible.">
+  <meta property="og:title" content="e = mc²: how mass and energy are the same — dewfog">
+  <meta property="og:description" content="Watch a burst of light turn into matter, then back into light again — a simple animated explanation of Einstein's famous equation, e = mc².">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="e = mc² — dewfog">
-  <meta name="twitter:description" content="A gamma photon becomes matter, then matter becomes light again. An interactive visualization of pair production and annihilation — Einstein's most famous equation made visible.">
+  <meta name="twitter:title" content="e = mc²: how mass and energy are the same — dewfog">
+  <meta name="twitter:description" content="See light become matter and back again — e = mc² explained simply, animated.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,7 +91,7 @@
     <div class="subtitle">mass · energy · equivalence</div>
   </div>
   <div id="status"></div>
-  <div id="info">A gamma photon with energy equal to 2mₑc² converts into an electron-positron pair in the field of an atomic nucleus. The pair forms a bound system called positronium, spiraling inward until they annihilate — producing two gamma photons of equal energy. Mass and energy are equivalent.</div>
+  <div id="info">A burst of pure energy — a gamma ray — can turn into a pair of particles: an electron and its opposite, a positron. For a moment they circle each other, then collide and turn back into pure energy as two flashes of light. This is Einstein's famous equation in action: mass and energy are two forms of the same thing, and one can turn into the other.</div>
 </div>
 
 <div id="vignette"></div>
@@ -130,22 +130,22 @@ function initPhase(p) {
   phase = p; phaseF = 0;
   if (p === 'photon_in') {
     phX = -25; phTrail = [];
-    status.textContent = 'gamma photon — E = 2mₑc²';
+    status.textContent = 'a burst of pure light energy';
   } else if (p === 'pair_produce') {
-    status.textContent = 'pair production — energy becomes matter';
+    status.textContent = 'energy becomes matter';
   } else if (p === 'orbit') {
     orR = 0; orAngle = -Math.PI / 4;
     eTr = []; pTr = [];
-    status.textContent = 'positronium — electron & positron in orbit';
+    status.textContent = 'electron and positron circling each other';
   } else if (p === 'annihilate') {
     eTr = []; pTr = [];
     status.textContent = 'annihilation — matter becomes energy';
   } else if (p === 'photons_out') {
     outL = { x: cx, tr: [] };
     outR = { x: cx, tr: [] };
-    status.textContent = '2 gamma photons — E = 2mₑc²';
+    status.textContent = 'two flashes of pure light energy';
   } else if (p === 'pause') {
-    status.textContent = 'e = mc²  —  mass and energy are equivalent';
+    status.textContent = 'e = mc²  —  mass and energy are two forms of the same thing';
   }
 }
 

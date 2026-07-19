@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>quantum entanglement — dewfog</title>
-  <meta name="description" content="Two particles, one measurement, instant correlation across any distance. An interactive visualization of quantum entanglement and the EPR paradox — confirmed in labs, still unexplained.">
+  <title>Quantum entanglement, explained simply — dewfog</title>
+  <meta name="description" content="Two particles, one measurement — the result of one instantly matches the other, no matter the distance between them. A simple animated look at quantum entanglement.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://dewfog.com/entanglement.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dewfog.com/entanglement.html">
-  <meta property="og:title" content="quantum entanglement — dewfog">
-  <meta property="og:description" content="Two particles, one measurement, instant correlation across any distance. An interactive visualization of quantum entanglement and the EPR paradox — confirmed in labs, still unexplained.">
+  <meta property="og:title" content="Quantum entanglement, explained simply — dewfog">
+  <meta property="og:description" content="Two particles, one measurement — the result of one instantly matches the other, no matter the distance between them. A simple animated look at quantum entanglement.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="quantum entanglement — dewfog">
-  <meta name="twitter:description" content="Two particles, one measurement, instant correlation across any distance. An interactive visualization of quantum entanglement and the EPR paradox — confirmed in labs, still unexplained.">
+  <meta name="twitter:title" content="Quantum entanglement, explained simply — dewfog">
+  <meta name="twitter:description" content="How measuring one particle instantly affects its entangled partner — explained simply, animated.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,7 +78,7 @@
     <div class="subtitle">superposition · correlation · nonlocality</div>
   </div>
   <div id="status"></div>
-  <div id="info">Two particles created in a singlet state have undefined but anti-correlated spins. Measuring one particle instantly determines the other's spin — regardless of distance. This nonlocal correlation has been confirmed by Bell test experiments and excludes local hidden-variable explanations.</div>
+  <div id="info">Two particles can be created as a linked pair, with a property called spin that isn't set until someone measures it. The moment you measure one particle, you instantly know the other's result too — even if it's on the other side of the galaxy. This strange link has been tested and confirmed again and again in real labs, and it rules out any simple, ordinary explanation.</div>
 </div>
 
 <div id="vignette"></div>
@@ -116,11 +116,11 @@ function initPhase(p) {
   } else if (p === 'travel') {
     pA = { x: cx, trail: [] };
     pB = { x: cx, trail: [] };
-    status.textContent = 'superposition — spin undefined until measured';
+    status.textContent = "undefined — spin isn't set until it's measured";
   } else if (p === 'collapse') {
     resultA = Math.random() < .5 ? 'teal' : 'amber';
     resultB = resultA === 'teal' ? 'amber' : 'teal'; // singlet: always opposite
-    status.textContent = 'measured — result instantly correlated across any distance';
+    status.textContent = 'measured — the two results match instantly, at any distance';
   } else if (p === 'show') {
     status.textContent = `alice ${spinOf(resultA)}  ·  bob ${spinOf(resultB)}  —  always opposite`;
   } else {
