@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Are your cells really replaced every 7 years? — dewfog</title>
+  <meta name="description" content="The &quot;7 years&quot; claim is a whole-body average, not a fixed clock — and the tissue tied to your sense of self turns over least of all. A simple animated look at cell turnover and personal identity.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/cell-turnover.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/cell-turnover.html">
+  <meta property="og:title" content="Are your cells really replaced every 7 years? — dewfog">
+  <meta property="og:description" content="The &quot;7 years&quot; claim is a whole-body average, not a fixed clock — and the tissue tied to your sense of self turns over least of all. A simple animated look at cell turnover and personal identity.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Are your cells really replaced every 7 years? — dewfog">
+  <meta name="twitter:description" content="Are you a new person every 7 years? What cell turnover actually shows about identity — explained simply.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #top-nav {
+      position: absolute; top: 5%; left: 5%;
+      display: flex; align-items: center; gap: 16px;
+      pointer-events: none;
+    }
+    #home-btn {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #nav-burger {
+      display: flex; flex-direction: column; justify-content: center;
+      gap: 4px; background: none; border: none; padding: 4px; margin: 0;
+      cursor: pointer; pointer-events: auto;
+    }
+    #nav-burger span {
+      display: block; width: 15px; height: 1px;
+      background: rgba(159,232,219,.6);
+      transition: transform .25s ease, background .25s ease;
+    }
+    #nav-burger:hover span { background: rgba(159,232,219,.95); }
+    #nav-burger.open span:first-child { transform: translateY(2.5px) rotate(45deg); }
+    #nav-burger.open span:last-child  { transform: translateY(-2.5px) rotate(-45deg); }
+    #nav-links {
+      display: none; flex-direction: column; gap: 10px;
+      position: absolute; top: calc(100% + 14px); left: 0;
+      padding: 14px 18px; margin: 0;
+      background: rgba(7,13,16,.94);
+      border: 1px solid rgba(159,232,219,.08);
+      border-radius: 3px;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      pointer-events: auto;
+      max-height: 70vh; overflow-y: auto;
+    }
+    #nav-links.open { display: flex; animation: navDrop .18s ease; }
+    #nav-links a {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: .3em; text-transform: lowercase; text-decoration: none;
+      color: rgba(159,232,219,.55); white-space: nowrap;
+      transition: color .2s ease, text-shadow .2s ease;
+    }
+    #nav-links a:hover { color: rgba(159,232,219,.95); text-shadow: 0 0 10px rgba(159,232,219,.35); }
+    @keyframes navDrop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.95); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 13%; right: 5%;
+      max-width: min(280px, 84vw); font-size: 10px; line-height: 1.6;
+      letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
+      background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
+      padding: 10px 12px; border-radius: 3px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <div id="top-nav">
+    <a id="home-btn" href="/">home</a>
+    <button id="nav-burger" aria-label="menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+    <div id="nav-links" role="menu">
+      <a href="/double-slit.html">double slit</a>
+      <a href="/emc2.html">e=mc²</a>
+      <a href="/entanglement.html">entanglement</a>
+      <a href="/near-death.html">near death</a>
+      <a href="/oneness.html">oneness</a>
+      <a href="/superposition.html">superposition</a>
+      <a href="/holographic.html">holographic</a>
+      <a href="/many-worlds.html">many worlds</a>
+      <a href="/hard-problem.html">hard problem</a>
+      <a href="/entropy.html">entropy</a>
+      <a href="/universe.html">universe</a>
+      <a href="/black-hole.html">black hole</a>
+      <a href="/spacetime.html">spacetime</a>
+      <a href="/present-moment.html">present moment</a>
+      <a href="/default-mode.html">default mode</a>
+      <a href="/interface-theory.html">interface theory</a>
+      <a href="/antenna.html">the antenna</a>
+      <a href="/quantum-myths.html">quantum myths</a>
+      <a href="/fine-tuning.html">fine-tuning</a>
+      <a href="/self-inquiry.html">self-inquiry</a>
+    </div>
+  </div>
+  <div id="title-wrap">
+    <h1>the parts that persist</h1>
+    <div class="subtitle">turnover · persistence · identity</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">You've probably heard it: every cell in your body is replaced every seven years, so you're a completely different person than you were a decade ago. The real number, from a 2005 carbon-dating study, is a whole-body average — not a shared clock. Turnover is wildly uneven: gut lining renews in about five days, while cerebellar neurons, formed in early childhood, last a lifetime and never turn over at all. The tissue most tied to your sense of self is exactly the tissue that persists. That's a real problem for the idea that "you" are just your current atoms — but it's not evidence for anything beyond materialism either. Whether identity depends on matter at all is a question philosophers were already asking long before carbon dating existed.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const CREAM = '255,248,228';
+
+const PHASES = ['average', 'reveal', 'persist', 'rest'];
+const DUR    = { average: 170, reveal: 200, persist: 260, rest: 160 };
+const STATUS = {
+  average: 'the popular number: seven years',
+  reveal:  'hiding wild variation underneath',
+  persist: 'the parts tied to you barely change at all',
+  rest:    ''
+};
+
+let phase = 'average', phaseF = 0;
+let t = 0; // global slow clock, keeps advancing across phases for blink/glow continuity
+
+// tissue points along an implied "renewal time" axis, fast (left) -> never (right)
+// frac: 0..1 position along the usable span; stagger: reveal-order offset
+const POINTS = [
+  { frac: 0.00, label: 'gut lining',        sub: 'days',     blink: 0.42, amp: 0.85, stagger: 0.00, persistent: false },
+  { frac: 0.13, label: null,                sub: null,       blink: 0.30, amp: 0.75, stagger: 0.05, persistent: false },
+  { frac: 0.25, label: null,                sub: null,       blink: 0.17, amp: 0.60, stagger: 0.10, persistent: false },
+  { frac: 0.40, label: null,                sub: null,       blink: 0.07, amp: 0.35, stagger: 0.16, persistent: false },
+  { frac: 0.60, label: null,                sub: null,       blink: 0.045,amp: 0.22, stagger: 0.22, persistent: false },
+  { frac: 1.00, label: 'cerebellar neurons',sub: 'lifetime',  blink: 0,    amp: 0,   stagger: 0.30, persistent: true  }
+];
+const AVG = { frac: 0.50, stagger: 0.26 };
+
+let marginL, marginR, axisY;
+
+function easeInOutCubic(x) {
+  return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
+}
+function easeOutCubic(x) { return 1 - Math.pow(1-x, 3); }
+function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+
+function fracToX(f) { return marginL + f * (marginR - marginL); }
+
+function drawBg() {
+  ctx.fillStyle = 'rgba(11,19,22,0.16)';
+  ctx.fillRect(0, 0, W, H);
+}
+
+function glowDot(x, y, r, color, alpha, glowMult) {
+  glowMult = glowMult || 3.2;
+  if (alpha <= 0.002) return;
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, r * glowMult);
+  grad.addColorStop(0, `rgba(${color},${alpha})`);
+  grad.addColorStop(1, `rgba(${color},0)`);
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r * glowMult, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = `rgba(${color},${Math.min(1, alpha*1.3)})`;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function label(text, x, y, color, alpha, align) {
+  if (!text || alpha <= 0.01) return;
+  ctx.save();
+  ctx.textAlign = align || 'center';
+  ctx.font = '9px "Space Mono", monospace';
+  ctx.fillStyle = `rgba(${color},${alpha})`;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function drawAxis(alpha) {
+  if (alpha <= 0.01) return;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},${0.12 * alpha})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(marginL, axisY);
+  ctx.lineTo(marginR, axisY);
+  ctx.stroke();
+  ctx.restore();
+  label('fast turnover', marginL, axisY + 26, TEAL, 0.22 * alpha, 'left');
+  label('no turnover', marginR, axisY + 26, TEAL, 0.22 * alpha, 'right');
+}
+
+function initPhase(p) {
+  phase = p;
+  phaseF = 0;
+}
+
+function nextPhase() {
+  const i = PHASES.indexOf(phase);
+  const next = PHASES[(i + 1) % PHASES.length];
+  initPhase(next);
+}
+
+function renderAverage() {
+  const f = phaseF / DUR.average;
+  const settle = easeOutCubic(clamp01(f / 0.25)); // quick fade-in then hold
+  const pulse = 0.5 + 0.5 * Math.sin(t * 0.05);
+  const r = 5 + pulse * 1.6;
+  const alpha = 0.55 + pulse * 0.35;
+  drawAxis(0);
+  glowDot(cx, cy, r, CREAM, alpha * settle, 4.2);
+  label('"7 years"', cx, cy - 22, CREAM, 0.6 * settle, 'center');
+  label('the whole-body average', cx, cy + 30, TEAL, 0.28 * settle, 'center');
+}
+
+function renderReveal() {
+  const axisAlpha = clamp01(phaseF / (DUR.reveal * 0.5));
+  drawAxis(axisAlpha);
+
+  const total = DUR.reveal;
+  POINTS.forEach(p => {
+    const local = clamp01((phaseF/total - p.stagger) / (1 - 0.3));
+    const e = easeInOutCubic(local);
+    const x = cx + (fracToX(p.frac) - cx) * e;
+    const y = cy;
+    const r = 4;
+    const alpha = 0.25 + 0.55 * e;
+    // faint travel line while in flight
+    if (e > 0.001 && e < 0.999) {
+      ctx.save();
+      ctx.strokeStyle = `rgba(${TEAL},${0.08 * (1-e)})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.restore();
+    }
+    glowDot(x, y, r, p.persistent ? AMBER : TEAL, alpha, p.persistent ? 4 : 3);
+    if (p.label && e > 0.85) {
+      const la = (e - 0.85) / 0.15;
+      label(p.label, x, y - (p.persistent ? 24 : -30), p.persistent ? AMBER : TEAL, 0.55 * la, 'center');
+      if (p.sub) label(p.sub, x, y + (p.persistent ? 40 : 44), TEAL, 0.3 * la, 'center');
+    }
+  });
+
+  // average marker fades in mid-spread, now visibly not representative
+  const avgLocal = clamp01((phaseF/total - AVG.stagger) / (1 - 0.3));
+  const avgE = easeInOutCubic(avgLocal);
+  if (avgE > 0.01) {
+    const ax = fracToX(AVG.frac);
+    ctx.save();
+    ctx.strokeStyle = `rgba(${CREAM},${0.22 * avgE})`;
+    ctx.setLineDash([2, 4]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(ax, cy - 34);
+    ctx.lineTo(ax, cy + 34);
+    ctx.stroke();
+    ctx.restore();
+    glowDot(ax, cy, 2.6, CREAM, 0.4 * avgE, 3);
+    label('avg: "7 yrs"', ax, cy - 42, CREAM, 0.4 * avgE, 'center');
+  }
+}
+
+function renderPersistFrame(focusAmount) {
+  // focusAmount: 0 at start of persist -> 1 held through persist/rest, drives dim/brighten
+  drawAxis(1);
+
+  POINTS.forEach(p => {
+    const x = fracToX(p.frac);
+    const y = cy;
+    if (p.persistent) {
+      const pulse = 0.5 + 0.5 * Math.sin(t * 0.02);
+      const r = 5.5 + pulse * 1.2;
+      const alpha = 0.55 + 0.4 * focusAmount + pulse * 0.15;
+      glowDot(x, y, r, AMBER, Math.min(1, alpha), 4.6);
+      label(p.label, x, y - 24, AMBER, 0.75, 'center');
+      label(p.sub, x, y + 40, AMBER, 0.4, 'center');
+    } else {
+      // fast tissues blink/flicker; the faster the turnover, the faster & harder the flicker
+      const flicker = p.blink > 0
+        ? (0.15 + 0.85 * Math.pow(0.5 + 0.5 * Math.sin(t * p.blink), 2))
+        : 1;
+      const baseAlpha = 0.55 - 0.42 * focusAmount; // dim out as focus shifts right
+      const alpha = Math.max(0.03, baseAlpha * flicker);
+      const r = 3.4 * (0.7 + 0.3 * flicker);
+      glowDot(x, y, r, TEAL, alpha, 3);
+      if (p.label) label(p.label, x, y - 30, TEAL, Math.max(0.08, 0.5 - 0.4*focusAmount), 'center');
+      if (p.sub) label(p.sub, x, y + 44, TEAL, Math.max(0.05, 0.3 - 0.25*focusAmount), 'center');
+    }
+  });
+
+  // average marker, now clearly de-emphasized — sits in the middle, unrepresentative
+  const ax = fracToX(AVG.frac);
+  const avgAlpha = Math.max(0.06, 0.32 - 0.22 * focusAmount);
+  ctx.save();
+  ctx.strokeStyle = `rgba(${CREAM},${avgAlpha * 0.7})`;
+  ctx.setLineDash([2, 4]);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(ax, cy - 34);
+  ctx.lineTo(ax, cy + 34);
+  ctx.stroke();
+  ctx.restore();
+  glowDot(ax, cy, 2.2, CREAM, avgAlpha, 3);
+  label('avg: "7 yrs"', ax, cy - 42, CREAM, avgAlpha, 'center');
+}
+
+function renderPersist() {
+  const focus = easeInOutCubic(clamp01(phaseF / (DUR.persist * 0.7)));
+  renderPersistFrame(focus);
+}
+
+function renderRest() {
+  const f = phaseF / DUR.rest;
+  // hold focus fully, then fade the whole scene out toward the loop point
+  const fadeOut = 1 - easeInOutCubic(clamp01((f - 0.55) / 0.45));
+  ctx.save();
+  ctx.globalAlpha = Math.max(0.02, fadeOut);
+  renderPersistFrame(1);
+  ctx.restore();
+}
+
+function frame() {
+  try {
+    drawBg();
+    t += 1;
+    switch (phase) {
+      case 'average': renderAverage(); break;
+      case 'reveal':  renderReveal();  break;
+      case 'persist': renderPersist();  break;
+      case 'rest':    renderRest();    break;
+    }
+    if (STATUS[phase] !== undefined) status.textContent = STATUS[phase];
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch (e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  marginL = W * 0.12;
+  marginR = W * 0.88;
+  axisY = cy;
+  ctx.fillStyle = '#0b1316';
+  ctx.fillRect(0, 0, W, H);
+  initPhase('average');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+
+// nav dropdown toggle
+(function () {
+  var burger = document.getElementById('nav-burger');
+  var links  = document.getElementById('nav-links');
+  if (!burger || !links) return;
+
+  burger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = links.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  document.addEventListener('pointerdown', function (e) {
+    if (!links.classList.contains('open')) return;
+    if (!links.contains(e.target) && e.target !== burger) {
+      links.classList.remove('open');
+      burger.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    }
+  });
+}());
+</script>
+
+<noscript>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(7,13,16,.96);border-top:1px solid rgba(159,232,219,.08);padding:12px clamp(16px,4vw,40px);font-family:monospace;font-size:10px;color:rgba(159,232,219,.55);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.8rem;">
+  <a href="/" style="color:rgba(159,232,219,.7);">dewfog</a>
+  <a href="/double-slit.html" style="color:rgba(159,232,219,.55);">double slit</a>
+  <a href="/emc2.html" style="color:rgba(159,232,219,.55);">e=mc²</a>
+  <a href="/entanglement.html" style="color:rgba(159,232,219,.55);">entanglement</a>
+  <a href="/near-death.html" style="color:rgba(159,232,219,.55);">near death</a>
+  <a href="/oneness.html" style="color:rgba(159,232,219,.55);">oneness</a>
+  <a href="/superposition.html" style="color:rgba(159,232,219,.55);">superposition</a>
+  <a href="/holographic.html" style="color:rgba(159,232,219,.55);">holographic</a>
+  <a href="/many-worlds.html" style="color:rgba(159,232,219,.55);">many worlds</a>
+  <a href="/hard-problem.html" style="color:rgba(159,232,219,.55);">hard problem</a>
+  <a href="/entropy.html" style="color:rgba(159,232,219,.55);">entropy</a>
+  <a href="/universe.html" style="color:rgba(159,232,219,.55);">universe</a>
+  <a href="/black-hole.html" style="color:rgba(159,232,219,.55);">black hole</a>
+  <a href="/spacetime.html" style="color:rgba(159,232,219,.55);">spacetime</a>
+  <a href="/present-moment.html" style="color:rgba(159,232,219,.55);">present moment</a>
+  <a href="/default-mode.html" style="color:rgba(159,232,219,.55);">default mode</a>
+  <a href="/interface-theory.html" style="color:rgba(159,232,219,.55);">interface theory</a>
+  <a href="/antenna.html" style="color:rgba(159,232,219,.55);">the antenna</a>
+  <a href="/quantum-myths.html" style="color:rgba(159,232,219,.55);">quantum myths</a>
+  <a href="/fine-tuning.html" style="color:rgba(159,232,219,.55);">fine-tuning</a>
+  <a href="/self-inquiry.html" style="color:rgba(159,232,219,.55);">self-inquiry</a>
+  <a href="/cell-turnover.html" style="color:rgba(159,232,219,.55);">the parts that persist</a>
+</div>
+</noscript>
+</body>
+</html>
