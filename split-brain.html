@@ -170,7 +170,7 @@ const STATUS = {
 let phase = 'intact', phaseF = 0;
 let t = 0;
 
-let hemiL, hemiR, midY, gap;
+let hemiL, hemiR, midY, ovalRX, ovalRY;
 
 function easeInOutCubic(x) {
   return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
@@ -209,20 +209,40 @@ function label(text, x, y, color, alpha, align) {
   ctx.restore();
 }
 
-function drawHemisphereOutline(x, y, color, alpha) {
+function drawBrainOutline(alpha) {
   if (alpha <= 0.01) return;
   ctx.save();
-  ctx.strokeStyle = `rgba(${color},${alpha})`;
+  ctx.strokeStyle = `rgba(${TEAL},${0.2 * alpha})`;
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.ellipse(x, y, 46, 62, 0, 0, Math.PI * 2);
+  ctx.ellipse(cx, midY, ovalRX, ovalRY, 0, 0, Math.PI * 2);
   ctx.stroke();
   ctx.restore();
 }
 
+// the vertical seam is the interhemispheric fissure — the natural gap
+// the bridge crosses; drawing brain-as-one-oval-split-in-two is what
+// makes "these are the two halves of one brain" legible at a glance
+function drawFissure(alpha) {
+  if (alpha <= 0.01) return;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},${0.24 * alpha})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx, midY - ovalRY * 0.96);
+  ctx.lineTo(cx, midY + ovalRY * 0.96);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawHemisphereLabels(alpha) {
+  label('left', hemiL, midY + ovalRY * 0.73, TEAL, 0.4 * alpha, 'center');
+  label('right', hemiR, midY + ovalRY * 0.73, TEAL, 0.4 * alpha, 'center');
+}
+
 function drawBridge(widthFrac, alpha, color) {
   if (widthFrac <= 0.001 || alpha <= 0.01) return;
-  const fullW = (hemiR - hemiL) * 0.5;
+  const fullW = ovalRX * 0.85;
   const w = fullW * widthFrac;
   ctx.save();
   ctx.fillStyle = `rgba(${color},${alpha})`;
@@ -243,8 +263,9 @@ function drawBridge(widthFrac, alpha, color) {
 function renderIntact() {
   const f = phaseF / DUR.intact;
   const settle = easeOutCubic(clamp01(f / 0.2));
-  drawHemisphereOutline(hemiL, midY, TEAL, 0.16 * settle);
-  drawHemisphereOutline(hemiR, midY, TEAL, 0.16 * settle);
+  drawBrainOutline(settle);
+  drawFissure(settle);
+  drawHemisphereLabels(settle);
   drawBridge(1, 0.5 * settle, TEAL);
   const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
   const r = 5 + pulse * 1.5;
@@ -257,8 +278,9 @@ function renderIntact() {
 function renderSevered() {
   const f = phaseF / DUR.severed;
   const cut = easeInOutCubic(clamp01(f / 0.35));
-  drawHemisphereOutline(hemiL, midY, TEAL, 0.16);
-  drawHemisphereOutline(hemiR, midY, TEAL, 0.16);
+  drawBrainOutline(1);
+  drawFissure(1);
+  drawHemisphereLabels(1);
   drawBridge(1 - cut, 0.5 * (1 - cut), TEAL);
   if (cut > 0.3) {
     const ga = (cut - 0.3) / 0.7;
@@ -282,8 +304,9 @@ function renderSliver() {
   const f = phaseF / DUR.sliver;
   const grow = easeInOutCubic(clamp01(f / 0.3));
   const resync = easeInOutCubic(clamp01((f - 0.3) / 0.5));
-  drawHemisphereOutline(hemiL, midY, TEAL, 0.16);
-  drawHemisphereOutline(hemiR, midY, TEAL, 0.16);
+  drawBrainOutline(1);
+  drawFissure(1);
+  drawHemisphereLabels(1);
   drawBridge(0.06 * grow, 0.7 * grow, AMBER);
   const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
   const r = 5 + pulse * 1.5;
@@ -299,8 +322,9 @@ function renderRest() {
   const fadeOut = 1 - easeInOutCubic(clamp01((f - 0.55) / 0.45));
   ctx.save();
   ctx.globalAlpha = Math.max(0.02, fadeOut);
-  drawHemisphereOutline(hemiL, midY, TEAL, 0.16);
-  drawHemisphereOutline(hemiR, midY, TEAL, 0.16);
+  drawBrainOutline(1);
+  drawFissure(1);
+  drawHemisphereLabels(1);
   drawBridge(0.06, 0.7, AMBER);
   const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
   const r = 5 + pulse * 1.5;
@@ -341,8 +365,10 @@ function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   cx = W * .5; cy = H * .5;
-  hemiL = cx - Math.min(140, W * 0.09);
-  hemiR = cx + Math.min(140, W * 0.09);
+  ovalRX = Math.max(70, Math.min(150, W * 0.11));
+  ovalRY = ovalRX * 0.74;
+  hemiL = cx - ovalRX * 0.45;
+  hemiR = cx + ovalRX * 0.45;
   midY = cy;
   ctx.fillStyle = '#0b1316';
   ctx.fillRect(0, 0, W, H);
