@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Do split-brain patients have two minds? — dewfog</title>
-  <meta name="description" content="A 2025 study found a single intact centimeter of corpus callosum was enough to keep two hemispheres fully synchronized. A simple animated look at split-brain surgery and the unity of consciousness.">
+  <title>Does DMT reveal a hidden reality, or make one up? — dewfog</title>
+  <meta name="description" content="DMT and ayahuasca reliably produce vivid, often entity-populated experiences many rate as more real than waking life. A simple animated look at the mechanism, the debunked 'brain releases DMT at death' myth, and what the finding does and doesn't settle.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://dewfog.com/split-brain.html">
+  <link rel="canonical" href="https://dewfog.com/realer-than-real.html">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://dewfog.com/split-brain.html">
-  <meta property="og:title" content="Do split-brain patients have two minds? — dewfog">
-  <meta property="og:description" content="A 2025 study found a single intact centimeter of corpus callosum was enough to keep two hemispheres fully synchronized. A simple animated look at split-brain surgery and the unity of consciousness.">
+  <meta property="og:url" content="https://dewfog.com/realer-than-real.html">
+  <meta property="og:title" content="Does DMT reveal a hidden reality, or make one up? — dewfog">
+  <meta property="og:description" content="DMT and ayahuasca reliably produce vivid, often entity-populated experiences many rate as more real than waking life. A simple animated look at the mechanism, the debunked 'brain releases DMT at death' myth, and what the finding does and doesn't settle.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Do split-brain patients have two minds? — dewfog">
-  <meta name="twitter:description" content="Does cutting the bridge between hemispheres split the mind in two? What a 2025 case actually showed — explained simply.">
+  <meta name="twitter:title" content="Does DMT reveal a hidden reality, or make one up? — dewfog">
+  <meta name="twitter:description" content="A molecule that reliably makes people feel they've met someone else, somewhere realer than here. Explained simply.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,15 +135,15 @@
       <a href="/fine-tuning.html">fine-tuning</a>
       <a href="/self-inquiry.html">self-inquiry</a>
       <a href="/cell-turnover.html">the parts that persist</a>
-      <a href="/realer-than-real.html">realer than real</a>
+      <a href="/split-brain.html">the sliver that held</a>
     </div>
   </div>
   <div id="title-wrap">
-    <h1>the sliver that held</h1>
-    <div class="subtitle">callosum · synchrony · unity</div>
+    <h1>realer than real</h1>
+    <div class="subtitle">dmt · receptor · reproducible</div>
   </div>
   <div id="status"></div>
-  <div id="info">In 2025, a rare surgical case let researchers scan a split-brain patient whose corpus callosum wasn't fully severed — a surgeon stopped at roughly one intact centimeter of fiber, to protect a nearby artery. That patient's two hemispheres showed full, healthy synchrony, indistinguishable from someone with no surgery at all, while patients with a complete cut showed clear disconnection. It's a striking single case, not yet a general rule — and it doesn't settle the older, still-unresolved argument over whether split-brain patients ever really had two separate conscious minds to begin with. What it adds is one more entry in that debate: whether the unity you feel right now is a hard yes-or-no fact, or something built in degrees.</div>
+  <div id="info">DMT — the compound in ayahuasca — is one of the fastest, most potent psychedelics known. On it, brain rhythms destabilize, cross-cortical connectivity spikes, and close to half of users report encountering some kind of entity, usually described as a guide. A popular claim says the brain floods itself with this molecule at death — a 2026 study looking for the biological hardware that would require found essentially none of it. What's left is still striking: one receptor, activated on command, reliably producing an experience rated more real than everyday life. Whether that's manufactured from nothing, or filtering something out, isn't settled by knowing the mechanism.</div>
 </div>
 
 <div id="vignette"></div>
@@ -159,25 +159,31 @@ const TEAL  = '159,232,219';
 const AMBER = '240,198,154';
 const CREAM = '255,248,228';
 
-const PHASES = ['intact', 'severed', 'sliver', 'rest'];
-const DUR    = { intact: 170, severed: 190, sliver: 220, rest: 160 };
-const STATUS = {
-  intact:  'corpus callosum intact — hemispheres synchronized',
-  severed: 'fully severed — synchrony breaks apart',
-  sliver:  'one centimeter left — synchrony returns, whole',
-  rest:    ''
-};
+const N_SAT = 9;
+const ENTITY_IDX = 4;
 
-let phase = 'intact', phaseF = 0;
-let t = 0;
-
-let hemiL, hemiR, midY, ovalRX, ovalRY;
+let hub, ringR, sats = [];
 
 function easeInOutCubic(x) {
   return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
 }
 function easeOutCubic(x) { return 1 - Math.pow(1-x, 3); }
 function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+
+const PHASES = ['baseline', 'binding', 'open', 'entity', 'settle', 'rest'];
+const DUR    = { baseline: 140, binding: 70, open: 130, entity: 170, settle: 120, rest: 110 };
+const STATUS = {
+  baseline: 'ordinary network — one dominant hub',
+  binding:  'DMT binds a serotonin receptor',
+  open:     'hub dysregulates — connections proliferate',
+  entity:   'many report an encounter — often a guide',
+  settle:   'effect resolves — hub reforms',
+  rest:     ''
+};
+
+let phase = 'baseline', phaseF = 0;
+let t = 0;
+let molecule = null;
 
 function drawBg() {
   ctx.fillStyle = 'rgba(11,19,22,0.16)';
@@ -210,134 +216,126 @@ function label(text, x, y, color, alpha, align) {
   ctx.restore();
 }
 
-function drawBrainOutline(alpha) {
+function line(x0, y0, x1, y1, color, alpha, width) {
   if (alpha <= 0.01) return;
   ctx.save();
-  ctx.strokeStyle = `rgba(${TEAL},${0.2 * alpha})`;
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = `rgba(${color},${alpha})`;
+  ctx.lineWidth = width || 1;
   ctx.beginPath();
-  ctx.ellipse(cx, midY, ovalRX, ovalRY, 0, 0, Math.PI * 2);
+  ctx.moveTo(x0, y0);
+  ctx.lineTo(x1, y1);
   ctx.stroke();
   ctx.restore();
 }
 
-// the vertical seam is the interhemispheric fissure — the natural gap
-// the bridge crosses; drawing brain-as-one-oval-split-in-two is what
-// makes "these are the two halves of one brain" legible at a glance
-function drawFissure(alpha) {
-  if (alpha <= 0.01) return;
-  ctx.save();
-  ctx.strokeStyle = `rgba(${TEAL},${0.24 * alpha})`;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(cx, midY - ovalRY * 0.96);
-  ctx.lineTo(cx, midY + ovalRY * 0.96);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawHemisphereLabels(alpha) {
-  label('left', hemiL, midY + ovalRY * 0.73, TEAL, 0.4 * alpha, 'center');
-  label('right', hemiR, midY + ovalRY * 0.73, TEAL, 0.4 * alpha, 'center');
-}
-
-function drawBridge(widthFrac, alpha, color) {
-  if (widthFrac <= 0.001 || alpha <= 0.01) return;
-  const fullW = ovalRX * 0.85;
-  const w = fullW * widthFrac;
-  ctx.save();
-  ctx.fillStyle = `rgba(${color},${alpha})`;
-  const h = 7;
-  const rx = Math.min(3, w / 2);
-  const x0 = cx - w / 2, y0 = midY - h / 2;
-  ctx.beginPath();
-  ctx.moveTo(x0 + rx, y0);
-  ctx.arcTo(x0 + w, y0, x0 + w, y0 + h, rx);
-  ctx.arcTo(x0 + w, y0 + h, x0, y0 + h, rx);
-  ctx.arcTo(x0, y0 + h, x0, y0, rx);
-  ctx.arcTo(x0, y0, x0 + w, y0, rx);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-}
-
-function renderIntact() {
-  const f = phaseF / DUR.intact;
-  const settle = easeOutCubic(clamp01(f / 0.2));
-  drawBrainOutline(settle);
-  drawFissure(settle);
-  drawHemisphereLabels(settle);
-  drawBridge(1, 0.5 * settle, TEAL);
-  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
-  const r = 5 + pulse * 1.5;
-  const alpha = (0.55 + pulse * 0.35) * settle;
-  glowDot(hemiL, midY, r, TEAL, alpha, 3.4);
-  glowDot(hemiR, midY, r, TEAL, alpha, 3.4);
-  label('~250 million fibers', cx, midY - 46, TEAL, 0.3 * settle, 'center');
-}
-
-function renderSevered() {
-  const f = phaseF / DUR.severed;
-  const cut = easeInOutCubic(clamp01(f / 0.35));
-  drawBrainOutline(1);
-  drawFissure(1);
-  drawHemisphereLabels(1);
-  drawBridge(1 - cut, 0.5 * (1 - cut), TEAL);
-  if (cut > 0.3) {
-    const ga = (cut - 0.3) / 0.7;
-    ctx.save();
-    ctx.strokeStyle = `rgba(${AMBER},${0.35 * ga})`;
-    ctx.lineWidth = 1.4;
-    const gx1 = cx - 5, gx2 = cx + 5;
-    ctx.beginPath(); ctx.moveTo(gx1, midY - 12); ctx.lineTo(gx1 + 4, midY + 12); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(gx2, midY - 12); ctx.lineTo(gx2 - 4, midY + 12); ctx.stroke();
-    ctx.restore();
+function drawHubSpokes(alpha) {
+  for (let i = 0; i < N_SAT; i++) {
+    line(hub.x, hub.y, sats[i].x, sats[i].y, TEAL, 0.22 * alpha, 1);
   }
-  // desynchronized pulsing — independent phases per hemisphere
-  const pl = 0.5 + 0.5 * Math.sin(t * 0.07);
-  const pr = 0.5 + 0.5 * Math.sin(t * 0.031 + 2.1);
-  glowDot(hemiL, midY, 5 + pl * 1.5, TEAL, 0.5 + pl * 0.35, 3.4);
-  glowDot(hemiR, midY, 5 + pr * 1.5, AMBER, 0.5 + pr * 0.35, 3.4);
-  if (cut > 0.6) label('desynchronized', cx, midY - 46, AMBER, Math.min(1,(cut-0.6)/0.4) * 0.4, 'center');
 }
 
-function renderSliver() {
-  const f = phaseF / DUR.sliver;
-  const grow = easeInOutCubic(clamp01(f / 0.3));
-  const resync = easeInOutCubic(clamp01((f - 0.3) / 0.5));
-  drawBrainOutline(1);
-  drawFissure(1);
-  drawHemisphereLabels(1);
-  drawBridge(0.06 * grow, 0.7 * grow, AMBER);
-  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
-  const r = 5 + pulse * 1.5;
-  const alpha = 0.3 + 0.6 * resync + pulse * 0.15;
-  glowDot(hemiL, midY, r, TEAL, Math.min(1, alpha), 3.4);
-  glowDot(hemiR, midY, r, TEAL, Math.min(1, alpha), 3.4);
-  if (grow > 0.5) label('~1 cm of posterior fiber', cx, midY - 46, AMBER, Math.min(1,(grow-0.5)/0.5) * 0.45, 'center');
-  if (resync > 0.6) label('full synchrony, again', cx, midY + 56, TEAL, Math.min(1,(resync-0.6)/0.4) * 0.5, 'center');
+function drawCrossLinks(alpha) {
+  for (let i = 0; i < N_SAT; i++) {
+    const j = (i + 1) % N_SAT;
+    line(sats[i].x, sats[i].y, sats[j].x, sats[j].y, TEAL, 0.16 * alpha, 1);
+    const k = (i + 3) % N_SAT;
+    line(sats[i].x, sats[i].y, sats[k].x, sats[k].y, AMBER, 0.14 * alpha, 1);
+  }
+}
+
+function drawHub(alpha, dim) {
+  const pulse = 0.5 + 0.5 * Math.sin(t * 0.045);
+  const r = (6 + pulse * 1.6) * (dim === undefined ? 1 : 1 - 0.45 * dim);
+  const a = (0.55 + pulse * 0.35) * alpha * (dim === undefined ? 1 : 1 - 0.5 * dim);
+  glowDot(hub.x, hub.y, r, TEAL, Math.min(1, a), 3.6);
+}
+
+function drawSats(alpha, brightBoost) {
+  for (let i = 0; i < N_SAT; i++) {
+    const s = sats[i];
+    const pulse = 0.5 + 0.5 * Math.sin(t * 0.03 + s.ph);
+    const isEntity = (i === ENTITY_IDX) && brightBoost > 0.01;
+    const color = isEntity ? AMBER : TEAL;
+    const boost = isEntity ? brightBoost : 0;
+    const r = (3.2 + pulse * 1) + boost * 4;
+    const a = Math.min(1, (0.35 + pulse * 0.25) * alpha + boost * 0.6);
+    glowDot(s.x, s.y, r, color, a, isEntity ? 4.2 : 3);
+    if (isEntity && brightBoost > 0.4) {
+      label('a guide, encountered', s.x, s.y - 16, AMBER, Math.min(1, (brightBoost - 0.4) / 0.4) * 0.55, 'center');
+    }
+  }
+}
+
+function renderBaseline() {
+  const f = phaseF / DUR.baseline;
+  const settle = easeOutCubic(clamp01(f / 0.25));
+  drawHubSpokes(settle);
+  drawSats(settle, 0);
+  drawHub(settle);
+  label('~1 receptor, everywhere', cx, hub.y - 46, TEAL, 0.28 * settle, 'center');
+}
+
+function renderBinding() {
+  const f = clamp01(phaseF / DUR.binding);
+  drawHubSpokes(1);
+  drawSats(1, 0);
+  if (!molecule) {
+    const ang = Math.random() * Math.PI * 2;
+    molecule = { x0: cx + Math.cos(ang) * ringR * 1.6, y0: cy + Math.sin(ang) * ringR * 1.6 };
+  }
+  const e = easeInOutCubic(f);
+  const mx = molecule.x0 + (hub.x - molecule.x0) * e;
+  const my = molecule.y0 + (hub.y - molecule.y0) * e;
+  glowDot(mx, my, 3.5, CREAM, 0.9, 3.2);
+  drawHub(1);
+  if (f > 0.8) {
+    const flash = (f - 0.8) / 0.2;
+    glowDot(hub.x, hub.y, 6 + flash * 22, CREAM, (1 - flash) * 0.5, 2.4);
+  }
+}
+
+function renderOpen() {
+  const f = phaseF / DUR.open;
+  const grow = easeInOutCubic(clamp01(f / 0.5));
+  drawHubSpokes(1 - 0.4 * grow);
+  drawCrossLinks(grow);
+  drawSats(1, 0);
+  drawHub(1, grow);
+  if (grow > 0.5) label('network disintegrates, desegregates', cx, hub.y - 46, AMBER, Math.min(1, (grow - 0.5) / 0.5) * 0.42, 'center');
+}
+
+function renderEntity() {
+  const f = phaseF / DUR.entity;
+  const rise = easeInOutCubic(clamp01(f / 0.3));
+  const hold = clamp01((f - 0.3) / 0.5);
+  const fall = 1 - easeInOutCubic(clamp01((f - 0.8) / 0.2));
+  const boost = Math.min(rise, fall) * (hold >= 0 ? 1 : 1);
+  drawHubSpokes(0.6);
+  drawCrossLinks(1);
+  drawSats(1, boost);
+  drawHub(1, 1);
+}
+
+function renderSettle() {
+  const f = phaseF / DUR.settle;
+  const fade = 1 - easeInOutCubic(clamp01(f / 0.7));
+  drawHubSpokes(1 - 0.4 * fade + 0.4);
+  drawCrossLinks(fade);
+  drawSats(1, 0);
+  drawHub(1, fade);
+  if (fade < 0.5) label('effect resolves, hub reforms', cx, hub.y - 46, TEAL, Math.min(1, (0.5 - fade) / 0.5) * 0.4, 'center');
 }
 
 function renderRest() {
-  const f = phaseF / DUR.rest;
-  const fadeOut = 1 - easeInOutCubic(clamp01((f - 0.55) / 0.45));
-  ctx.save();
-  ctx.globalAlpha = Math.max(0.02, fadeOut);
-  drawBrainOutline(1);
-  drawFissure(1);
-  drawHemisphereLabels(1);
-  drawBridge(0.06, 0.7, AMBER);
-  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
-  const r = 5 + pulse * 1.5;
-  glowDot(hemiL, midY, r, TEAL, 0.9, 3.4);
-  glowDot(hemiR, midY, r, TEAL, 0.9, 3.4);
-  label('full synchrony, again', cx, midY + 56, TEAL, 0.5, 'center');
-  ctx.restore();
+  drawHubSpokes(1);
+  drawSats(1, 0);
+  drawHub(1);
 }
 
 function initPhase(p) {
   phase = p;
   phaseF = 0;
+  if (p === 'binding') molecule = null;
 }
 
 function nextPhase() {
@@ -351,10 +349,12 @@ function frame() {
     drawBg();
     t += 1;
     switch (phase) {
-      case 'intact':  renderIntact();  break;
-      case 'severed': renderSevered(); break;
-      case 'sliver':  renderSliver();  break;
-      case 'rest':    renderRest();    break;
+      case 'baseline': renderBaseline(); break;
+      case 'binding':  renderBinding();  break;
+      case 'open':     renderOpen();     break;
+      case 'entity':   renderEntity();   break;
+      case 'settle':   renderSettle();   break;
+      case 'rest':     renderRest();     break;
     }
     if (STATUS[phase] !== undefined) status.textContent = STATUS[phase];
     if (++phaseF >= DUR[phase]) nextPhase();
@@ -366,14 +366,20 @@ function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   cx = W * .5; cy = H * .5;
-  ovalRX = Math.max(70, Math.min(150, W * 0.11));
-  ovalRY = ovalRX * 0.74;
-  hemiL = cx - ovalRX * 0.45;
-  hemiR = cx + ovalRX * 0.45;
-  midY = cy;
+  ringR = Math.max(60, Math.min(140, Math.min(W, H) * 0.24));
+  hub = { x: cx, y: cy };
+  sats = [];
+  for (let i = 0; i < N_SAT; i++) {
+    const ang = (i / N_SAT) * Math.PI * 2 - Math.PI / 2;
+    sats.push({
+      x: cx + Math.cos(ang) * ringR,
+      y: cy + Math.sin(ang) * ringR,
+      ph: (i / N_SAT) * Math.PI * 2,
+    });
+  }
   ctx.fillStyle = '#0b1316';
   ctx.fillRect(0, 0, W, H);
-  initPhase('intact');
+  initPhase('baseline');
 }
 window.addEventListener('resize', resize);
 resize();
