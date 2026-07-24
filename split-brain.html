@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Are your cells really replaced every 7 years? — dewfog</title>
-  <meta name="description" content="The &quot;7 years&quot; claim is a whole-body average, not a fixed clock — and the tissue tied to your sense of self turns over least of all. A simple animated look at cell turnover and personal identity.">
+  <title>Do split-brain patients have two minds? — dewfog</title>
+  <meta name="description" content="A 2025 study found a single intact centimeter of corpus callosum was enough to keep two hemispheres fully synchronized. A simple animated look at split-brain surgery and the unity of consciousness.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://dewfog.com/cell-turnover.html">
+  <link rel="canonical" href="https://dewfog.com/split-brain.html">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://dewfog.com/cell-turnover.html">
-  <meta property="og:title" content="Are your cells really replaced every 7 years? — dewfog">
-  <meta property="og:description" content="The &quot;7 years&quot; claim is a whole-body average, not a fixed clock — and the tissue tied to your sense of self turns over least of all. A simple animated look at cell turnover and personal identity.">
+  <meta property="og:url" content="https://dewfog.com/split-brain.html">
+  <meta property="og:title" content="Do split-brain patients have two minds? — dewfog">
+  <meta property="og:description" content="A 2025 study found a single intact centimeter of corpus callosum was enough to keep two hemispheres fully synchronized. A simple animated look at split-brain surgery and the unity of consciousness.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Are your cells really replaced every 7 years? — dewfog">
-  <meta name="twitter:description" content="Are you a new person every 7 years? What cell turnover actually shows about identity — explained simply.">
+  <meta name="twitter:title" content="Do split-brain patients have two minds? — dewfog">
+  <meta name="twitter:description" content="Does cutting the bridge between hemispheres split the mind in two? What a 2025 case actually showed — explained simply.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -134,14 +134,15 @@
       <a href="/quantum-myths.html">quantum myths</a>
       <a href="/fine-tuning.html">fine-tuning</a>
       <a href="/self-inquiry.html">self-inquiry</a>
+      <a href="/cell-turnover.html">the parts that persist</a>
     </div>
   </div>
   <div id="title-wrap">
-    <h1>the parts that persist</h1>
-    <div class="subtitle">turnover · persistence · identity</div>
+    <h1>the sliver that held</h1>
+    <div class="subtitle">callosum · synchrony · unity</div>
   </div>
   <div id="status"></div>
-  <div id="info">You've probably heard it: every cell in your body is replaced every seven years, so you're a completely different person than you were a decade ago. The real number, from a 2005 carbon-dating study, is a whole-body average — not a shared clock. Turnover is wildly uneven: gut lining renews in about five days, while cerebellar neurons, formed in early childhood, last a lifetime and never turn over at all. The tissue most tied to your sense of self is exactly the tissue that persists. That's a real problem for the idea that "you" are just your current atoms — but it's not evidence for anything beyond materialism either. Whether identity depends on matter at all is a question philosophers were already asking long before carbon dating existed.</div>
+  <div id="info">In 2025, a rare surgical case let researchers scan a split-brain patient whose corpus callosum wasn't fully severed — a surgeon stopped at roughly one intact centimeter of fiber, to protect a nearby artery. That patient's two hemispheres showed full, healthy synchrony, indistinguishable from someone with no surgery at all, while patients with a complete cut showed clear disconnection. It's a striking single case, not yet a general rule — and it doesn't settle the older, still-unresolved argument over whether split-brain patients ever really had two separate conscious minds to begin with. What it adds is one more entry in that debate: whether the unity you feel right now is a hard yes-or-no fact, or something built in degrees.</div>
 </div>
 
 <div id="vignette"></div>
@@ -157,39 +158,25 @@ const TEAL  = '159,232,219';
 const AMBER = '240,198,154';
 const CREAM = '255,248,228';
 
-const PHASES = ['average', 'reveal', 'persist', 'rest'];
-const DUR    = { average: 170, reveal: 200, persist: 260, rest: 160 };
+const PHASES = ['intact', 'severed', 'sliver', 'rest'];
+const DUR    = { intact: 170, severed: 190, sliver: 220, rest: 160 };
 const STATUS = {
-  average: 'the popular number: seven years',
-  reveal:  'hiding wild variation underneath',
-  persist: 'the parts tied to you barely change at all',
+  intact:  'corpus callosum intact — hemispheres synchronized',
+  severed: 'fully severed — synchrony breaks apart',
+  sliver:  'one centimeter left — synchrony returns, whole',
   rest:    ''
 };
 
-let phase = 'average', phaseF = 0;
-let t = 0; // global slow clock, keeps advancing across phases for blink/glow continuity
+let phase = 'intact', phaseF = 0;
+let t = 0;
 
-// tissue points along an implied "renewal time" axis, fast (left) -> never (right)
-// frac: 0..1 position along the usable span; stagger: reveal-order offset
-const POINTS = [
-  { frac: 0.00, label: 'gut lining',        sub: 'days',     blink: 0.42, amp: 0.85, stagger: 0.00, persistent: false },
-  { frac: 0.13, label: null,                sub: null,       blink: 0.30, amp: 0.75, stagger: 0.05, persistent: false },
-  { frac: 0.25, label: null,                sub: null,       blink: 0.17, amp: 0.60, stagger: 0.10, persistent: false },
-  { frac: 0.40, label: null,                sub: null,       blink: 0.07, amp: 0.35, stagger: 0.16, persistent: false },
-  { frac: 0.60, label: null,                sub: null,       blink: 0.045,amp: 0.22, stagger: 0.22, persistent: false },
-  { frac: 1.00, label: 'cerebellar neurons',sub: 'lifetime',  blink: 0,    amp: 0,   stagger: 0.30, persistent: true  }
-];
-const AVG = { frac: 0.50, stagger: 0.26 };
-
-let marginL, marginR, axisY;
+let hemiL, hemiR, midY, gap;
 
 function easeInOutCubic(x) {
   return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
 }
 function easeOutCubic(x) { return 1 - Math.pow(1-x, 3); }
 function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-
-function fracToX(f) { return marginL + f * (marginR - marginL); }
 
 function drawBg() {
   ctx.fillStyle = 'rgba(11,19,22,0.16)';
@@ -222,18 +209,105 @@ function label(text, x, y, color, alpha, align) {
   ctx.restore();
 }
 
-function drawAxis(alpha) {
+function drawHemisphereOutline(x, y, color, alpha) {
   if (alpha <= 0.01) return;
   ctx.save();
-  ctx.strokeStyle = `rgba(${TEAL},${0.12 * alpha})`;
+  ctx.strokeStyle = `rgba(${color},${alpha})`;
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(marginL, axisY);
-  ctx.lineTo(marginR, axisY);
+  ctx.ellipse(x, y, 46, 62, 0, 0, Math.PI * 2);
   ctx.stroke();
   ctx.restore();
-  label('fast turnover', marginL, axisY + 26, TEAL, 0.22 * alpha, 'left');
-  label('no turnover', marginR, axisY + 26, TEAL, 0.22 * alpha, 'right');
+}
+
+function drawBridge(widthFrac, alpha, color) {
+  if (widthFrac <= 0.001 || alpha <= 0.01) return;
+  const fullW = (hemiR - hemiL) * 0.5;
+  const w = fullW * widthFrac;
+  ctx.save();
+  ctx.fillStyle = `rgba(${color},${alpha})`;
+  const h = 7;
+  const rx = Math.min(3, w / 2);
+  const x0 = cx - w / 2, y0 = midY - h / 2;
+  ctx.beginPath();
+  ctx.moveTo(x0 + rx, y0);
+  ctx.arcTo(x0 + w, y0, x0 + w, y0 + h, rx);
+  ctx.arcTo(x0 + w, y0 + h, x0, y0 + h, rx);
+  ctx.arcTo(x0, y0 + h, x0, y0, rx);
+  ctx.arcTo(x0, y0, x0 + w, y0, rx);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function renderIntact() {
+  const f = phaseF / DUR.intact;
+  const settle = easeOutCubic(clamp01(f / 0.2));
+  drawHemisphereOutline(hemiL, midY, TEAL, 0.16 * settle);
+  drawHemisphereOutline(hemiR, midY, TEAL, 0.16 * settle);
+  drawBridge(1, 0.5 * settle, TEAL);
+  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
+  const r = 5 + pulse * 1.5;
+  const alpha = (0.55 + pulse * 0.35) * settle;
+  glowDot(hemiL, midY, r, TEAL, alpha, 3.4);
+  glowDot(hemiR, midY, r, TEAL, alpha, 3.4);
+  label('~250 million fibers', cx, midY - 46, TEAL, 0.3 * settle, 'center');
+}
+
+function renderSevered() {
+  const f = phaseF / DUR.severed;
+  const cut = easeInOutCubic(clamp01(f / 0.35));
+  drawHemisphereOutline(hemiL, midY, TEAL, 0.16);
+  drawHemisphereOutline(hemiR, midY, TEAL, 0.16);
+  drawBridge(1 - cut, 0.5 * (1 - cut), TEAL);
+  if (cut > 0.3) {
+    const ga = (cut - 0.3) / 0.7;
+    ctx.save();
+    ctx.strokeStyle = `rgba(${AMBER},${0.35 * ga})`;
+    ctx.lineWidth = 1.4;
+    const gx1 = cx - 5, gx2 = cx + 5;
+    ctx.beginPath(); ctx.moveTo(gx1, midY - 12); ctx.lineTo(gx1 + 4, midY + 12); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gx2, midY - 12); ctx.lineTo(gx2 - 4, midY + 12); ctx.stroke();
+    ctx.restore();
+  }
+  // desynchronized pulsing — independent phases per hemisphere
+  const pl = 0.5 + 0.5 * Math.sin(t * 0.07);
+  const pr = 0.5 + 0.5 * Math.sin(t * 0.031 + 2.1);
+  glowDot(hemiL, midY, 5 + pl * 1.5, TEAL, 0.5 + pl * 0.35, 3.4);
+  glowDot(hemiR, midY, 5 + pr * 1.5, AMBER, 0.5 + pr * 0.35, 3.4);
+  if (cut > 0.6) label('desynchronized', cx, midY - 46, AMBER, Math.min(1,(cut-0.6)/0.4) * 0.4, 'center');
+}
+
+function renderSliver() {
+  const f = phaseF / DUR.sliver;
+  const grow = easeInOutCubic(clamp01(f / 0.3));
+  const resync = easeInOutCubic(clamp01((f - 0.3) / 0.5));
+  drawHemisphereOutline(hemiL, midY, TEAL, 0.16);
+  drawHemisphereOutline(hemiR, midY, TEAL, 0.16);
+  drawBridge(0.06 * grow, 0.7 * grow, AMBER);
+  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
+  const r = 5 + pulse * 1.5;
+  const alpha = 0.3 + 0.6 * resync + pulse * 0.15;
+  glowDot(hemiL, midY, r, TEAL, Math.min(1, alpha), 3.4);
+  glowDot(hemiR, midY, r, TEAL, Math.min(1, alpha), 3.4);
+  if (grow > 0.5) label('~1 cm of posterior fiber', cx, midY - 46, AMBER, Math.min(1,(grow-0.5)/0.5) * 0.45, 'center');
+  if (resync > 0.6) label('full synchrony, again', cx, midY + 56, TEAL, Math.min(1,(resync-0.6)/0.4) * 0.5, 'center');
+}
+
+function renderRest() {
+  const f = phaseF / DUR.rest;
+  const fadeOut = 1 - easeInOutCubic(clamp01((f - 0.55) / 0.45));
+  ctx.save();
+  ctx.globalAlpha = Math.max(0.02, fadeOut);
+  drawHemisphereOutline(hemiL, midY, TEAL, 0.16);
+  drawHemisphereOutline(hemiR, midY, TEAL, 0.16);
+  drawBridge(0.06, 0.7, AMBER);
+  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
+  const r = 5 + pulse * 1.5;
+  glowDot(hemiL, midY, r, TEAL, 0.9, 3.4);
+  glowDot(hemiR, midY, r, TEAL, 0.9, 3.4);
+  label('full synchrony, again', cx, midY + 56, TEAL, 0.5, 'center');
+  ctx.restore();
 }
 
 function initPhase(p) {
@@ -247,135 +321,14 @@ function nextPhase() {
   initPhase(next);
 }
 
-function renderAverage() {
-  const f = phaseF / DUR.average;
-  const settle = easeOutCubic(clamp01(f / 0.25)); // quick fade-in then hold
-  const pulse = 0.5 + 0.5 * Math.sin(t * 0.05);
-  const r = 5 + pulse * 1.6;
-  const alpha = 0.55 + pulse * 0.35;
-  drawAxis(0);
-  glowDot(cx, cy, r, CREAM, alpha * settle, 4.2);
-  label('"7 years"', cx, cy - 22, CREAM, 0.6 * settle, 'center');
-  label('the whole-body average', cx, cy + 30, TEAL, 0.28 * settle, 'center');
-}
-
-function renderReveal() {
-  const axisAlpha = clamp01(phaseF / (DUR.reveal * 0.5));
-  drawAxis(axisAlpha);
-
-  const total = DUR.reveal;
-  POINTS.forEach(p => {
-    const local = clamp01((phaseF/total - p.stagger) / (1 - 0.3));
-    const e = easeInOutCubic(local);
-    const x = cx + (fracToX(p.frac) - cx) * e;
-    const y = cy;
-    const r = 4;
-    const alpha = 0.25 + 0.55 * e;
-    // faint travel line while in flight
-    if (e > 0.001 && e < 0.999) {
-      ctx.save();
-      ctx.strokeStyle = `rgba(${TEAL},${0.08 * (1-e)})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      ctx.restore();
-    }
-    glowDot(x, y, r, p.persistent ? AMBER : TEAL, alpha, p.persistent ? 4 : 3);
-    if (p.label && e > 0.85) {
-      const la = (e - 0.85) / 0.15;
-      label(p.label, x, y - (p.persistent ? 24 : -30), p.persistent ? AMBER : TEAL, 0.55 * la, 'center');
-      if (p.sub) label(p.sub, x, y + (p.persistent ? 40 : 44), TEAL, 0.3 * la, 'center');
-    }
-  });
-
-  // average marker fades in mid-spread, now visibly not representative
-  const avgLocal = clamp01((phaseF/total - AVG.stagger) / (1 - 0.3));
-  const avgE = easeInOutCubic(avgLocal);
-  if (avgE > 0.01) {
-    const ax = fracToX(AVG.frac);
-    ctx.save();
-    ctx.strokeStyle = `rgba(${CREAM},${0.22 * avgE})`;
-    ctx.setLineDash([2, 4]);
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(ax, cy - 34);
-    ctx.lineTo(ax, cy + 34);
-    ctx.stroke();
-    ctx.restore();
-    glowDot(ax, cy, 2.6, CREAM, 0.4 * avgE, 3);
-    label('avg: "7 yrs"', ax, cy - 42, CREAM, 0.4 * avgE, 'center');
-  }
-}
-
-function renderPersistFrame(focusAmount) {
-  // focusAmount: 0 at start of persist -> 1 held through persist/rest, drives dim/brighten
-  drawAxis(1);
-
-  POINTS.forEach(p => {
-    const x = fracToX(p.frac);
-    const y = cy;
-    if (p.persistent) {
-      const pulse = 0.5 + 0.5 * Math.sin(t * 0.02);
-      const r = 5.5 + pulse * 1.2;
-      const alpha = 0.55 + 0.4 * focusAmount + pulse * 0.15;
-      glowDot(x, y, r, AMBER, Math.min(1, alpha), 4.6);
-      label(p.label, x, y - 24, AMBER, 0.75, 'center');
-      label(p.sub, x, y + 40, AMBER, 0.4, 'center');
-    } else {
-      // fast tissues blink/flicker; the faster the turnover, the faster & harder the flicker
-      const flicker = p.blink > 0
-        ? (0.15 + 0.85 * Math.pow(0.5 + 0.5 * Math.sin(t * p.blink), 2))
-        : 1;
-      const baseAlpha = 0.55 - 0.42 * focusAmount; // dim out as focus shifts right
-      const alpha = Math.max(0.03, baseAlpha * flicker);
-      const r = 3.4 * (0.7 + 0.3 * flicker);
-      glowDot(x, y, r, TEAL, alpha, 3);
-      if (p.label) label(p.label, x, y - 30, TEAL, Math.max(0.08, 0.5 - 0.4*focusAmount), 'center');
-      if (p.sub) label(p.sub, x, y + 44, TEAL, Math.max(0.05, 0.3 - 0.25*focusAmount), 'center');
-    }
-  });
-
-  // average marker, now clearly de-emphasized — sits in the middle, unrepresentative
-  const ax = fracToX(AVG.frac);
-  const avgAlpha = Math.max(0.06, 0.32 - 0.22 * focusAmount);
-  ctx.save();
-  ctx.strokeStyle = `rgba(${CREAM},${avgAlpha * 0.7})`;
-  ctx.setLineDash([2, 4]);
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(ax, cy - 34);
-  ctx.lineTo(ax, cy + 34);
-  ctx.stroke();
-  ctx.restore();
-  glowDot(ax, cy, 2.2, CREAM, avgAlpha, 3);
-  label('avg: "7 yrs"', ax, cy - 42, CREAM, avgAlpha, 'center');
-}
-
-function renderPersist() {
-  const focus = easeInOutCubic(clamp01(phaseF / (DUR.persist * 0.7)));
-  renderPersistFrame(focus);
-}
-
-function renderRest() {
-  const f = phaseF / DUR.rest;
-  // hold focus fully, then fade the whole scene out toward the loop point
-  const fadeOut = 1 - easeInOutCubic(clamp01((f - 0.55) / 0.45));
-  ctx.save();
-  ctx.globalAlpha = Math.max(0.02, fadeOut);
-  renderPersistFrame(1);
-  ctx.restore();
-}
-
 function frame() {
   try {
     drawBg();
     t += 1;
     switch (phase) {
-      case 'average': renderAverage(); break;
-      case 'reveal':  renderReveal();  break;
-      case 'persist': renderPersist();  break;
+      case 'intact':  renderIntact();  break;
+      case 'severed': renderSevered(); break;
+      case 'sliver':  renderSliver();  break;
       case 'rest':    renderRest();    break;
     }
     if (STATUS[phase] !== undefined) status.textContent = STATUS[phase];
@@ -388,12 +341,12 @@ function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   cx = W * .5; cy = H * .5;
-  marginL = W * 0.12;
-  marginR = W * 0.88;
-  axisY = cy;
+  hemiL = cx - Math.min(140, W * 0.09);
+  hemiR = cx + Math.min(140, W * 0.09);
+  midY = cy;
   ctx.fillStyle = '#0b1316';
   ctx.fillRect(0, 0, W, H);
-  initPhase('average');
+  initPhase('intact');
 }
 window.addEventListener('resize', resize);
 resize();
