@@ -28,8 +28,50 @@
     #title-wrap { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
     h1 { font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase; color: rgba(223,240,236,.65); font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0; text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25); }
     .subtitle { font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.32); margin: .45em 0 0; }
-    #home-btn { position: absolute; top: 5%; left: 5%; font-size: 9px; letter-spacing: .44em; text-transform: uppercase; color: rgba(159,232,219,.88); text-decoration: none; pointer-events: auto; transition: color .4s ease; }
+        #top-nav {
+      position: absolute; top: 5%; left: 5%;
+      display: flex; align-items: center; gap: 16px;
+      pointer-events: none;
+    }
+    #home-btn {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
     #home-btn:hover { color: rgba(159,232,219,.75); }
+    #nav-burger {
+      display: flex; flex-direction: column; justify-content: center;
+      gap: 4px; background: none; border: none; padding: 4px; margin: 0;
+      cursor: pointer; pointer-events: auto;
+    }
+    #nav-burger span {
+      display: block; width: 15px; height: 1px;
+      background: rgba(159,232,219,.6);
+      transition: transform .25s ease, background .25s ease;
+    }
+    #nav-burger:hover span { background: rgba(159,232,219,.95); }
+    #nav-burger.open span:first-child { transform: translateY(2.5px) rotate(45deg); }
+    #nav-burger.open span:last-child  { transform: translateY(-2.5px) rotate(-45deg); }
+    #nav-links {
+      display: none; flex-direction: column; gap: 10px;
+      position: absolute; top: calc(100% + 14px); left: 0;
+      padding: 14px 18px; margin: 0;
+      background: rgba(7,13,16,.94);
+      border: 1px solid rgba(159,232,219,.08);
+      border-radius: 3px;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      pointer-events: auto;
+      max-height: 70vh; overflow-y: auto;
+    }
+    #nav-links.open { display: flex; animation: navDrop .18s ease; }
+    #nav-links a {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: .3em; text-transform: lowercase; text-decoration: none;
+      color: rgba(159,232,219,.55); white-space: nowrap;
+      transition: color .2s ease, text-shadow .2s ease;
+    }
+    #nav-links a:hover { color: rgba(159,232,219,.95); text-shadow: 0 0 10px rgba(159,232,219,.35); }
+    @keyframes navDrop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
     #status { position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: .28em; color: rgba(159,232,219,.95); text-align: center; }
     #info { position: absolute; bottom: 16%; right: 5%; max-width: 240px; font-size: 10px; line-height: 1.9; letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right; background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08); padding: 12px 14px; border-radius: 3px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
     #vignette { position: fixed; inset: 0; pointer-events: none; box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55); }
@@ -38,7 +80,33 @@
 <body>
 <canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
 <div id="ui">
-  <a id="home-btn" href="/">home</a>
+  <div id="top-nav">
+    <a id="home-btn" href="/">home</a>
+    <button id="nav-burger" aria-label="menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+    <div id="nav-links" role="menu">
+      <a href="/double-slit.html">double slit</a>
+      <a href="/emc2.html">e=mc²</a>
+      <a href="/entanglement.html">entanglement</a>
+      <a href="/near-death.html">near death</a>
+      <a href="/oneness.html">oneness</a>
+      <a href="/superposition.html">superposition</a>
+      <a href="/holographic.html">holographic</a>
+      <a href="/many-worlds.html">many worlds</a>
+      <a href="/hard-problem.html">hard problem</a>
+      <a href="/entropy.html">entropy</a>
+      <a href="/universe.html">universe</a>
+      <a href="/black-hole.html">black hole</a>
+      <a href="/spacetime.html">spacetime</a>
+      <a href="/default-mode.html">default mode</a>
+      <a href="/interface-theory.html">interface theory</a>
+      <a href="/antenna.html">the antenna</a>
+      <a href="/quantum-myths.html">quantum myths</a>
+      <a href="/fine-tuning.html">fine-tuning</a>
+      <a href="/self-inquiry.html">self-inquiry</a>
+    </div>
+  </div>
   <div id="title-wrap">
     <h1>the present moment</h1>
     <div class="subtitle">flow · block · now</div>
@@ -312,5 +380,29 @@ requestAnimationFrame(frame);
   <a href="/self-inquiry.html" style="color:rgba(159,232,219,.55);">self-inquiry</a>
 </div>
 </noscript>
+
+<script>
+(function () {
+  var burger = document.getElementById('nav-burger');
+  var links  = document.getElementById('nav-links');
+  if (!burger || !links) return;
+
+  burger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = links.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  document.addEventListener('pointerdown', function (e) {
+    if (!links.classList.contains('open')) return;
+    if (!links.contains(e.target) && e.target !== burger) {
+      links.classList.remove('open');
+      burger.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    }
+  });
+}());
+</script>
 </body>
 </html>
