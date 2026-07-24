@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fine-tuning: why do the universe's constants allow us to exist? — dewfog</title>
+  <meta name="description" content="The universe's basic constants sit in a surprisingly narrow, life-permitting range. A simple animated look at cosmological fine-tuning — and why it doesn't settle the question of purpose.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/fine-tuning.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/fine-tuning.html">
+  <meta property="og:title" content="Fine-tuning: why do the universe's constants allow us to exist? — dewfog">
+  <meta property="og:description" content="The universe's basic constants sit in a surprisingly narrow, life-permitting range. A simple animated look at cosmological fine-tuning — and why it doesn't settle the question of purpose.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fine-tuning: why do the universe's constants allow us to exist? — dewfog">
+  <meta name="twitter:description" content="Why do the universe's constants allow stars and atoms to exist at all? Fine-tuning, explained simply.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.95); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 13%; right: 5%;
+      max-width: min(280px, 84vw); font-size: 10px; line-height: 1.6;
+      letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
+      background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
+      padding: 10px 12px; border-radius: 3px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>fine-tuned, or just here</h1>
+    <div class="subtitle">constants · range · chance</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Several of the universe's basic constants sit in a surprisingly narrow range that allows stars, atoms, and chemistry to exist at all. The most extreme case: the cosmological constant's "natural" value should be roughly 10 followed by 120 zeros larger than what's actually observed. Nudge it by a small fraction, and the equations predict a universe with no galaxies, no stars, no atoms heavier than hydrogen. This is real, established physics, not speculation. What it doesn't settle is why: a multiverse of differently-tuned universes, a selection effect built into the question itself — we could only ever find ourselves somewhere life is possible — or something else entirely. Physicists and philosophers still argue over which, and none of the answers has earned the right to call itself settled.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const CREAM = '255,248,228';
+
+const PHASES = ['range', 'sweep', 'return', 'why', 'rest'];
+const DUR    = { range: 150, sweep: 200, return: 170, why: 240, rest: 130 };
+
+const STATUS = {
+  range:  'a vast range of possible values',
+  sweep:  'nudge outside the band — structure dissolves',
+  return: 'back inside the narrow slice — structure returns',
+  why:    'why does anything exist to ask this question at all',
+  rest:   'no answer here has earned the right to call itself settled'
+};
+
+let phase = 'range', phaseF = 0;
+
+let needleFrac = 0.5, needleStart = 0.5, needleEnd = 0.5;
+let structureLevel = 1;
+let zoomLevel = 1, zoomStart = 1, zoomEnd = 1;
+let ghostAlpha = 0, ghostStart = 0, ghostEnd = 0;
+let ghosts = [];
+
+const BAND_HALF = 0.007;
+
+const N_PARTICLES = 130;
+const particles = [];
+for (let i = 0; i < N_PARTICLES; i++) {
+  particles.push({
+    fx: Math.random(),
+    fy: Math.random(),
+    jx: 0, jy: 0,
+    baseAlpha: 0.25 + Math.random() * 0.65,
+    size: 0.6 + Math.random() * 1.6,
+    tw: Math.random() * Math.PI * 2,
+    twSpeed: 0.01 + Math.random() * 0.02
+  });
+}
+
+function easeInOutCubic(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function rgba(c, a) { return `rgba(${c},${a})`; }
+
+function initPhase(name) {
+  needleStart = needleFrac;
+  zoomStart   = zoomLevel;
+  ghostStart  = ghostAlpha;
+
+  if (name === 'range') {
+    needleEnd = 0.5; zoomEnd = 1; ghostEnd = 0;
+  } else if (name === 'sweep') {
+    needleEnd = 0.13; zoomEnd = 1; ghostEnd = 0;
+  } else if (name === 'return') {
+    needleEnd = 0.5; zoomEnd = 1; ghostEnd = 0;
+  } else if (name === 'why') {
+    needleEnd = 0.5; zoomEnd = 0.8; ghostEnd = 1;
+    ghosts = [];
+    const offsets = [-0.17, -0.085, 0.09, 0.175];
+    offsets.forEach(dy => {
+      ghosts.push({ dy, bandFrac: 0.1 + Math.random() * 0.8 });
+    });
+  } else if (name === 'rest') {
+    needleEnd = 0.5; zoomEnd = 1; ghostEnd = 0;
+  }
+}
+
+function nextPhase() {
+  const idx = PHASES.indexOf(phase);
+  phase = PHASES[(idx + 1) % PHASES.length];
+  phaseF = 0;
+  initPhase(phase);
+}
+
+function update() {
+  const t  = clamp(phaseF / DUR[phase], 0, 1);
+  const te = easeInOutCubic(t);
+  needleFrac = lerp(needleStart, needleEnd, te);
+  zoomLevel  = lerp(zoomStart, zoomEnd, te);
+  ghostAlpha = lerp(ghostStart, ghostEnd, te);
+
+  const inBand = Math.abs(needleFrac - 0.5) < BAND_HALF;
+  const targetStructure = inBand ? 1 : 0;
+  const rate = targetStructure < structureLevel ? 0.14 : 0.035;
+  structureLevel += (targetStructure - structureLevel) * rate;
+
+  const jitterAmt = (1 - structureLevel) * 0.015;
+  for (const p of particles) {
+    p.tw += p.twSpeed;
+    p.jx += (Math.random() - 0.5) * jitterAmt * 0.4 - p.jx * 0.05;
+    p.jy += (Math.random() - 0.5) * jitterAmt * 0.4 - p.jy * 0.05;
+  }
+}
+
+function drawBg() {
+  ctx.fillStyle = '#0b1316';
+  ctx.fillRect(0, 0, W, H);
+  const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
+  g.addColorStop(0, 'rgba(20,34,38,.5)');
+  g.addColorStop(1, 'rgba(11,19,22,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    const x = p.fx * W + p.jx * W;
+    const y = p.fy * H + p.jy * H;
+    const twinkle = 0.6 + 0.4 * Math.sin(p.tw);
+    const a = p.baseAlpha * (0.12 + 0.88 * structureLevel) * twinkle;
+    if (a <= 0.012) continue;
+    ctx.beginPath();
+    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = rgba(CREAM, clamp(a, 0, 1));
+    ctx.fill();
+  }
+  if (structureLevel > 0.22) {
+    const lineA = (structureLevel - 0.22) / 0.78 * 0.16;
+    ctx.strokeStyle = rgba(TEAL, lineA);
+    ctx.lineWidth = 1;
+    for (let i = 0; i < particles.length; i++) {
+      const a1 = particles[i];
+      const b1 = particles[(i + 7) % particles.length];
+      const x1 = a1.fx * W + a1.jx * W, y1 = a1.fy * H + a1.jy * H;
+      const x2 = b1.fx * W + b1.jx * W, y2 = b1.fy * H + b1.jy * H;
+      const d = Math.hypot(x1 - x2, y1 - y2);
+      if (d < Math.min(W, H) * 0.12) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function drawScaleLine(y, bandFrac, opts) {
+  opts = opts || {};
+  const alpha    = opts.alpha    ?? 1;
+  const glowMul  = opts.glow     ?? 1;
+  const bandHalf = opts.bandHalf ?? BAND_HALF;
+  const x0 = W * 0.08, x1 = W * 0.92;
+
+  ctx.strokeStyle = rgba(TEAL, 0.18 * alpha);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x0, y);
+  ctx.lineTo(x1, y);
+  ctx.stroke();
+
+  const nTicks = 22;
+  ctx.strokeStyle = rgba(TEAL, 0.12 * alpha);
+  for (let i = 0; i <= nTicks; i++) {
+    const tx = x0 + (x1 - x0) * (i / nTicks);
+    ctx.beginPath();
+    ctx.moveTo(tx, y - 4);
+    ctx.lineTo(tx, y + 4);
+    ctx.stroke();
+  }
+
+  const bandX = x0 + (x1 - x0) * bandFrac;
+  const bandW = (x1 - x0) * bandHalf * 2;
+  const glowR = Math.max(bandW * 6, 40);
+  const glow = ctx.createRadialGradient(bandX, y, 0, bandX, y, glowR);
+  glow.addColorStop(0,   rgba(TEAL, 0.85 * alpha * glowMul));
+  glow.addColorStop(0.3, rgba(TEAL, 0.35 * alpha * glowMul));
+  glow.addColorStop(1,   rgba(TEAL, 0));
+  ctx.fillStyle = glow;
+  ctx.fillRect(bandX - glowR, y - glowR, glowR * 2, glowR * 2);
+
+  ctx.fillStyle = rgba(TEAL, 0.9 * alpha);
+  ctx.fillRect(bandX - Math.max(bandW / 2, 1), y - 10, Math.max(bandW, 2), 20);
+
+  if (opts.label) {
+    ctx.font = '9px "Space Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = rgba(TEAL, 0.5 * alpha);
+    ctx.fillText(opts.label, bandX, y + 28);
+  }
+
+  return { x0, x1, bandX };
+}
+
+function drawNeedle(x0, x1, y, frac) {
+  const x = x0 + (x1 - x0) * frac;
+  ctx.strokeStyle = rgba(AMBER, 0.9);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(x, y - 24);
+  ctx.lineTo(x, y + 24);
+  ctx.stroke();
+
+  const g = ctx.createRadialGradient(x, y - 24, 0, x, y - 24, 14);
+  g.addColorStop(0, rgba(AMBER, 0.9));
+  g.addColorStop(1, rgba(AMBER, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y - 24, 14, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function frame() {
+  try {
+    update();
+    drawBg();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(zoomLevel, zoomLevel);
+    ctx.translate(-cx, -cy);
+
+    if (ghostAlpha > 0.01) {
+      for (const g of ghosts) {
+        drawScaleLine(cy + g.dy * H, g.bandFrac, { alpha: 0.32 * ghostAlpha, glow: 0.55, bandHalf: 0.01 });
+      }
+    }
+
+    drawParticles();
+
+    const { x0, x1 } = drawScaleLine(cy, 0.5, {
+      alpha: 1,
+      glow: 0.55 + 0.45 * structureLevel,
+      label: 'life permitting',
+      bandHalf: BAND_HALF
+    });
+    drawNeedle(x0, x1, cy, needleFrac);
+
+    if (phase === 'why' && ghostAlpha > 0.35) {
+      const ox = cx, oy = cy - 6;
+      const pulse = 0.6 + 0.4 * Math.sin(phaseF * 0.05);
+      const og = ctx.createRadialGradient(ox, oy, 0, ox, oy, 18 * pulse);
+      og.addColorStop(0, rgba(CREAM, 0.9 * ghostAlpha));
+      og.addColorStop(1, rgba(CREAM, 0));
+      ctx.fillStyle = og;
+      ctx.beginPath();
+      ctx.arc(ox, oy, 18 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    status.textContent = STATUS[phase];
+
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch (e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  initPhase(phase);
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+<noscript>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(7,13,16,.96);border-top:1px solid rgba(159,232,219,.08);padding:12px clamp(16px,4vw,40px);font-family:monospace;font-size:10px;color:rgba(159,232,219,.55);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.8rem;">
+  <a href="/" style="color:rgba(159,232,219,.7);">dewfog</a>
+  <a href="/double-slit.html" style="color:rgba(159,232,219,.55);">double slit</a>
+  <a href="/emc2.html" style="color:rgba(159,232,219,.55);">e=mc²</a>
+  <a href="/entanglement.html" style="color:rgba(159,232,219,.55);">entanglement</a>
+  <a href="/near-death.html" style="color:rgba(159,232,219,.55);">near death</a>
+  <a href="/oneness.html" style="color:rgba(159,232,219,.55);">oneness</a>
+  <a href="/superposition.html" style="color:rgba(159,232,219,.55);">superposition</a>
+  <a href="/holographic.html" style="color:rgba(159,232,219,.55);">holographic</a>
+  <a href="/many-worlds.html" style="color:rgba(159,232,219,.55);">many worlds</a>
+  <a href="/hard-problem.html" style="color:rgba(159,232,219,.55);">hard problem</a>
+  <a href="/entropy.html" style="color:rgba(159,232,219,.55);">entropy</a>
+  <a href="/universe.html" style="color:rgba(159,232,219,.55);">universe</a>
+  <a href="/black-hole.html" style="color:rgba(159,232,219,.55);">black hole</a>
+  <a href="/spacetime.html" style="color:rgba(159,232,219,.55);">spacetime</a>
+  <a href="/present-moment.html" style="color:rgba(159,232,219,.55);">present moment</a>
+  <a href="/default-mode.html" style="color:rgba(159,232,219,.55);">default mode</a>
+  <a href="/interface-theory.html" style="color:rgba(159,232,219,.55);">interface theory</a>
+  <a href="/antenna.html" style="color:rgba(159,232,219,.55);">the antenna</a>
+  <a href="/quantum-myths.html" style="color:rgba(159,232,219,.55);">quantum myths</a>
+  <a href="/fine-tuning.html" style="color:rgba(159,232,219,.55);">fine-tuning</a>
+  <a href="/self-inquiry.html" style="color:rgba(159,232,219,.55);">self-inquiry</a>
+</div>
+</noscript>
+</body>
+</html>

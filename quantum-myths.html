@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The quantum physics myths, corrected — dewfog</title>
+  <meta name="description" content="Superposition, uncertainty, and &quot;observation collapses reality&quot; are real physics, stretched past what they actually say. A simple animated guide to four common quantum myths.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/quantum-myths.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/quantum-myths.html">
+  <meta property="og:title" content="The quantum physics myths, corrected — dewfog">
+  <meta property="og:description" content="Superposition, uncertainty, and &quot;observation collapses reality&quot; are real physics, stretched past what they actually say. A simple animated guide to four common quantum myths.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The quantum physics myths, corrected — dewfog">
+  <meta name="twitter:description" content="Superposition, uncertainty, observation, entanglement — the real physics, and the myths stretched from them.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.95); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 13%; right: 5%;
+      max-width: min(280px, 84vw); font-size: 10px; line-height: 1.6;
+      letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
+      background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
+      padding: 10px 12px; border-radius: 3px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    #info2 {
+      position: absolute; bottom: 6.5%; right: 5%;
+      max-width: min(280px, 84vw); font-size: 10px; line-height: 1.6;
+      letter-spacing: .05em; color: rgba(159,232,219,.75); text-align: right;
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>quantum myths</h1>
+    <div class="subtitle">borrowed · stretched · corrected</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Four real, well-tested pieces of quantum physics get borrowed constantly by popular spirituality, stretched past what they actually say. Superposition doesn't mean you can manifest any outcome you choose. The uncertainty principle doesn't mean "everything is uncertain, so anything is possible." "Observation collapses reality" means a physical interaction happened, not that a mind was watching. And entanglement carries no message, and falls apart almost instantly in anything as warm as a human body — it doesn't explain telepathy.</div>
+  <div id="info2">A rule of thumb: if a claim doesn't survive swapping the physics term back to its plain-English meaning, it's borrowing vocabulary, not making a physical argument. None of this makes the real questions less interesting — it just means the case for them has to be made honestly, on its own terms, not smuggled in wearing a lab coat it hasn't earned.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+
+const PHASES = ['superposition', 'uncertainty', 'collapse', 'entanglement', 'rest'];
+const DUR    = { superposition: 280, uncertainty: 280, collapse: 260, entanglement: 280, rest: 120 };
+
+// beat window (as a fraction of a phase's duration) where the "myth" stretch happens
+const B1 = .32, B2 = .68;
+
+const TEXTS = {
+  superposition: {
+    real: "superposition: a real mix of states, before it's measured",
+    myth: "not: you can manifest any outcome you choose",
+  },
+  uncertainty: {
+    real: "uncertainty: a limit on what can be known at once",
+    myth: "not: everything is uncertain, so anything is possible",
+  },
+  collapse: {
+    real: "collapse: a physical interaction happened",
+    myth: "not: a mind was watching",
+  },
+  entanglement: {
+    real: "entanglement: a real, tested correlation",
+    myth: "not: telepathy or psychic bonds",
+  },
+};
+
+let phase = 'superposition', phaseF = 0;
+
+function initPhase(p) {
+  phase = p; phaseF = 0;
+  status.textContent = (p === 'rest') ? '' : TEXTS[p].real;
+}
+function nextPhase() { initPhase(PHASES[(PHASES.indexOf(phase) + 1) % PHASES.length]); }
+
+// ----- helpers -----
+function drawBg() { ctx.fillStyle = '#0b1316'; ctx.fillRect(0, 0, W, H); }
+
+function radGlow(x, y, r, c, a) {
+  if (r <= 0 || a <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0,  `rgba(${c},${Math.min(a,1)})`);
+  g.addColorStop(.5, `rgba(${c},${(a*.14).toFixed(3)})`);
+  g.addColorStop(1,  `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function dot(x, y, r, c, a) {
+  if (a <= 0) return;
+  radGlow(x, y, r*5.5, c, a*.42);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = `rgba(${c},${Math.min(a,1)})`; ctx.fill();
+}
+
+// mixes two "r,g,b" strings by t (0..1) — used to drift a shape's glow from
+// teal (the real, bounded meaning) toward amber (the mystical overreach)
+function lerpColor(a, b, t) {
+  const pa = a.split(',').map(Number), pb = b.split(',').map(Number);
+  const r = Math.round(pa[0] + (pb[0]-pa[0]) * t);
+  const g = Math.round(pa[1] + (pb[1]-pa[1]) * t);
+  const bch = Math.round(pa[2] + (pb[2]-pa[2]) * t);
+  return `${r},${g},${bch}`;
+}
+
+// bell curve: 0 during the "real" beat, rises through the "myth" stretch,
+// and eases back to exactly 0 by the "settle" beat — one shape for the
+// whole real -> myth -> corrected rhythm
+function bell(t) {
+  if (t <= B1 || t >= B2) return 0;
+  const local = (t - B1) / (B2 - B1);
+  return Math.sin(Math.PI * local);
+}
+
+// ----- phase renderers -----
+function rSuperposition(t) {
+  const m   = bell(t);
+  const sep = 26 + m * 70;
+  const col = lerpColor(TEAL, AMBER, m);
+
+  if (m > .08) {
+    for (let i = 0; i < 6; i++) {
+      const ang = (i / 6) * Math.PI * 2 + phaseF * .01;
+      const r   = sep * 1.5 + i * 16;
+      const x   = cx + Math.cos(ang) * r;
+      const y   = cy + Math.sin(ang) * r * .55;
+      radGlow(x, y, 18, AMBER, m * .2 * (1 - i * .1));
+    }
+  }
+
+  radGlow(cx - sep, cy, 44, col, .3);
+  radGlow(cx + sep, cy, 44, col, .3);
+  ctx.save();
+  ctx.lineWidth = 1.3; ctx.strokeStyle = `rgba(${col},.6)`;
+  ctx.beginPath(); ctx.arc(cx - sep, cy, 38, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx + sep, cy, 38, 0, Math.PI*2); ctx.stroke();
+  ctx.restore();
+  dot(cx - sep, cy, 3, col, .8);
+  dot(cx + sep, cy, 3, col, .8);
+}
+
+function rUncertainty(t) {
+  const m     = bell(t);
+  const fuzzR = 46 + m * 360;
+  const col   = lerpColor(TEAL, AMBER, m);
+  const sep   = 72;
+
+  if (m > .05) radGlow(cx, cy, Math.max(W, H) * .65, AMBER, .05 * m);
+
+  radGlow(cx + sep, cy, fuzzR, col, .2);
+  radGlow(cx + sep, cy, fuzzR * .45, col, .28);
+  dot(cx - sep, cy, 4, TEAL, .9); // sharp — stays crisp, untouched by the myth
+}
+
+function rCollapse(t) {
+  const waveA  = t < .1 ? 1 : Math.max(0, 1 - (t - .1) / .12);
+  const pointA = Math.min(1, t / .24);
+  const m      = bell(t);
+  const col    = lerpColor(TEAL, AMBER, m);
+  const haloR  = 240 * m;
+
+  if (waveA > .01) {
+    for (let i = 0; i < 4; i++) {
+      const r = 28 + i * 22;
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(${TEAL},${(.3 * waveA * (1 - i*.2)).toFixed(3)})`;
+      ctx.lineWidth = 1.3; ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+    }
+  }
+
+  if (m > .02) {
+    radGlow(cx, cy, haloR, col, .14 * m);
+    ctx.save();
+    ctx.strokeStyle = `rgba(${col},${(.4 * m).toFixed(3)})`; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.ellipse(cx, cy, haloR * .82, haloR * .42, 0, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+  }
+
+  if (pointA > .01) {
+    dot(cx, cy, 4, TEAL, .9 * pointA);
+    ctx.save();
+    ctx.strokeStyle = `rgba(${TEAL},${(.5 * pointA).toFixed(3)})`; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - 13, cy); ctx.lineTo(cx - 6, cy);
+    ctx.moveTo(cx + 6, cy);  ctx.lineTo(cx + 13, cy);
+    ctx.moveTo(cx, cy - 13); ctx.lineTo(cx, cy - 6);
+    ctx.moveTo(cx, cy + 6);  ctx.lineTo(cx, cy + 13);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function rEntanglement(t) {
+  const m   = bell(t);
+  const col = lerpColor(TEAL, AMBER, m);
+  const sep = 125;
+  const bob = Math.sin(phaseF * .05) * 10;
+  const x1 = cx - sep, y1 = cy + bob;
+  const x2 = cx + sep, y2 = cy - bob;
+
+  ctx.save();
+  ctx.lineWidth = 1 + m * 3;
+  ctx.strokeStyle = `rgba(${col},${(.35 + m * .3).toFixed(3)})`;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.restore();
+
+  if (m > .05) {
+    const trav = (phaseF * .02) % 1;
+    const px = x1 + (x2 - x1) * trav, py = y1 + (y2 - y1) * trav;
+    radGlow(px, py, 14, AMBER, .5 * m);
+  }
+
+  dot(x1, y1, 6, col, .75);
+  dot(x2, y2, 6, col, .75);
+}
+
+function rRest(t) {
+  const fa = t < .15 ? t / .15 : t > .85 ? (1 - t) / .15 : 1;
+  const sp = 130;
+  const startX = cx - sp * 1.5;
+  for (let i = 0; i < 4; i++) {
+    const x = startX + i * sp;
+    const y = cy + Math.sin(phaseF * .02 + i * 1.7) * 5;
+    radGlow(x, y, 22, TEAL, .16 * fa);
+    ctx.save();
+    ctx.strokeStyle = `rgba(${TEAL},${(.4 * fa).toFixed(3)})`; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// ----- main loop -----
+function frame() {
+  try {
+    drawBg();
+    const t = phaseF / DUR[phase];
+    switch (phase) {
+      case 'superposition': rSuperposition(t); break;
+      case 'uncertainty':   rUncertainty(t);   break;
+      case 'collapse':      rCollapse(t);      break;
+      case 'entanglement':  rEntanglement(t);  break;
+      case 'rest':          rRest(t);          break;
+    }
+    if (phase !== 'rest') {
+      const b1f = Math.round(DUR[phase] * B1);
+      const b2f = Math.round(DUR[phase] * B2);
+      if (phaseF === b1f) status.textContent = TEXTS[phase].myth;
+      else if (phaseF === b2f) status.textContent = TEXTS[phase].real;
+    }
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  initPhase('superposition');
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+<noscript>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(7,13,16,.96);border-top:1px solid rgba(159,232,219,.08);padding:12px clamp(16px,4vw,40px);font-family:monospace;font-size:10px;color:rgba(159,232,219,.55);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.8rem;">
+  <a href="/" style="color:rgba(159,232,219,.7);">dewfog</a>
+  <a href="/double-slit.html" style="color:rgba(159,232,219,.55);">double slit</a>
+  <a href="/emc2.html" style="color:rgba(159,232,219,.55);">e=mc²</a>
+  <a href="/entanglement.html" style="color:rgba(159,232,219,.55);">entanglement</a>
+  <a href="/near-death.html" style="color:rgba(159,232,219,.55);">near death</a>
+  <a href="/oneness.html" style="color:rgba(159,232,219,.55);">oneness</a>
+  <a href="/superposition.html" style="color:rgba(159,232,219,.55);">superposition</a>
+  <a href="/holographic.html" style="color:rgba(159,232,219,.55);">holographic</a>
+  <a href="/many-worlds.html" style="color:rgba(159,232,219,.55);">many worlds</a>
+  <a href="/hard-problem.html" style="color:rgba(159,232,219,.55);">hard problem</a>
+  <a href="/entropy.html" style="color:rgba(159,232,219,.55);">entropy</a>
+  <a href="/universe.html" style="color:rgba(159,232,219,.55);">universe</a>
+  <a href="/black-hole.html" style="color:rgba(159,232,219,.55);">black hole</a>
+  <a href="/spacetime.html" style="color:rgba(159,232,219,.55);">spacetime</a>
+  <a href="/present-moment.html" style="color:rgba(159,232,219,.55);">present moment</a>
+  <a href="/default-mode.html" style="color:rgba(159,232,219,.55);">default mode</a>
+  <a href="/interface-theory.html" style="color:rgba(159,232,219,.55);">interface theory</a>
+  <a href="/antenna.html" style="color:rgba(159,232,219,.55);">the antenna</a>
+  <a href="/quantum-myths.html" style="color:rgba(159,232,219,.55);">quantum myths</a>
+  <a href="/fine-tuning.html" style="color:rgba(159,232,219,.55);">fine-tuning</a>
+  <a href="/self-inquiry.html" style="color:rgba(159,232,219,.55);">self-inquiry</a>
+</div>
+</noscript>
+</body>
+</html>

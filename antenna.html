@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Is the brain a receiver, or does it make consciousness? — dewfog</title>
+  <meta name="description" content="Some thinkers compare the brain to a radio tuning into a consciousness it doesn't create. A simple animated look at the receiver theory — and why brain-damage evidence complicates it.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/antenna.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/antenna.html">
+  <meta property="og:title" content="Is the brain a receiver, or does it make consciousness? — dewfog">
+  <meta property="og:description" content="Some thinkers compare the brain to a radio tuning into a consciousness it doesn't create. A simple animated look at the receiver theory — and why brain-damage evidence complicates it.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Is the brain a receiver, or does it make consciousness? — dewfog">
+  <meta name="twitter:description" content="Is the brain a radio, tuning into consciousness — or the thing that makes it? Explained simply.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
+    * { box-sizing: border-box; }
+    #ui { position: fixed; inset: 0; pointer-events: none; font-family: 'Space Mono', monospace; }
+    #title-wrap {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      text-align: center; white-space: nowrap;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.65);
+      font-size: clamp(1.5rem,3vw,2.8rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.32); margin: .45em 0 0;
+    }
+    #home-btn {
+      position: absolute; top: 5%; left: 5%;
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      pointer-events: auto; transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #status {
+      position: absolute; bottom: 6%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .28em;
+      color: rgba(159,232,219,.95); text-align: center;
+    }
+    #info {
+      position: absolute; bottom: 13%; right: 5%;
+      max-width: min(280px, 84vw); font-size: 10px; line-height: 1.6;
+      letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
+      background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
+      padding: 10px 12px; border-radius: 3px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    #vignette {
+      position: fixed; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c" style="display:block;position:fixed;inset:0;"></canvas>
+
+<div id="ui">
+  <a id="home-btn" href="/">home</a>
+  <div id="title-wrap">
+    <h1>the antenna</h1>
+    <div class="subtitle">receiver · filter · static</div>
+  </div>
+  <div id="status"></div>
+  <div id="info">Damage to one exact part of the brain can wipe out one exact function — faces, new memories, speech — while everything else keeps working normally. That precision is some of the strongest evidence for the ordinary view: the brain makes consciousness. A different picture, going back over a century, compares the brain to a radio: consciousness is a broadcast it tunes into, not one it creates. But a damaged radio loses signal generally — it doesn't lose one exact channel with surgical precision the way a damaged brain does. That's a real problem for the simple version of this idea. A modified version, the brain as filter rather than generator, survives the objection — but makes no prediction that tells it apart from ordinary materialism. No experiment yet decides which story is right.</div>
+</div>
+
+<div id="vignette"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const status = document.getElementById('status');
+
+let W, H, cx, cy;
+let t = 0;
+
+const TEAL  = '159,232,219';
+const AMBER = '240,198,154';
+const CREAM = '255,248,228';
+const BG    = '#0b1316';
+
+const PHASES = ['broadcast', 'damage-radio', 'damage-brain', 'filter', 'rest'];
+const DUR    = { broadcast: 230, 'damage-radio': 200, 'damage-brain': 230, filter: 230, rest: 120 };
+
+const MSGS = {
+  broadcast:      'tuning into many channels at once',
+  'damage-radio': 'a damaged radio: every channel degrades together',
+  'damage-brain': 'a damaged brain: one channel goes dark, the rest stay clear',
+  filter:         "filter or generator — the data can't tell you which",
+  rest:           '',
+};
+
+let phase = 'broadcast', phaseF = 0;
+let channels = [];
+const damagedIndex = 2;
+
+function easeInOut(p){ return p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p+2, 2)/2; }
+function clamp01(v){ return Math.max(0, Math.min(1, v)); }
+
+function colorFor(i){
+  const m = i % 3;
+  return m === 0 ? TEAL : m === 1 ? AMBER : CREAM;
+}
+
+function buildChannels(){
+  const n = 5;
+  const spacing = Math.min(46, H * 0.09);
+  channels = [];
+  for (let i = 0; i < n; i++){
+    channels.push({
+      yOff: (i - (n-1)/2) * spacing,
+      color: colorFor(i),
+      speed: 0.012 + i*0.002,
+      phase0: i*1.3,
+      amp: 10 + (i%2)*4,
+      fadeDelay: i*14,
+    });
+  }
+}
+
+function nextPhase(){
+  const idx = PHASES.indexOf(phase);
+  phase = PHASES[(idx+1) % PHASES.length];
+  phaseF = 0;
+  status.textContent = MSGS[phase];
+}
+
+function glowDot(x, y, r, rgb, alpha){
+  if (alpha <= 0.002 || r <= 0) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, `rgba(${rgb},${alpha})`);
+  g.addColorStop(1, `rgba(${rgb},0)`);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+}
+
+function strokeGlow(rgb, alpha, blur){
+  ctx.strokeStyle = `rgba(${rgb},${alpha})`;
+  ctx.shadowColor  = `rgba(${rgb},${Math.min(1, alpha*1.4)})`;
+  ctx.shadowBlur   = blur;
+}
+function clearShadow(){ ctx.shadowBlur = 0; }
+
+function drawBg(){
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function computeChannelState(i){
+  let alpha = 1, noise = 0, dark = 0;
+  if (phase === 'broadcast'){
+    const localP = clamp01((phaseF - channels[i].fadeDelay) / 50);
+    alpha = easeInOut(localP);
+  } else if (phase === 'damage-radio'){
+    noise = easeInOut(clamp01(phaseF / DUR[phase]));
+  } else if (phase === 'damage-brain'){
+    if (i === damagedIndex){
+      dark = easeInOut(clamp01((phaseF - 30) / 120));
+      alpha = 1 - dark;
+    }
+  }
+  return { alpha, noise, dark };
+}
+
+function drawChannel(ch, state){
+  if (state.alpha <= 0.01) return;
+  const y0 = cy + ch.yOff;
+  const baseAlpha = 0.55 * state.alpha;
+
+  ctx.beginPath();
+  let first = true;
+  for (let x = 0; x <= W; x += 6){
+    let ny = y0 + Math.sin(x*0.02 + t*ch.speed + ch.phase0) * ch.amp;
+    if (state.noise > 0){
+      ny += (Math.random() - 0.5) * 70 * state.noise;
+    }
+    if (phase === 'filter' && x > cx){
+      const bendP = clamp01((x - cx) / 140);
+      const targetAmp = ch.amp * 0.35;
+      ny = y0 + Math.sin(x*0.038 + t*ch.speed*1.5 + ch.phase0) * (ch.amp + (targetAmp - ch.amp)*bendP);
+    }
+    if (first){ ctx.moveTo(x, ny); first = false; } else { ctx.lineTo(x, ny); }
+  }
+  strokeGlow(ch.color, baseAlpha, 10);
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+  clearShadow();
+
+  const nodeAlpha = Math.min(1, baseAlpha * 1.7);
+  const nodeR = 4 + Math.sin(t*0.05 + ch.phase0) * 1.2;
+  glowDot(cx, y0, nodeR*3.2, ch.color, nodeAlpha*0.45);
+  ctx.beginPath();
+  ctx.fillStyle = `rgba(${ch.color},${nodeAlpha})`;
+  ctx.arc(cx, y0, Math.max(0, nodeR), 0, Math.PI*2);
+  ctx.fill();
+
+  if (state.dark > 0.05){
+    ctx.strokeStyle = `rgba(${CREAM},${state.dark*0.85})`;
+    ctx.lineWidth = 1.2;
+    const s = 7;
+    ctx.beginPath();
+    ctx.moveTo(cx-s, y0-s); ctx.lineTo(cx+s, y0+s);
+    ctx.moveTo(cx-s, y0+s); ctx.lineTo(cx+s, y0-s);
+    ctx.stroke();
+  }
+}
+
+function drawAntenna(alpha){
+  const half = Math.min(130, H*0.22);
+  const topY = cy - half, botY = cy + half;
+
+  ctx.lineWidth = 1.2;
+  strokeGlow(TEAL, 0.5*alpha, 8);
+  ctx.beginPath();
+  ctx.moveTo(cx, botY); ctx.lineTo(cx, topY);
+  ctx.moveTo(cx, topY); ctx.lineTo(cx-28, topY-42);
+  ctx.moveTo(cx, topY); ctx.lineTo(cx+28, topY-42);
+  ctx.stroke();
+  clearShadow();
+
+  glowDot(cx-28, topY-42, 10, AMBER, 0.5*alpha);
+  glowDot(cx+28, topY-42, 10, AMBER, 0.5*alpha);
+
+  const crackAmt = phase === 'damage-radio' ? easeInOut(clamp01(phaseF/50)) : 0;
+  if (crackAmt > 0.02){
+    ctx.strokeStyle = `rgba(${CREAM},${0.7*crackAmt*alpha})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx-3, topY+20);
+    ctx.lineTo(cx+6, topY + (botY-topY)*0.35);
+    ctx.lineTo(cx-5, cy);
+    ctx.lineTo(cx+7, cy + (botY-topY)*0.3);
+    ctx.lineTo(cx-4, botY-15);
+    ctx.stroke();
+  }
+}
+
+function drawMesh(alpha){
+  if (alpha <= 0.01) return;
+  const half = Math.min(130, H*0.22);
+  const topY = cy-half-20, botY = cy+half+20;
+  const bandW = 46;
+
+  const grad = ctx.createLinearGradient(cx-bandW, 0, cx+bandW, 0);
+  grad.addColorStop(0, `rgba(${TEAL},0)`);
+  grad.addColorStop(0.5, `rgba(${TEAL},${0.10*alpha})`);
+  grad.addColorStop(1, `rgba(${TEAL},0)`);
+  ctx.fillStyle = grad;
+  ctx.fillRect(cx-bandW, topY, bandW*2, botY-topY);
+
+  strokeGlow(AMBER, 0.35*alpha, 6);
+  ctx.lineWidth = 1;
+  const rows = 9;
+  for (let r = 0; r < rows; r++){
+    const ry = topY + (r/(rows-1)) * (botY-topY);
+    ctx.beginPath();
+    ctx.moveTo(cx-bandW, ry);
+    ctx.lineTo(cx+bandW, ry);
+    ctx.stroke();
+  }
+  clearShadow();
+
+  strokeGlow(TEAL, 0.4*alpha, 6);
+  ctx.beginPath();
+  ctx.moveTo(cx-bandW, topY); ctx.lineTo(cx-bandW, botY);
+  ctx.moveTo(cx+bandW, topY); ctx.lineTo(cx+bandW, botY);
+  ctx.stroke();
+  clearShadow();
+}
+
+function frame(){
+  try {
+    t++;
+    drawBg();
+
+    const restA = phase === 'rest' ? 1 - easeInOut(clamp01(phaseF/DUR.rest)) : 1;
+
+    channels.forEach((ch, i) => {
+      const st = computeChannelState(i);
+      st.alpha *= restA;
+      drawChannel(ch, st);
+    });
+
+    let antennaAmt = 0, meshAmt = 0;
+    if (phase === 'broadcast'){
+      antennaAmt = easeInOut(clamp01(phaseF/40));
+    } else if (phase === 'damage-radio' || phase === 'damage-brain'){
+      antennaAmt = 1;
+    } else if (phase === 'filter'){
+      const r = easeInOut(clamp01(phaseF/60));
+      meshAmt = r; antennaAmt = 1 - r;
+    } else if (phase === 'rest'){
+      meshAmt = restA;
+    }
+
+    if (antennaAmt > 0.01) drawAntenna(antennaAmt);
+    if (meshAmt > 0.01) drawMesh(meshAmt);
+
+    if (++phaseF >= DUR[phase]) nextPhase();
+  } catch(e) {}
+  requestAnimationFrame(frame);
+}
+
+function resize(){
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W * .5; cy = H * .5;
+  buildChannels();
+  phase = 'broadcast'; phaseF = 0;
+  status.textContent = MSGS['broadcast'];
+}
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+<noscript>
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(7,13,16,.96);border-top:1px solid rgba(159,232,219,.08);padding:12px clamp(16px,4vw,40px);font-family:monospace;font-size:10px;color:rgba(159,232,219,.55);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.8rem;">
+  <a href="/" style="color:rgba(159,232,219,.7);">dewfog</a>
+  <a href="/double-slit.html" style="color:rgba(159,232,219,.55);">double slit</a>
+  <a href="/emc2.html" style="color:rgba(159,232,219,.55);">e=mc²</a>
+  <a href="/entanglement.html" style="color:rgba(159,232,219,.55);">entanglement</a>
+  <a href="/near-death.html" style="color:rgba(159,232,219,.55);">near death</a>
+  <a href="/oneness.html" style="color:rgba(159,232,219,.55);">oneness</a>
+  <a href="/superposition.html" style="color:rgba(159,232,219,.55);">superposition</a>
+  <a href="/holographic.html" style="color:rgba(159,232,219,.55);">holographic</a>
+  <a href="/many-worlds.html" style="color:rgba(159,232,219,.55);">many worlds</a>
+  <a href="/hard-problem.html" style="color:rgba(159,232,219,.55);">hard problem</a>
+  <a href="/entropy.html" style="color:rgba(159,232,219,.55);">entropy</a>
+  <a href="/universe.html" style="color:rgba(159,232,219,.55);">universe</a>
+  <a href="/black-hole.html" style="color:rgba(159,232,219,.55);">black hole</a>
+  <a href="/spacetime.html" style="color:rgba(159,232,219,.55);">spacetime</a>
+  <a href="/present-moment.html" style="color:rgba(159,232,219,.55);">present moment</a>
+  <a href="/default-mode.html" style="color:rgba(159,232,219,.55);">default mode</a>
+  <a href="/interface-theory.html" style="color:rgba(159,232,219,.55);">interface theory</a>
+  <a href="/antenna.html" style="color:rgba(159,232,219,.55);">the antenna</a>
+  <a href="/quantum-myths.html" style="color:rgba(159,232,219,.55);">quantum myths</a>
+  <a href="/fine-tuning.html" style="color:rgba(159,232,219,.55);">fine-tuning</a>
+  <a href="/self-inquiry.html" style="color:rgba(159,232,219,.55);">self-inquiry</a>
+</div>
+</noscript>
+</body>
+</html>
