@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /design_handoff_dewfog_landing/
 Sitemap: https://dewfog.com/sitemap.xml
