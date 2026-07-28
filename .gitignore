@@ -1,1 +1,17 @@
 .claude/skills/dewfog-scout/SKILL.md
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Dependencies
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
