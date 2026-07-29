@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Can you be tricked into leaving your body? — dewfog</title>
-  <meta name="description" content="A well-replicated line of neuroscience can relocate the felt sense of 'I' outside the body on command, in a lab. A simple animated look at how — and what a direct test for real out-of-body perception during cardiac arrest did and didn't find.">
+  <title>Why do dementia patients suddenly become lucid before death? — dewfog</title>
+  <meta name="description" content="For over 250 years, doctors have documented dementia patients — unable to speak clearly for months — suddenly becoming lucid before they die. A simple animated look at terminal lucidity, the 2025 hospice study that caught it happening on video, and why researchers now call it paradoxical lucidity instead.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://dewfog.com/leaving-on-command.html">
+  <link rel="canonical" href="https://dewfog.com/terminal-lucidity.html">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://dewfog.com/leaving-on-command.html">
-  <meta property="og:title" content="Can you be tricked into leaving your body? — dewfog">
-  <meta property="og:description" content="A well-replicated line of neuroscience can relocate the felt sense of 'I' outside the body on command, in a lab. A simple animated look at how — and what a direct test for real out-of-body perception during cardiac arrest did and didn't find.">
+  <meta property="og:url" content="https://dewfog.com/terminal-lucidity.html">
+  <meta property="og:title" content="Why do dementia patients suddenly become lucid before death? — dewfog">
+  <meta property="og:description" content="For over 250 years, doctors have documented dementia patients — unable to speak clearly for months — suddenly becoming lucid before they die. A simple animated look at terminal lucidity, the 2025 hospice study that caught it happening on video, and why researchers now call it paradoxical lucidity instead.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Can you be tricked into leaving your body? — dewfog">
-  <meta name="twitter:description" content="A camera, a paintbrush, and a few minutes — that's all it takes to relocate the felt sense of 'I'. Explained simply.">
+  <meta name="twitter:title" content="Why do dementia patients suddenly become lucid before death? — dewfog">
+  <meta name="twitter:description" content="Dementia patients who haven't spoken clearly in months, suddenly lucid days or months before death — terminal lucidity, explained simply.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,6 +88,7 @@
       transform: translateX(-50%);
       font-size: 9px; letter-spacing: .28em;
       color: rgba(159,232,219,.95); text-align: center;
+      transition: color 1.2s ease;
     }
     #info {
       position: absolute; bottom: 13%; right: 5%;
@@ -137,18 +138,18 @@
       <a href="/cell-turnover.html">the parts that persist</a>
       <a href="/split-brain.html">the sliver that held</a>
       <a href="/realer-than-real.html">realer than real</a>
+      <a href="/leaving-on-command.html">leaving, on command</a>
       <a href="/the-particle-they-didnt-want-to-name.html">the particle they didn't want to name</a>
       <a href="/free-will.html">who moved first</a>
-      <a href="/terminal-lucidity.html">one last clear day</a>
       <a href="/reincarnation.html">the mark and the memory</a>
     </div>
   </div>
   <div id="title-wrap">
-    <h1>leaving, on command</h1>
-    <div class="subtitle">self · location · on command</div>
+    <h1>one last clear day</h1>
+    <div class="subtitle">silence · window · goodbye</div>
   </div>
   <div id="status"></div>
-  <div id="info">In 2002, stimulating one spot in the brain reliably produced a full out-of-body experience, on and off, on command. Since then, ordinary volunteers have been given the same illusion using nothing but a synchronized video feed and touch — most drift toward feeling located behind their own body, and the drift breaks the moment the signals fall out of sync. That's solid: the felt sense of where "you" are isn't fixed, it's built. What's still open is harder — whether an out-of-body state ever picks up real information the senses didn't. The one purpose-built test of that, during cardiac arrest, came back empty-handed, but barely got the chance to look.</div>
+  <div id="info">For at least 250 years, doctors and family members have documented a startling exception to dementia's one-way decline: patients who haven't spoken a clear sentence in months suddenly recognize people, speak normally, or say goodbye — hours, days, sometimes months before they die. A 2025 hospice study that directly monitored patients caught nine such episodes across three of twenty, ranging from one minute to two days, some occurring nearly a year before death — while a 2026 national survey found 43.6% of dementia caregivers report witnessing one. Researchers now prefer the term "paradoxical lucidity" over "terminal," since the episodes aren't confined to the deathbed. Whether this reflects a spared brain network briefly reopening, or points to something the mechanism doesn't explain yet, is a genuinely unresolved fork — sharper here than in most of this book's other chapters, since the underlying brain damage is often severe and visible on a scan.</div>
 </div>
 
 <div id="vignette"></div>
@@ -161,170 +162,120 @@ const status = document.getElementById('status');
 let W, H, cx, cy;
 
 const TEAL  = '159,232,219';
-const AMBER = '240,198,154';
-const CREAM = '255,248,228';
+const CREAM = '255,248,232';
 
-let realY, virtualY, selfX;
+const N = 130;
+let fog = [];
 
-function easeInOutCubic(x) {
-  return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
+function makeFogParticle() {
+  return {
+    x: Math.random() * 1, y: Math.random() * 1, // normalized 0..1
+    r: 0.6 + Math.random() * 1.4,
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.006 + Math.random() * 0.012,
+  };
 }
-function easeOutCubic(x) { return 1 - Math.pow(1-x, 3); }
-function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-function lerp(a, b, f) { return a + (b - a) * f; }
 
-const PHASES = ['anchored', 'stimulate', 'sync', 'hold', 'desync', 'rest'];
-const DUR    = { anchored: 130, stimulate: 90, sync: 130, hold: 160, desync: 130, rest: 110 };
+const PHASES = ['clouded', 'opening', 'clear', 'closing'];
+const DUR    = { clouded: 150, opening: 100, clear: 160, closing: 120 };
 const STATUS = {
-  anchored:  'ordinary state — self anchored to body',
-  stimulate: 'electrical stimulation — temporoparietal junction',
-  sync:      'synchronized touch — self drifts outward',
-  hold:      '"I" is over there now, not here',
-  desync:    'break the sync — self snaps back',
-  rest:      ''
+  clouded: 'clouded',
+  opening: 'a window opens',
+  clear:   'lucid',
+  closing: 'closing again',
 };
 
-let phase = 'anchored', phaseF = 0;
+let phase = 'clouded', phaseF = 0;
 let t = 0;
+let windowR = 0;
+
+function easeInOutCubic(x) { return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2; }
+function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
 
 function drawBg() {
-  ctx.fillStyle = 'rgba(11,19,22,0.16)';
+  ctx.fillStyle = 'rgba(11,19,22,0.22)';
   ctx.fillRect(0, 0, W, H);
 }
 
-function glowDot(x, y, r, color, alpha, glowMult) {
-  glowMult = glowMult || 3.2;
-  if (alpha <= 0.002) return;
-  const grad = ctx.createRadialGradient(x, y, 0, x, y, r * glowMult);
-  grad.addColorStop(0, `rgba(${color},${alpha})`);
-  grad.addColorStop(1, `rgba(${color},0)`);
-  ctx.fillStyle = grad;
+function drawFog(dim) {
+  for (const p of fog) {
+    p.phase += p.speed;
+    const flicker = 0.5 + 0.5 * Math.sin(p.phase);
+    const x = p.x * W, y = p.y * H;
+    const d = Math.hypot(x - cx, y - cy) / (Math.min(W, H) * 0.5);
+    const suppress = dim ? clamp01(1 - Math.max(0, (windowR / (Math.min(W,H)*0.42)) - d) * 1.4) : 1;
+    const a = 0.10 + flicker * 0.16 * suppress;
+    ctx.beginPath();
+    ctx.arc(x, y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${TEAL},${a})`;
+    ctx.fill();
+  }
+}
+
+function drawWindow(alpha) {
+  if (alpha <= 0.003 || windowR <= 1) return;
+  const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, windowR);
+  g.addColorStop(0,    `rgba(${CREAM},${0.85 * alpha})`);
+  g.addColorStop(0.45, `rgba(${TEAL},${0.42 * alpha})`);
+  g.addColorStop(1,    `rgba(${TEAL},0)`);
+  ctx.fillStyle = g;
   ctx.beginPath();
-  ctx.arc(x, y, r * glowMult, 0, Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle = `rgba(${color},${Math.min(1, alpha*1.3)})`;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.arc(cx, cy, windowR, 0, Math.PI * 2);
   ctx.fill();
 }
 
-function label(text, x, y, color, alpha, align) {
+function label(text, x, y, color, alpha) {
   if (!text || alpha <= 0.01) return;
   ctx.save();
-  ctx.textAlign = align || 'center';
+  ctx.textAlign = 'center';
   ctx.font = '9px "Space Mono", monospace';
   ctx.fillStyle = `rgba(${color},${alpha})`;
   ctx.fillText(text, x, y);
   ctx.restore();
 }
 
-function line(x0, y0, x1, y1, color, alpha, width, dash) {
-  if (alpha <= 0.01) return;
-  ctx.save();
-  ctx.strokeStyle = `rgba(${color},${alpha})`;
-  ctx.lineWidth = width || 1;
-  if (dash) ctx.setLineDash(dash);
-  ctx.beginPath();
-  ctx.moveTo(x0, y0);
-  ctx.lineTo(x1, y1);
-  ctx.stroke();
-  ctx.restore();
-}
+function render() {
+  const maxR = Math.min(W, H) * 0.30;
 
-function drawBodyMarker(y, label_, color, alpha, pulsePhase) {
-  const pulse = 0.5 + 0.5 * Math.sin(t * 0.05 + pulsePhase);
-  const r = 6 + pulse * 1.4;
-  glowDot(selfX, y, r, color, Math.min(1, (0.5 + pulse * 0.3) * alpha), 3.2);
-  label(label_, selfX + 26, y + 3, color, 0.5 * alpha, 'left');
-}
-
-function renderAnchored() {
-  const f = phaseF / DUR.anchored;
-  const settle = easeOutCubic(clamp01(f / 0.25));
-  drawBodyMarker(realY, 'real body', TEAL, settle, 0);
-  label('the felt "I" sits where the body is', cx, realY - 40, TEAL, 0.28 * settle, 'center');
-}
-
-function renderStimulate() {
-  const f = phaseF / DUR.stimulate;
-  const pulse1 = clamp01(f / 0.3);
-  const pulse2 = clamp01((f - 0.5) / 0.3);
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  const jump = Math.sin(Math.min(pulse1, 1 - (pulse1 < 1 ? 0 : 0)) * Math.PI) * 0.5;
-  const wobble = (pulse1 > 0 && pulse1 < 1) ? Math.sin(pulse1 * Math.PI) : 0;
-  const wobble2 = (pulse2 > 0 && pulse2 < 1) ? Math.sin(pulse2 * Math.PI) : 0;
-  const totalWobble = Math.max(wobble, wobble2);
-  const flashY = realY - totalWobble * 34;
-  if (totalWobble > 0.02) {
-    glowDot(cx, flashY, 5 + totalWobble * 3, CREAM, totalWobble, 4);
-    label('one spot, stimulated — briefly relocated', cx, realY - 46, CREAM, totalWobble * 0.7, 'center');
+  if (phase === 'clouded') {
+    const f = phaseF / DUR.clouded;
+    windowR = 0;
+    drawFog(false);
+  } else if (phase === 'opening') {
+    const f = easeOutCubic(clamp01(phaseF / DUR.opening));
+    windowR = maxR * f;
+    drawFog(true);
+    drawWindow(f);
+  } else if (phase === 'clear') {
+    const f = phaseF / DUR.clear;
+    windowR = maxR;
+    drawFog(true);
+    drawWindow(1);
+    if (f > 0.15) label('lucid', cx, cy + windowR + 26, CREAM, Math.min(1,(f-0.15)/0.3) * 0.7);
+  } else if (phase === 'closing') {
+    const f = easeInOutCubic(clamp01(phaseF / DUR.closing));
+    windowR = maxR * (1 - f);
+    drawFog(true);
+    drawWindow(1 - f);
   }
 }
 
-function renderSync() {
-  const f = phaseF / DUR.sync;
-  const grow = easeOutCubic(clamp01(f / 0.35));
-  const drift = easeInOutCubic(clamp01((f - 0.25) / 0.6));
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  drawBodyMarker(virtualY, 'virtual body', AMBER, grow, 0);
-  const selfY = lerp(realY, virtualY, drift);
-  glowDot(selfX - 30, selfY, 4.5, CREAM, 0.85, 3.4);
-  label('felt "I"', selfX - 56, selfY + 3, CREAM, 0.6, 'right');
-  line(selfX, realY, selfX, virtualY, TEAL, 0.15 * grow, 1, [3, 3]);
-}
-
-function renderHold() {
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  drawBodyMarker(virtualY, 'virtual body', AMBER, 1, 0);
-  glowDot(selfX - 30, virtualY, 4.5, CREAM, 0.9, 3.6);
-  label('felt "I"', selfX - 56, virtualY + 3, CREAM, 0.65, 'right');
-  line(selfX, realY, selfX, virtualY, TEAL, 0.12, 1, [3, 3]);
-}
-
-function renderDesync() {
-  const f = phaseF / DUR.desync;
-  const snap = easeInOutCubic(clamp01(f / 0.4));
-  const fadeVirtual = 1 - easeInOutCubic(clamp01((f - 0.5) / 0.5));
-  const pl = 0.5 + 0.5 * Math.sin(t * 0.05);
-  const pr = 0.5 + 0.5 * Math.sin(t * 0.083 + 1.7);
-  glowDot(selfX, realY, 6 + pl * 1.4, TEAL, 0.5 + pl * 0.3, 3.2);
-  label('real body', selfX + 26, realY + 3, TEAL, 0.5, 'left');
-  glowDot(selfX, virtualY, (6 + pr * 1.4) * Math.max(0.05, fadeVirtual), AMBER, (0.5 + pr * 0.3) * fadeVirtual, 3.2);
-  if (fadeVirtual > 0.1) label('virtual body', selfX + 26, virtualY + 3, AMBER, 0.5 * fadeVirtual, 'left');
-  const selfY = lerp(virtualY, realY, snap);
-  glowDot(selfX - 30, selfY, 4.5, CREAM, 0.85, 3.4);
-  label('felt "I"', selfX - 56, selfY + 3, CREAM, 0.6, 'right');
-  if (snap > 0.5) label('signals fall out of sync', cx, realY - 46, AMBER, Math.min(1, (snap - 0.5) / 0.5) * 0.45, 'center');
-}
-
-function renderRest() {
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-}
-
 function initPhase(p) {
-  phase = p;
-  phaseF = 0;
+  phase = p; phaseF = 0;
+  status.textContent = STATUS[p];
 }
 
 function nextPhase() {
   const i = PHASES.indexOf(phase);
-  const next = PHASES[(i + 1) % PHASES.length];
-  initPhase(next);
+  initPhase(PHASES[(i + 1) % PHASES.length]);
 }
 
 function frame() {
   try {
     drawBg();
     t += 1;
-    switch (phase) {
-      case 'anchored':  renderAnchored();  break;
-      case 'stimulate': renderStimulate(); break;
-      case 'sync':      renderSync();      break;
-      case 'hold':      renderHold();      break;
-      case 'desync':    renderDesync();    break;
-      case 'rest':      renderRest();      break;
-    }
-    if (STATUS[phase] !== undefined) status.textContent = STATUS[phase];
+    render();
     if (++phaseF >= DUR[phase]) nextPhase();
   } catch (e) {}
   requestAnimationFrame(frame);
@@ -334,13 +285,10 @@ function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   cx = W * .5; cy = H * .5;
-  selfX = cx;
-  const gap = Math.max(50, Math.min(110, H * 0.16));
-  realY = cy + gap * 0.6;
-  virtualY = cy - gap * 0.6;
+  fog = Array.from({ length: N }, makeFogParticle);
   ctx.fillStyle = '#0b1316';
   ctx.fillRect(0, 0, W, H);
-  initPhase('anchored');
+  initPhase('clouded');
 }
 window.addEventListener('resize', resize);
 resize();

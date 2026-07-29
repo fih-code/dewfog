@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Can you be tricked into leaving your body? — dewfog</title>
-  <meta name="description" content="A well-replicated line of neuroscience can relocate the felt sense of 'I' outside the body on command, in a lab. A simple animated look at how — and what a direct test for real out-of-body perception during cardiac arrest did and didn't find.">
+  <title>Does your brain decide before you do? — dewfog</title>
+  <meta name="description" content="Benjamin Libet's 1983 readiness-potential experiment seemed to show the brain decides before you're consciously aware of choosing. A simple animated look at the Libet experiment — and why decades of follow-up research say neuroscience hasn't actually settled whether free will is an illusion.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://dewfog.com/leaving-on-command.html">
+  <link rel="canonical" href="https://dewfog.com/free-will.html">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://dewfog.com/leaving-on-command.html">
-  <meta property="og:title" content="Can you be tricked into leaving your body? — dewfog">
-  <meta property="og:description" content="A well-replicated line of neuroscience can relocate the felt sense of 'I' outside the body on command, in a lab. A simple animated look at how — and what a direct test for real out-of-body perception during cardiac arrest did and didn't find.">
+  <meta property="og:url" content="https://dewfog.com/free-will.html">
+  <meta property="og:title" content="Does your brain decide before you do? — dewfog">
+  <meta property="og:description" content="Benjamin Libet's 1983 readiness-potential experiment seemed to show the brain decides before you're consciously aware of choosing. A simple animated look at the Libet experiment — and why decades of follow-up research say neuroscience hasn't actually settled whether free will is an illusion.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Can you be tricked into leaving your body? — dewfog">
-  <meta name="twitter:description" content="A camera, a paintbrush, and a few minutes — that's all it takes to relocate the felt sense of 'I'. Explained simply.">
+  <meta name="twitter:title" content="Does your brain decide before you do? — dewfog">
+  <meta name="twitter:description" content="A brain signal that rises before you feel the urge to choose — the Libet experiment, and why it doesn't settle free will after all.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -137,18 +137,18 @@
       <a href="/cell-turnover.html">the parts that persist</a>
       <a href="/split-brain.html">the sliver that held</a>
       <a href="/realer-than-real.html">realer than real</a>
+      <a href="/leaving-on-command.html">leaving, on command</a>
       <a href="/the-particle-they-didnt-want-to-name.html">the particle they didn't want to name</a>
-      <a href="/free-will.html">who moved first</a>
       <a href="/terminal-lucidity.html">one last clear day</a>
       <a href="/reincarnation.html">the mark and the memory</a>
     </div>
   </div>
   <div id="title-wrap">
-    <h1>leaving, on command</h1>
-    <div class="subtitle">self · location · on command</div>
+    <h1>who moved first</h1>
+    <div class="subtitle">urge · signal · delay</div>
   </div>
   <div id="status"></div>
-  <div id="info">In 2002, stimulating one spot in the brain reliably produced a full out-of-body experience, on and off, on command. Since then, ordinary volunteers have been given the same illusion using nothing but a synchronized video feed and touch — most drift toward feeling located behind their own body, and the drift breaks the moment the signals fall out of sync. That's solid: the felt sense of where "you" are isn't fixed, it's built. What's still open is harder — whether an out-of-body state ever picks up real information the senses didn't. The one purpose-built test of that, during cardiac arrest, came back empty-handed, but barely got the chance to look.</div>
+  <div id="info">In 1983, Benjamin Libet asked volunteers to flick their wrist whenever they felt like it, and measured a brain signal called the readiness potential building for roughly half a second before they felt the urge to move — about a third of a second before the felt urge itself. It became one of neuroscience's most famous arguments that conscious choice arrives too late to be the real cause of your actions. That certainty hasn't held up cleanly since: a 2012 model showed ordinary background brain noise can produce the same rising signal with no decision behind it at all; a 2019 study found the signal nearly vanishes before meaningful choices, showing up clearly only before arbitrary ones; and a 2025 follow-up found the opposite pattern. Four decades on, whether the conscious "I" actually decides, or just narrates a choice already made elsewhere in the brain, remains a genuinely open question — not the settled case pop science often claims.</div>
 </div>
 
 <div id="vignette"></div>
@@ -164,48 +164,54 @@ const TEAL  = '159,232,219';
 const AMBER = '240,198,154';
 const CREAM = '255,248,228';
 
-let realY, virtualY, selfX;
+// timeline: milliseconds before/after movement (t = 0)
+const T_MIN = -650, T_MAX = 80;
+const T_RP_START = -550;   // readiness potential begins
+const T_URGE      = -200;  // felt urge to move
+const T_MOVE      = 0;     // movement
 
-function easeInOutCubic(x) {
-  return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
+let axisY, x0, x1, ampTop;
+
+function xForT(t) { return x0 + (t - T_MIN) / (T_MAX - T_MIN) * (x1 - x0); }
+
+function rpValue(t) {
+  if (t <= T_RP_START) return 0;
+  if (t <= 0) {
+    const f = (t - T_RP_START) / (0 - T_RP_START);
+    return f * f * (3 - 2 * f); // smoothstep 0->1
+  }
+  const f = Math.min(1, t / 80);
+  return 1 - f * f; // quick fall after movement fires
 }
-function easeOutCubic(x) { return 1 - Math.pow(1-x, 3); }
-function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-function lerp(a, b, f) { return a + (b - a) * f; }
 
-const PHASES = ['anchored', 'stimulate', 'sync', 'hold', 'desync', 'rest'];
-const DUR    = { anchored: 130, stimulate: 90, sync: 130, hold: 160, desync: 130, rest: 110 };
+const PHASES = ['sweep', 'hold', 'fade'];
+const DUR    = { sweep: 340, hold: 90, fade: 60 };
 const STATUS = {
-  anchored:  'ordinary state — self anchored to body',
-  stimulate: 'electrical stimulation — temporoparietal junction',
-  sync:      'synchronized touch — self drifts outward',
-  hold:      '"I" is over there now, not here',
-  desync:    'break the sync — self snaps back',
-  rest:      ''
+  sweep: null, // set dynamically
+  hold:  'movement',
+  fade:  ''
 };
 
-let phase = 'anchored', phaseF = 0;
-let t = 0;
+let phase = 'sweep', phaseF = 0;
+let sweepT = T_MIN;
 
-function drawBg() {
-  ctx.fillStyle = 'rgba(11,19,22,0.16)';
+function easeLinear(x) { return x; }
+function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+
+function drawBg(alpha) {
+  ctx.fillStyle = `rgba(11,19,22,${alpha === undefined ? 1 : alpha})`;
   ctx.fillRect(0, 0, W, H);
 }
 
-function glowDot(x, y, r, color, alpha, glowMult) {
-  glowMult = glowMult || 3.2;
-  if (alpha <= 0.002) return;
-  const grad = ctx.createRadialGradient(x, y, 0, x, y, r * glowMult);
-  grad.addColorStop(0, `rgba(${color},${alpha})`);
-  grad.addColorStop(1, `rgba(${color},0)`);
-  ctx.fillStyle = grad;
+function drawAxis(alpha) {
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},${0.22 * alpha})`;
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(x, y, r * glowMult, 0, Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle = `rgba(${color},${Math.min(1, alpha*1.3)})`;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI*2);
-  ctx.fill();
+  ctx.moveTo(x0, axisY);
+  ctx.lineTo(x1, axisY);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function label(text, x, y, color, alpha, align) {
@@ -218,113 +224,125 @@ function label(text, x, y, color, alpha, align) {
   ctx.restore();
 }
 
-function line(x0, y0, x1, y1, color, alpha, width, dash) {
+function drawMarker(t, alpha, color) {
   if (alpha <= 0.01) return;
+  const x = xForT(t);
   ctx.save();
-  ctx.strokeStyle = `rgba(${color},${alpha})`;
-  ctx.lineWidth = width || 1;
-  if (dash) ctx.setLineDash(dash);
+  ctx.strokeStyle = `rgba(${color},${0.28 * alpha})`;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 3]);
   ctx.beginPath();
-  ctx.moveTo(x0, y0);
-  ctx.lineTo(x1, y1);
+  ctx.moveTo(x, axisY - ampTop);
+  ctx.lineTo(x, axisY + 14);
   ctx.stroke();
   ctx.restore();
 }
 
-function drawBodyMarker(y, label_, color, alpha, pulsePhase) {
-  const pulse = 0.5 + 0.5 * Math.sin(t * 0.05 + pulsePhase);
-  const r = 6 + pulse * 1.4;
-  glowDot(selfX, y, r, color, Math.min(1, (0.5 + pulse * 0.3) * alpha), 3.2);
-  label(label_, selfX + 26, y + 3, color, 0.5 * alpha, 'left');
+function drawCurve(uptoT) {
+  ctx.save();
+  ctx.strokeStyle = `rgba(${TEAL},.85)`;
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  const steps = 140;
+  let started = false;
+  for (let i = 0; i <= steps; i++) {
+    const t = T_MIN + (uptoT - T_MIN) * (i / steps);
+    if (t > uptoT) break;
+    const v = rpValue(t);
+    const x = xForT(t);
+    const y = axisY - v * ampTop;
+    if (!started) { ctx.moveTo(x, y); started = true; }
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
 }
 
-function renderAnchored() {
-  const f = phaseF / DUR.anchored;
-  const settle = easeOutCubic(clamp01(f / 0.25));
-  drawBodyMarker(realY, 'real body', TEAL, settle, 0);
-  label('the felt "I" sits where the body is', cx, realY - 40, TEAL, 0.28 * settle, 'center');
+function glowDot(x, y, r, color, alpha) {
+  if (alpha <= 0.005) return;
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 3.4);
+  grad.addColorStop(0, `rgba(${color},${alpha})`);
+  grad.addColorStop(1, `rgba(${color},0)`);
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 3.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = `rgba(${color},${Math.min(1, alpha * 1.3)})`;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
 }
 
-function renderStimulate() {
-  const f = phaseF / DUR.stimulate;
-  const pulse1 = clamp01(f / 0.3);
-  const pulse2 = clamp01((f - 0.5) / 0.3);
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  const jump = Math.sin(Math.min(pulse1, 1 - (pulse1 < 1 ? 0 : 0)) * Math.PI) * 0.5;
-  const wobble = (pulse1 > 0 && pulse1 < 1) ? Math.sin(pulse1 * Math.PI) : 0;
-  const wobble2 = (pulse2 > 0 && pulse2 < 1) ? Math.sin(pulse2 * Math.PI) : 0;
-  const totalWobble = Math.max(wobble, wobble2);
-  const flashY = realY - totalWobble * 34;
-  if (totalWobble > 0.02) {
-    glowDot(cx, flashY, 5 + totalWobble * 3, CREAM, totalWobble, 4);
-    label('one spot, stimulated — briefly relocated', cx, realY - 46, CREAM, totalWobble * 0.7, 'center');
+function render() {
+  drawBg();
+  drawAxis(1);
+  label('urge felt', 0, 0, TEAL, 0); // no-op placeholder to keep function shape stable
+
+  const t = sweepT;
+  drawCurve(t);
+
+  // moving playhead
+  const px = xForT(t);
+  ctx.save();
+  ctx.strokeStyle = `rgba(${CREAM},.5)`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(px, axisY - ampTop - 8);
+  ctx.lineTo(px, axisY + 18);
+  ctx.stroke();
+  ctx.restore();
+
+  // RP-start marker, once reached
+  if (t >= T_RP_START) {
+    drawMarker(T_RP_START, 1, TEAL);
+    label('signal begins', xForT(T_RP_START), axisY - ampTop - 14, TEAL, 0.55, 'center');
+  }
+
+  // urge marker, once reached — the counterintuitive moment
+  if (t >= T_URGE) {
+    const age = Math.min(1, (t - T_URGE) / 40);
+    const pulse = 0.6 + 0.4 * Math.sin(phaseF * 0.18);
+    glowDot(xForT(T_URGE), axisY - rpValue(T_URGE) * ampTop, 4 + pulse * 1.4, AMBER, 0.85);
+    label('you feel the urge — here', xForT(T_URGE), axisY + 30, AMBER, 0.75 * Math.min(1, age * 3), 'center');
+  }
+
+  // movement marker + flash
+  if (t >= T_MOVE - 4) {
+    const flashAge = clamp01((t - T_MOVE) / 30 + 0.15);
+    glowDot(xForT(T_MOVE), axisY - rpValue(T_MOVE) * ampTop, 5 + (1 - flashAge) * 5, CREAM, 0.5 + (1 - flashAge) * 0.5);
+    label('movement', xForT(T_MOVE), axisY - ampTop - 14, CREAM, 0.7, 'center');
   }
 }
 
-function renderSync() {
-  const f = phaseF / DUR.sync;
-  const grow = easeOutCubic(clamp01(f / 0.35));
-  const drift = easeInOutCubic(clamp01((f - 0.25) / 0.6));
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  drawBodyMarker(virtualY, 'virtual body', AMBER, grow, 0);
-  const selfY = lerp(realY, virtualY, drift);
-  glowDot(selfX - 30, selfY, 4.5, CREAM, 0.85, 3.4);
-  label('felt "I"', selfX - 56, selfY + 3, CREAM, 0.6, 'right');
-  line(selfX, realY, selfX, virtualY, TEAL, 0.15 * grow, 1, [3, 3]);
-}
-
-function renderHold() {
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  drawBodyMarker(virtualY, 'virtual body', AMBER, 1, 0);
-  glowDot(selfX - 30, virtualY, 4.5, CREAM, 0.9, 3.6);
-  label('felt "I"', selfX - 56, virtualY + 3, CREAM, 0.65, 'right');
-  line(selfX, realY, selfX, virtualY, TEAL, 0.12, 1, [3, 3]);
-}
-
-function renderDesync() {
-  const f = phaseF / DUR.desync;
-  const snap = easeInOutCubic(clamp01(f / 0.4));
-  const fadeVirtual = 1 - easeInOutCubic(clamp01((f - 0.5) / 0.5));
-  const pl = 0.5 + 0.5 * Math.sin(t * 0.05);
-  const pr = 0.5 + 0.5 * Math.sin(t * 0.083 + 1.7);
-  glowDot(selfX, realY, 6 + pl * 1.4, TEAL, 0.5 + pl * 0.3, 3.2);
-  label('real body', selfX + 26, realY + 3, TEAL, 0.5, 'left');
-  glowDot(selfX, virtualY, (6 + pr * 1.4) * Math.max(0.05, fadeVirtual), AMBER, (0.5 + pr * 0.3) * fadeVirtual, 3.2);
-  if (fadeVirtual > 0.1) label('virtual body', selfX + 26, virtualY + 3, AMBER, 0.5 * fadeVirtual, 'left');
-  const selfY = lerp(virtualY, realY, snap);
-  glowDot(selfX - 30, selfY, 4.5, CREAM, 0.85, 3.4);
-  label('felt "I"', selfX - 56, selfY + 3, CREAM, 0.6, 'right');
-  if (snap > 0.5) label('signals fall out of sync', cx, realY - 46, AMBER, Math.min(1, (snap - 0.5) / 0.5) * 0.45, 'center');
-}
-
-function renderRest() {
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-}
-
 function initPhase(p) {
-  phase = p;
-  phaseF = 0;
+  phase = p; phaseF = 0;
+  if (p === 'sweep') { sweepT = T_MIN; status.textContent = 'readiness potential rising, unconsciously'; }
+  if (STATUS[p] !== null && STATUS[p] !== undefined) status.textContent = STATUS[p];
 }
 
 function nextPhase() {
   const i = PHASES.indexOf(phase);
-  const next = PHASES[(i + 1) % PHASES.length];
-  initPhase(next);
+  initPhase(PHASES[(i + 1) % PHASES.length]);
 }
 
 function frame() {
   try {
-    drawBg();
-    t += 1;
-    switch (phase) {
-      case 'anchored':  renderAnchored();  break;
-      case 'stimulate': renderStimulate(); break;
-      case 'sync':      renderSync();      break;
-      case 'hold':      renderHold();      break;
-      case 'desync':    renderDesync();    break;
-      case 'rest':      renderRest();      break;
+    if (phase === 'sweep') {
+      const f = phaseF / DUR.sweep;
+      sweepT = T_MIN + (T_MAX - T_MIN) * clamp01(f);
+      if (sweepT >= T_URGE && sweepT < T_URGE + 6) status.textContent = 'the urge — arriving after the signal already began';
+      render();
+    } else if (phase === 'hold') {
+      sweepT = T_MAX;
+      render();
+    } else if (phase === 'fade') {
+      const f = phaseF / DUR.fade;
+      ctx.save();
+      drawBg(1);
+      ctx.globalAlpha = 1 - clamp01(f);
+      render();
+      ctx.restore();
     }
-    if (STATUS[phase] !== undefined) status.textContent = STATUS[phase];
     if (++phaseF >= DUR[phase]) nextPhase();
   } catch (e) {}
   requestAnimationFrame(frame);
@@ -334,13 +352,12 @@ function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   cx = W * .5; cy = H * .5;
-  selfX = cx;
-  const gap = Math.max(50, Math.min(110, H * 0.16));
-  realY = cy + gap * 0.6;
-  virtualY = cy - gap * 0.6;
+  axisY = cy + H * 0.04;
+  x0 = W * 0.16; x1 = W * 0.84;
+  ampTop = Math.min(140, H * 0.22);
   ctx.fillStyle = '#0b1316';
   ctx.fillRect(0, 0, W, H);
-  initPhase('anchored');
+  initPhase('sweep');
 }
 window.addEventListener('resize', resize);
 resize();

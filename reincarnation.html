@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Can you be tricked into leaving your body? — dewfog</title>
-  <meta name="description" content="A well-replicated line of neuroscience can relocate the felt sense of 'I' outside the body on command, in a lab. A simple animated look at how — and what a direct test for real out-of-body perception during cardiac arrest did and didn't find.">
+  <title>Is there real evidence that children remember past lives? — dewfog</title>
+  <meta name="description" content="Since 1967, University of Virginia researchers have documented more than 2,500 cases of children who spontaneously describe memories of another life — some with a birthmark matching a stranger's fatal wound. A simple animated look at the Stevenson reincarnation cases, and the pattern that makes most researchers skeptical.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://dewfog.com/leaving-on-command.html">
+  <link rel="canonical" href="https://dewfog.com/reincarnation.html">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://dewfog.com/leaving-on-command.html">
-  <meta property="og:title" content="Can you be tricked into leaving your body? — dewfog">
-  <meta property="og:description" content="A well-replicated line of neuroscience can relocate the felt sense of 'I' outside the body on command, in a lab. A simple animated look at how — and what a direct test for real out-of-body perception during cardiac arrest did and didn't find.">
+  <meta property="og:url" content="https://dewfog.com/reincarnation.html">
+  <meta property="og:title" content="Is there real evidence that children remember past lives? — dewfog">
+  <meta property="og:description" content="Since 1967, University of Virginia researchers have documented more than 2,500 cases of children who spontaneously describe memories of another life — some with a birthmark matching a stranger's fatal wound. A simple animated look at the Stevenson reincarnation cases, and the pattern that makes most researchers skeptical.">
   <meta property="og:image" content="https://dewfog.com/og.png">
   <meta property="og:site_name" content="dewfog">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Can you be tricked into leaving your body? — dewfog">
-  <meta name="twitter:description" content="A camera, a paintbrush, and a few minutes — that's all it takes to relocate the felt sense of 'I'. Explained simply.">
+  <meta name="twitter:title" content="Is there real evidence that children remember past lives? — dewfog">
+  <meta name="twitter:description" content="Over 2,500 documented cases of children describing another life — the Stevenson reincarnation research, and why the evidence is more limited than it first appears.">
   <meta name="twitter:image" content="https://dewfog.com/og.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -137,18 +137,18 @@
       <a href="/cell-turnover.html">the parts that persist</a>
       <a href="/split-brain.html">the sliver that held</a>
       <a href="/realer-than-real.html">realer than real</a>
+      <a href="/leaving-on-command.html">leaving, on command</a>
       <a href="/the-particle-they-didnt-want-to-name.html">the particle they didn't want to name</a>
       <a href="/free-will.html">who moved first</a>
       <a href="/terminal-lucidity.html">one last clear day</a>
-      <a href="/reincarnation.html">the mark and the memory</a>
     </div>
   </div>
   <div id="title-wrap">
-    <h1>leaving, on command</h1>
-    <div class="subtitle">self · location · on command</div>
+    <h1>the mark and the memory</h1>
+    <div class="subtitle">birthmark · record · doubt</div>
   </div>
   <div id="status"></div>
-  <div id="info">In 2002, stimulating one spot in the brain reliably produced a full out-of-body experience, on and off, on command. Since then, ordinary volunteers have been given the same illusion using nothing but a synchronized video feed and touch — most drift toward feeling located behind their own body, and the drift breaks the moment the signals fall out of sync. That's solid: the felt sense of where "you" are isn't fixed, it's built. What's still open is harder — whether an out-of-body state ever picks up real information the senses didn't. The one purpose-built test of that, during cardiac arrest, came back empty-handed, but barely got the chance to look.</div>
+  <div id="info">Since 1967, researchers at the University of Virginia have documented more than 2,500 cases of young children spontaneously describing memories of another life — in a minority of cases, with a birthmark or birth defect that appears to match a fatal wound on a specific, deceased stranger they say they used to be, cross-checked against autopsy or medical records. But the strongest cases cluster almost entirely in cultures that already believe in reincarnation — a pattern the researchers' own reviews confirm, not one imposed by critics — and skeptics argue overheard conversation, chance name matches, and eager family members are enough to produce detailed, convincing testimony without anything paranormal involved. This is one of the more skeptical-leaning chapters in the book: the ordinary explanation does most of the work, but a minority of individually striking, cross-checked cases still haven't been fully explained away.</div>
 </div>
 
 <div id="vignette"></div>
@@ -162,30 +162,25 @@ let W, H, cx, cy;
 
 const TEAL  = '159,232,219';
 const AMBER = '240,198,154';
-const CREAM = '255,248,228';
 
-let realY, virtualY, selfX;
+let leftX, rightX, midY;
+let sparks = [];
 
-function easeInOutCubic(x) {
-  return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
-}
-function easeOutCubic(x) { return 1 - Math.pow(1-x, 3); }
-function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-function lerp(a, b, f) { return a + (b - a) * f; }
-
-const PHASES = ['anchored', 'stimulate', 'sync', 'hold', 'desync', 'rest'];
-const DUR    = { anchored: 130, stimulate: 90, sync: 130, hold: 160, desync: 130, rest: 110 };
+const PHASES = ['separate', 'searching', 'align', 'doubt'];
+const DUR    = { separate: 130, searching: 190, align: 150, doubt: 170 };
 const STATUS = {
-  anchored:  'ordinary state — self anchored to body',
-  stimulate: 'electrical stimulation — temporoparietal junction',
-  sync:      'synchronized touch — self drifts outward',
-  hold:      '"I" is over there now, not here',
-  desync:    'break the sync — self snaps back',
-  rest:      ''
+  separate:  'two lives, unconnected',
+  searching: 'a claimed connection',
+  align:     'the marks line up',
+  doubt:     'or does it?',
 };
 
-let phase = 'anchored', phaseF = 0;
+let phase = 'separate', phaseF = 0;
 let t = 0;
+
+function easeInOutCubic(x) { return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2; }
+function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
 
 function drawBg() {
   ctx.fillStyle = 'rgba(11,19,22,0.16)';
@@ -208,108 +203,140 @@ function glowDot(x, y, r, color, alpha, glowMult) {
   ctx.fill();
 }
 
-function label(text, x, y, color, alpha, align) {
+function label(text, x, y, color, alpha) {
   if (!text || alpha <= 0.01) return;
   ctx.save();
-  ctx.textAlign = align || 'center';
+  ctx.textAlign = 'center';
   ctx.font = '9px "Space Mono", monospace';
   ctx.fillStyle = `rgba(${color},${alpha})`;
   ctx.fillText(text, x, y);
   ctx.restore();
 }
 
-function line(x0, y0, x1, y1, color, alpha, width, dash) {
-  if (alpha <= 0.01) return;
+// each "life" dot carries a small offset mark (birthmark/wound)
+function drawLifeMark(x, alpha) {
+  const mx = x + 6, my = midY - 11;
   ctx.save();
-  ctx.strokeStyle = `rgba(${color},${alpha})`;
-  ctx.lineWidth = width || 1;
-  if (dash) ctx.setLineDash(dash);
+  ctx.fillStyle = `rgba(${AMBER},${0.75 * alpha})`;
   ctx.beginPath();
-  ctx.moveTo(x0, y0);
-  ctx.lineTo(x1, y1);
-  ctx.stroke();
+  ctx.arc(mx, my, 2.1, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
 
-function drawBodyMarker(y, label_, color, alpha, pulsePhase) {
-  const pulse = 0.5 + 0.5 * Math.sin(t * 0.05 + pulsePhase);
-  const r = 6 + pulse * 1.4;
-  glowDot(selfX, y, r, color, Math.min(1, (0.5 + pulse * 0.3) * alpha), 3.2);
-  label(label_, selfX + 26, y + 3, color, 0.5 * alpha, 'left');
+function renderLives(pulse) {
+  const r = 6 + pulse * 1.6;
+  glowDot(leftX, midY, r, TEAL, 0.55 + pulse * 0.35, 3.4);
+  glowDot(rightX, midY, r, TEAL, 0.55 + pulse * 0.35, 3.4);
+  label('a life', leftX, midY + 34, TEAL, 0.4);
+  label('another, later', rightX, midY + 34, TEAL, 0.4);
 }
 
-function renderAnchored() {
-  const f = phaseF / DUR.anchored;
+function renderSeparate() {
+  const f = phaseF / DUR.separate;
   const settle = easeOutCubic(clamp01(f / 0.25));
-  drawBodyMarker(realY, 'real body', TEAL, settle, 0);
-  label('the felt "I" sits where the body is', cx, realY - 40, TEAL, 0.28 * settle, 'center');
+  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
+  renderLives(pulse * settle);
+  drawLifeMark(leftX, settle);
+  drawLifeMark(rightX, settle);
 }
 
-function renderStimulate() {
-  const f = phaseF / DUR.stimulate;
-  const pulse1 = clamp01(f / 0.3);
-  const pulse2 = clamp01((f - 0.5) / 0.3);
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  const jump = Math.sin(Math.min(pulse1, 1 - (pulse1 < 1 ? 0 : 0)) * Math.PI) * 0.5;
-  const wobble = (pulse1 > 0 && pulse1 < 1) ? Math.sin(pulse1 * Math.PI) : 0;
-  const wobble2 = (pulse2 > 0 && pulse2 < 1) ? Math.sin(pulse2 * Math.PI) : 0;
-  const totalWobble = Math.max(wobble, wobble2);
-  const flashY = realY - totalWobble * 34;
-  if (totalWobble > 0.02) {
-    glowDot(cx, flashY, 5 + totalWobble * 3, CREAM, totalWobble, 4);
-    label('one spot, stimulated — briefly relocated', cx, realY - 46, CREAM, totalWobble * 0.7, 'center');
+function renderSearching() {
+  const f = phaseF / DUR.searching;
+  const pulse = 0.5 + 0.5 * Math.sin(t * 0.04);
+  renderLives(pulse);
+  drawLifeMark(leftX, 1);
+  drawLifeMark(rightX, 1);
+
+  // sparks drifting stochastically between the two poles
+  if (sparks.length < 26 && Math.random() < 0.6) {
+    sparks.push({
+      x: leftX, y: midY,
+      tx: rightX, ty: midY,
+      p: 0, speed: 0.01 + Math.random() * 0.02,
+      wobble: (Math.random() - 0.5) * 40,
+    });
   }
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const s = sparks[i];
+    s.p += s.speed;
+    if (s.p >= 1) { sparks.splice(i, 1); continue; }
+    const x = s.x + (s.tx - s.x) * s.p + Math.sin(s.p * Math.PI) * s.wobble;
+    const y = s.y + (s.ty - s.y) * s.p - Math.sin(s.p * Math.PI) * 18;
+    const a = Math.sin(s.p * Math.PI) * 0.6;
+    glowDot(x, y, 1.6, AMBER, a, 2.6);
+  }
+  if (f > 0.5) label('looking for a match', cx, midY - 50, AMBER, Math.min(1,(f-0.5)/0.4) * 0.5);
 }
 
-function renderSync() {
-  const f = phaseF / DUR.sync;
-  const grow = easeOutCubic(clamp01(f / 0.35));
-  const drift = easeInOutCubic(clamp01((f - 0.25) / 0.6));
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  drawBodyMarker(virtualY, 'virtual body', AMBER, grow, 0);
-  const selfY = lerp(realY, virtualY, drift);
-  glowDot(selfX - 30, selfY, 4.5, CREAM, 0.85, 3.4);
-  label('felt "I"', selfX - 56, selfY + 3, CREAM, 0.6, 'right');
-  line(selfX, realY, selfX, virtualY, TEAL, 0.15 * grow, 1, [3, 3]);
+function renderAlign() {
+  const f = phaseF / DUR.align;
+  const grow = easeInOutCubic(clamp01(f / 0.5));
+  renderLives(0.7);
+  drawLifeMark(leftX, 1);
+  drawLifeMark(rightX, 1);
+
+  // thread connecting the two marks
+  const mLx = leftX + 6, mLy = midY - 11;
+  const mRx = rightX + 6, mRy = midY - 11;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${AMBER},${0.55 * grow})`;
+  ctx.lineWidth = 1.3;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(mLx, mLy);
+  ctx.lineTo(mLx + (mRx - mLx) * grow, mLy + (mRy - mLy) * grow);
+  ctx.stroke();
+  ctx.restore();
+
+  if (grow > 0.85) label('the marks line up', cx, midY - 50, AMBER, Math.min(1,(grow-0.85)/0.15) * 0.6);
 }
 
-function renderHold() {
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
-  drawBodyMarker(virtualY, 'virtual body', AMBER, 1, 0);
-  glowDot(selfX - 30, virtualY, 4.5, CREAM, 0.9, 3.6);
-  label('felt "I"', selfX - 56, virtualY + 3, CREAM, 0.65, 'right');
-  line(selfX, realY, selfX, virtualY, TEAL, 0.12, 1, [3, 3]);
-}
+function renderDoubt() {
+  const f = phaseF / DUR.doubt;
+  const dissolve = easeInOutCubic(clamp01(f / 0.55));
+  renderLives(0.7 * (1 - dissolve * 0.4));
+  drawLifeMark(leftX, 1);
+  drawLifeMark(rightX, 1);
 
-function renderDesync() {
-  const f = phaseF / DUR.desync;
-  const snap = easeInOutCubic(clamp01(f / 0.4));
-  const fadeVirtual = 1 - easeInOutCubic(clamp01((f - 0.5) / 0.5));
-  const pl = 0.5 + 0.5 * Math.sin(t * 0.05);
-  const pr = 0.5 + 0.5 * Math.sin(t * 0.083 + 1.7);
-  glowDot(selfX, realY, 6 + pl * 1.4, TEAL, 0.5 + pl * 0.3, 3.2);
-  label('real body', selfX + 26, realY + 3, TEAL, 0.5, 'left');
-  glowDot(selfX, virtualY, (6 + pr * 1.4) * Math.max(0.05, fadeVirtual), AMBER, (0.5 + pr * 0.3) * fadeVirtual, 3.2);
-  if (fadeVirtual > 0.1) label('virtual body', selfX + 26, virtualY + 3, AMBER, 0.5 * fadeVirtual, 'left');
-  const selfY = lerp(virtualY, realY, snap);
-  glowDot(selfX - 30, selfY, 4.5, CREAM, 0.85, 3.4);
-  label('felt "I"', selfX - 56, selfY + 3, CREAM, 0.6, 'right');
-  if (snap > 0.5) label('signals fall out of sync', cx, realY - 46, AMBER, Math.min(1, (snap - 0.5) / 0.5) * 0.45, 'center');
-}
+  const mLx = leftX + 6, mLy = midY - 11;
+  const mRx = rightX + 6, mRy = midY - 11;
+  const flicker = Math.random() < 0.5 ? 1 : 0.3;
+  ctx.save();
+  ctx.strokeStyle = `rgba(${AMBER},${0.45 * (1 - dissolve) * flicker})`;
+  ctx.lineWidth = 1.3;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(mLx, mLy);
+  ctx.lineTo(mRx, mRy);
+  ctx.stroke();
+  ctx.restore();
 
-function renderRest() {
-  drawBodyMarker(realY, 'real body', TEAL, 1, 0);
+  // thread breaking into scattered drifting particles
+  if (dissolve > 0.2) {
+    const n = 10;
+    for (let i = 0; i < n; i++) {
+      const along = i / n;
+      const bx = mLx + (mRx - mLx) * along;
+      const by = mLy + (mRy - mLy) * along;
+      const drift = (dissolve - 0.2) * 40;
+      const dx = bx + Math.sin(i * 1.7 + t * 0.05) * drift;
+      const dy = by + Math.cos(i * 2.1 + t * 0.05) * drift - drift * 0.6;
+      glowDot(dx, dy, 1.2, TEAL, (1 - dissolve) * 0.4, 2.4);
+    }
+  }
+  if (dissolve > 0.5) label('cultural pattern, not proof', cx, midY - 50, TEAL, Math.min(1,(dissolve-0.5)/0.5) * 0.45);
 }
 
 function initPhase(p) {
-  phase = p;
-  phaseF = 0;
+  phase = p; phaseF = 0;
+  status.textContent = STATUS[p];
+  if (p === 'separate') sparks = [];
 }
 
 function nextPhase() {
   const i = PHASES.indexOf(phase);
-  const next = PHASES[(i + 1) % PHASES.length];
-  initPhase(next);
+  initPhase(PHASES[(i + 1) % PHASES.length]);
 }
 
 function frame() {
@@ -317,14 +344,11 @@ function frame() {
     drawBg();
     t += 1;
     switch (phase) {
-      case 'anchored':  renderAnchored();  break;
-      case 'stimulate': renderStimulate(); break;
-      case 'sync':      renderSync();      break;
-      case 'hold':      renderHold();      break;
-      case 'desync':    renderDesync();    break;
-      case 'rest':      renderRest();      break;
+      case 'separate':  renderSeparate();  break;
+      case 'searching': renderSearching(); break;
+      case 'align':     renderAlign();     break;
+      case 'doubt':      renderDoubt();     break;
     }
-    if (STATUS[phase] !== undefined) status.textContent = STATUS[phase];
     if (++phaseF >= DUR[phase]) nextPhase();
   } catch (e) {}
   requestAnimationFrame(frame);
@@ -334,13 +358,13 @@ function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   cx = W * .5; cy = H * .5;
-  selfX = cx;
-  const gap = Math.max(50, Math.min(110, H * 0.16));
-  realY = cy + gap * 0.6;
-  virtualY = cy - gap * 0.6;
+  const spread = Math.max(90, Math.min(200, W * 0.16));
+  leftX = cx - spread;
+  rightX = cx + spread;
+  midY = cy;
   ctx.fillStyle = '#0b1316';
   ctx.fillRect(0, 0, W, H);
-  initPhase('anchored');
+  initPhase('separate');
 }
 window.addEventListener('resize', resize);
 resize();
