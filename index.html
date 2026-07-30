@@ -47,7 +47,7 @@
     * { box-sizing: border-box; }
     @keyframes dewWhisper  { 0%,100% { opacity: .78; letter-spacing: .34em } 50% { opacity: 1; letter-spacing: .38em } }
     @keyframes dewBlob     { 0%,100% { transform: translate3d(0,0,0) scale(1); opacity: .5 } 50% { transform: translate3d(2%,-2%,0) scale(1.08); opacity: .78 } }
-    @keyframes dewHint     { 0%,100% { opacity: .5 } 50% { opacity: 1 } }
+    @keyframes dewHint     { 0%,100% { opacity: .75 } 50% { opacity: 1 } }
     @keyframes dewMote     { 0% { transform: translate3d(0,0,0); opacity: 0 } 12% { opacity: .7 } 88% { opacity: .6 } 100% { transform: translate3d(14px,-120px,0); opacity: 0 } }
     @keyframes dewFrag     { 0%,100% { opacity: 1 } 50% { opacity: .72 } }
     /* ── site nav ─────────────────────────────────────────────────────────── */
@@ -244,7 +244,7 @@
   <div id="clock" style="position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.22em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);pointer-events:none;opacity:1;transition:opacity 1.4s ease;">observed: 03:14:07</div>
   <!-- hint: outer owns reveal opacity, inner owns pulse keyframe -->
   <div id="hintWrap" style="position:absolute;left:50%;bottom:11%;transform:translateX(-50%);z-index:4;pointer-events:none;opacity:0.85;transition:opacity .8s ease;">
-    <span id="hintSpan" style="display:block;font-size:9.5px;letter-spacing:.5em;text-transform:uppercase;color:rgba(196,210,208,.85);animation:dewHint 4.2s ease-in-out infinite;">wipe the glass</span>
+    <span id="hintSpan" style="display:block;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:rgba(16,28,30,.85);text-shadow:0 0 6px rgba(255,255,255,.4);animation:dewHint 4.2s ease-in-out infinite;">wipe the glass</span>
   </div>
 
   <!-- vignette (z:4) -->
