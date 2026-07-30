@@ -301,7 +301,7 @@
 <div id="dewCaseOverlay" aria-hidden="true">
   <div id="dewCasePanel" role="dialog">
     <button id="dewCaseClose" aria-label="close">×</button>
-    <p>independent lines of evidence — quantum measurement, the explanatory gap, twenty-five centuries of contemplative report, and anomalous experience near death — converge, without colluding, on the same possibility: that awareness is fundamental and the separate self is a process, not a thing.</p>
+    <p>independent lines of evidence — brain activity recorded returning during cardiac arrest in 2023, philosophers arguing physicalism itself implies panpsychism, dementia patients regaining sudden clarity days before death, and twenty-five centuries of contemplative reports describing the same dissolving boundary — converge, without colluding, on the same possibility: that awareness is fundamental, and the separate self is a process, not a thing.</p>
   </div>
 </div>
 
@@ -311,7 +311,7 @@
 <main style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;gap:1rem;">
   <div role="heading" aria-level="1" style="font-family:Georgia,serif;font-weight:400;color:rgba(223,240,236,.85);font-size:2.4rem;letter-spacing:.2em;margin:0 0 2rem;">it was never out there</div>
 
-  <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">not produced by the brain. we checked.</p>
+  <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">whether the brain produces this or filters it remains, genuinely, unsettled.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">matter is the residue. the looking comes first.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">the hard problem of consciousness has not been solved. only quieted.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">the signal precedes the receiver. filter, not generator.</p>
@@ -326,7 +326,7 @@
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">zen: before thinking, what are you? they are asking our question.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">plotinus: the one. not a deity. a ground. we think he was right.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">the mystics arrived here first. science is still catching up.</p>
-  <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">no cortical activity. full conscious account. we are still checking.</p>
+  <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">2023: brain activity recorded returning during cardiac arrest, in a window once thought silent.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">the observer is not produced by what it observes.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">consciousness research, meditation, near-death experience, quantum field theory — converging.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">materialism is one interpretation of reality. it is not the only one.</p>
@@ -382,79 +382,60 @@
   // ── fragment pool ─────────────────────────────────────────────────────────
 
   const FRAGMENT_POOL = [
-    'entry 47 — it held longer this time',
-    'not produced by the brain. we checked.',
+    '2023: EEG picked up organized brain activity returning during CPR — up to an hour after the heart stopped, in a window once assumed silent.',
     'matter is the residue. the looking comes first.',
     { redacted: true },
     'the signal precedes the receiver.',
-    'filter, not generator — that is what we found.',
+    'a century before anyone named the hard problem, james and bergson asked: does the brain make the signal, or only limit it?',
     'particles are temporary. the field is not.',
     'why does it feel like anything at all',
     'they all reported the same place. no coordinates.',
-    'entry 12 — no cortical activity. full account. we are still checking.',
+    '2006: philosopher galen strawson argued physicalism itself implies panpsychism, once you follow it all the way through.',
     'it was here before the matter. we think.',
     'the observer is not produced by what it observes.',
-    'entry 91 — the boundary dissolved. she could not say where she ended.',
+    'christof koch: consciousness may be a matter of degree — present wherever a system is richly enough wired together, not switched on only in brains like ours.',
     'the hard problem has not been solved. only quieted.',
     'you are not the excitation. you are the field.',
-    'entry 63 — when the filter loosened, there was no gap.',
-    'entry 34 — she described the room from outside it. the room confirmed.',
+    'bernardo kastrup: matter is what consciousness looks like from outside. not the other way around.',
+    '2009: two researchers combed two centuries of medical journals and found 49 documented cases of sudden clarity before death.',
     'every culture. every century. the same coordinates.',
-    'entry 29 — the model accounts for everything. except the feeling.',
+    '2025: a hospice study watched 20 dementia patients for 1,433 hours straight. nine of them came back, briefly — some nine months before the end.',
     'the lesion changed what he could say. not what he knew.',
-    'entry 17 — she could not locate where she ended.',
+    '2026: 43.6% of dementia caregivers, in a national survey, reported watching it happen.',
     'it does not make it. it limits it.',
     'the looking is prior. the looked-at is secondary.',
-    'entry 2 — what if the observer cannot be produced by the observed?',
-    'entry 71 — we keep finding it underneath. below the particles.',
+    'damage to one exact spot can erase one exact channel — a face, a memory, a word — and leave everything else untouched. a receiver breaks with that same precision. so does a generator.',
     'you cannot examine the watching from outside the watching.',
-    'entry 19 — we eliminated the local explanations. what remains is not local.',
     'they all stopped where the self ended. none could say where that was.',
     'e=mc². what appears solid is a temporary arrangement of something else.',
-    'entry 5 — mass is energy that paused. we are asking what the energy is.',
     'the equation says the solid is not. physics confirmed it. we are working on the rest.',
-    'entry 38 — concentrated. not fundamental. there is a difference.',
     'vedanta: tat tvam asi. the student and the infinite were never separate. twenty-five centuries of pointing.',
     'vedanta called it brahman. the field they describe matches.',
     'dzogchen calls it rigpa. we have a different word. same location.',
-    'entry 66 — zen: before thinking, what are you? they are asking our question.',
-    'entry 88 — the sufi accounts of fana match the nde reports. we checked.',
+    'zen, ninth century: before thinking, what are you? the question is older than the field that\'s now asking it too.',
+    'the sufi accounts of fana and near-death reports describe the same dissolving boundary, centuries and continents apart.',
     'the islamic mystical tradition points to the same interior. a different name. same location.',
     'the christian mystical tradition found it interior. not above. not after. within.',
-    'christian mystics: the ground of being is not separate from the being. logged.',
     'the tao that can be named is not it. they knew the problem.',
     'plotinus: the one. not a deity. a ground. we think he was right.',
     'every tradition found the same place. none agreed on the name.',
-    'entry 56 — the mystics arrived here first. we are still catching up.',
-    // tesla / frequency thread
-    'energy, frequency, vibration — tesla said this is how to understand the universe. we agree.',
-    'entry 44 — every particle oscillates. the universe speaks in frequencies. we are learning to listen.',
-    'entry 61 — the brain emits waves. whether it generates consciousness or receives it is the open question.',
-    // quantum / double slit thread
-    'entry 77 — the double slit experiment, 1927. unobserved: wave. observed: particle. we are still asking why.',
-    'the particle knew it was being watched. it changed its path. we do not fully understand this.',
-    'entry 82 — the wave function collapses when measured. we do not yet know what the measuring is.',
+    'panpsychism and idealism aren\'t the same claim, and they don\'t agree with each other. worth getting right before dismissing either.',
+    'the wave function collapses when something physical interacts with it — not when a conscious mind pays attention. that part is often gotten backwards.',
     'quantum entanglement — two particles, instant correlation, no distance between them. confirmed in labs. we are asking what it means.',
-    'entry 55 — the act of observation changes the observed. they called it physics. we think physics is pointing at something.',
-    // additional e=mc²
-    'entry 14 — solid is a convenient description. beneath it: oscillating energy fields. einstein agreed.',
-    // new design content
+    'mass is energy that paused. e=mc². einstein\'s own equation, not a slogan built on top of it.',
     'energy is never spent. it only changes address.',
-    'remove the observer, the reading goes blank.',
-    'the field was awake before the instrument.',
-    'subject reports no edge between self and field.',
-    'every run agreed. we stopped writing it down.',
+    'the brain emits measurable waves. whether it generates the experience or receives it is still, genuinely, an open question.',
     'matter is the excitation. the looking comes first.',
   ];
 
   const CLOSING_POOL = [
-    'log closed — subject arrived.',
-    'entry 103 — the subject was correct.',
-    'observation complete. result: prior.',
-    'end of log. the field holds.',
-    'entry 0 — recorded before the search began.',
+    'what\'s real here is checkable — dates, studies, named researchers.',
+    'the evidence doesn\'t settle it. it doesn\'t close it either.',
+    'the field holds. the argument stays honest.',
+    'nothing here needed to be invented.',
     'the glass was always clear on one side.',
     'what you found was here before you looked.',
+    'open, not solved. that\'s the honest end of it.',
   ];
 
   // Phase 1: 4 fragments barely visible from the start (opacity MIN_OP1).
@@ -503,7 +484,7 @@
       return 'the <span id="redactSpan" style="background:rgba(159,232,219,.22);color:transparent;padding:0 .15em;letter-spacing:0;">██████</span> is not lost — nothing here is';
     }
     if (f && f.anomaly) {
-      return 'entry 00 — this should not be visible. we are looking into it.';
+      return 'this shouldn\'t be visible. you found it anyway.';
     }
     return f;
   }
