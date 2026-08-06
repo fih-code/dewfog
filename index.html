@@ -107,26 +107,26 @@
     #dewNav.resolved #dewLinks { background: rgb(38,26,18); border-color: rgba(74,54,38,.22); backdrop-filter: none; -webkit-backdrop-filter: none; }
     #dewNav.resolved #dewLinks a { color: rgba(230,200,165,.90); }
     #dewNav.resolved #dewLinks a:hover { color: #fff5e8; text-shadow: 0 0 10px rgba(201,122,74,.40); }
-    #dewNav.resolved #dewCase { color: rgba(74,54,38,.68); }
-    #dewNav.resolved #dewCase:hover { color: rgba(74,54,38,.95); }
-    /* ── "the case" button + overlay ────────────────────────────────────────── */
+    #dewNav.resolved #dewCase, #dewNav.resolved #dewContribute { color: rgba(74,54,38,.68); }
+    #dewNav.resolved #dewCase:hover, #dewNav.resolved #dewContribute:hover { color: rgba(74,54,38,.95); }
+    /* ── "the case" / "contribute" buttons + overlays ───────────────────────── */
     #dewNavLeft { display: flex; align-items: center; gap: 1.5em; }
-    #dewCase {
+    #dewCase, #dewContribute {
       font-family: 'Space Mono',monospace; font-size: 9px;
       letter-spacing: .36em; text-transform: lowercase;
       color: rgba(159,232,219,.32); background: none; border: none;
       cursor: pointer; padding: 0; pointer-events: auto;
       transition: color .25s ease;
     }
-    #dewCase:hover { color: rgba(159,232,219,.7); }
-    #dewCaseOverlay {
+    #dewCase:hover, #dewContribute:hover { color: rgba(159,232,219,.7); }
+    #dewCaseOverlay, #dewContributeOverlay {
       display: none; position: fixed; inset: 0; z-index: 9;
       align-items: center; justify-content: center;
       background: rgba(6,12,14,.58);
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     }
-    #dewCaseOverlay.open { display: flex; animation: dewDrop .22s ease; }
-    #dewCasePanel {
+    #dewCaseOverlay.open, #dewContributeOverlay.open { display: flex; animation: dewDrop .22s ease; }
+    #dewCasePanel, #dewContributePanel {
       position: relative; max-width: 520px; width: 90%;
       padding: 36px 40px;
       background: rgba(7,13,16,.96);
@@ -134,19 +134,26 @@
       border-radius: 3px;
       backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     }
-    #dewCaseClose {
+    #dewCaseClose, #dewContributeClose {
       position: absolute; top: 14px; right: 18px;
       font-family: 'Space Mono',monospace; font-size: 13px;
       color: rgba(159,232,219,.28); background: none; border: none;
       cursor: pointer; padding: 4px; line-height: 1;
       transition: color .2s ease;
     }
-    #dewCaseClose:hover { color: rgba(159,232,219,.7); }
-    #dewCasePanel p {
+    #dewCaseClose:hover, #dewContributeClose:hover { color: rgba(159,232,219,.7); }
+    #dewCasePanel p, #dewContributePanel p {
       font-family: 'Space Mono',monospace; font-size: 10px;
       line-height: 2.1; letter-spacing: .05em;
       color: rgba(159,232,219,.82); margin: 0;
     }
+    #dewContributePanel p + p { margin-top: 1.4em; }
+    #dewMailLink {
+      color: rgba(159,232,219,.95); text-decoration: none;
+      border-bottom: 1px solid rgba(159,232,219,.35);
+      transition: color .2s ease, border-color .2s ease;
+    }
+    #dewMailLink:hover { color: #fff; border-color: rgba(159,232,219,.8); }
   </style>
 </head>
 <body>
@@ -261,6 +268,7 @@
     <div id="dewNavLeft">
       <a id="dewLogo" href="/">dewfog</a>
       <button id="dewCase">the case</button>
+      <button id="dewContribute">contribute</button>
     </div>
     <ul id="dewLinks">
       <li><a href="/double-slit.html">the double slit</a></li>
@@ -304,6 +312,14 @@
   <div id="dewCasePanel" role="dialog">
     <button id="dewCaseClose" aria-label="close">×</button>
     <p>independent lines of evidence — brain activity recorded returning during cardiac arrest in 2023, philosophers arguing physicalism itself implies panpsychism, dementia patients regaining sudden clarity days before death, and twenty-five centuries of contemplative reports describing the same dissolving boundary — converge, without colluding, on the same possibility: that awareness is fundamental, and the separate self is a process, not a thing.</p>
+  </div>
+</div>
+
+<div id="dewContributeOverlay" aria-hidden="true">
+  <div id="dewContributePanel" role="dialog">
+    <button id="dewContributeClose" aria-label="close">×</button>
+    <p>found a paper you think belongs in this? if there's a study, preprint, or finding you'd like looked at, send the link to <a id="dewMailLink" href="#" rel="nofollow">·&nbsp;·&nbsp;·</a>.</p>
+    <p>every submission gets read. not every one makes the cut.</p>
   </div>
 </div>
 
@@ -1004,6 +1020,44 @@
   });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && caseOverlay.classList.contains('open')) closeCase();
+  });
+}());
+</script>
+<script>
+(function () {
+  var contribBtn     = document.getElementById('dewContribute');
+  var contribOverlay = document.getElementById('dewContributeOverlay');
+  var contribClose   = document.getElementById('dewContributeClose');
+  var mailLink       = document.getElementById('dewMailLink');
+  if (!contribBtn || !contribOverlay) return;
+
+  // assembled at runtime so the address never sits in the page source as plain text
+  var mailUser = String.fromCharCode(115,117,112,112,111,114,116);          // support
+  var mailHost = String.fromCharCode(100,101,119,102,111,103,46,99,111,109); // dewfog.com
+  var mailAddr = mailUser + String.fromCharCode(64) + mailHost;
+  if (mailLink) {
+    mailLink.href = String.fromCharCode(109,97,105,108,116,111,58) + mailAddr; // mailto:
+    mailLink.textContent = mailAddr;
+  }
+
+  function openContrib() {
+    contribOverlay.classList.add('open');
+    contribOverlay.setAttribute('aria-hidden', 'false');
+    contribClose.focus();
+  }
+  function closeContrib() {
+    contribOverlay.classList.remove('open');
+    contribOverlay.setAttribute('aria-hidden', 'true');
+    contribBtn.focus();
+  }
+
+  contribBtn.addEventListener('click', function (e) { e.stopPropagation(); openContrib(); });
+  contribClose.addEventListener('click', closeContrib);
+  contribOverlay.addEventListener('pointerdown', function (e) {
+    if (e.target === contribOverlay) closeContrib();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && contribOverlay.classList.contains('open')) closeContrib();
   });
 }());
 </script>
