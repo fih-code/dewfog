@@ -35,6 +35,48 @@
       pointer-events: auto; transition: color .4s ease;
     }
     #home-btn:hover { color: rgba(159,232,219,.75); }
+    #dewContribute {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.5); background: none; border: none;
+      cursor: pointer; padding: 0; pointer-events: auto;
+      transition: color .4s ease;
+    }
+    #dewContribute:hover { color: rgba(159,232,219,.85); }
+    #dewContributeOverlay {
+      display: none; position: fixed; inset: 0; z-index: 20;
+      align-items: center; justify-content: center;
+      background: rgba(6,12,14,.58);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    #dewContributeOverlay.open { display: flex; animation: navDrop .22s ease; }
+    #dewContributePanel {
+      position: relative; max-width: 480px; width: 90%;
+      padding: 32px 36px;
+      background: rgba(7,13,16,.96);
+      border: 1px solid rgba(159,232,219,.10);
+      border-radius: 3px;
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      font-family: 'Space Mono', monospace;
+    }
+    #dewContributeClose {
+      position: absolute; top: 12px; right: 16px;
+      font-size: 13px; color: rgba(159,232,219,.4);
+      background: none; border: none; cursor: pointer;
+      padding: 4px; line-height: 1;
+      transition: color .2s ease;
+    }
+    #dewContributeClose:hover { color: rgba(159,232,219,.8); }
+    #dewContributePanel p {
+      font-size: 10px; line-height: 2; letter-spacing: .05em;
+      color: rgba(159,232,219,.82); margin: 0;
+    }
+    #dewContributePanel p + p { margin-top: 1.2em; }
+    #dewMailLink {
+      color: rgba(159,232,219,.95); text-decoration: none;
+      border-bottom: 1px solid rgba(159,232,219,.35);
+      transition: color .2s ease, border-color .2s ease;
+    }
+    #dewMailLink:hover { color: #fff; border-color: rgba(159,232,219,.8); }
     #nav-burger {
       display: flex; flex-direction: column; justify-content: center;
       gap: 4px; background: none; border: none; padding: 4px; margin: 0;
@@ -110,6 +152,7 @@
 <div id="ui">
   <div id="top-nav">
     <a id="home-btn" href="/">home</a>
+    <button id="dewContribute">contribute</button>
     <button id="nav-burger" aria-label="menu" aria-expanded="false">
       <span></span><span></span>
     </button>
@@ -154,6 +197,14 @@
 </div>
 
 <div id="vignette"></div>
+
+<div id="dewContributeOverlay" aria-hidden="true">
+  <div id="dewContributePanel" role="dialog">
+    <button id="dewContributeClose" aria-label="close">×</button>
+    <p>aware of a scientific paper touching on consciousness as fundamental? share the link with <a id="dewMailLink" href="#" rel="nofollow">·&nbsp;·&nbsp;·</a>.</p>
+    <p>every submission gets read. not every one makes the cut.</p>
+  </div>
+</div>
 
 <script>
 const canvas = document.getElementById('c');
@@ -364,6 +415,43 @@ requestAnimationFrame(frame);
       burger.classList.remove('open');
       burger.setAttribute('aria-expanded', 'false');
     }
+  });
+}());
+
+(function () {
+  var contribBtn     = document.getElementById('dewContribute');
+  var contribOverlay = document.getElementById('dewContributeOverlay');
+  var contribClose   = document.getElementById('dewContributeClose');
+  var mailLink       = document.getElementById('dewMailLink');
+  if (!contribBtn || !contribOverlay) return;
+
+  // assembled at runtime so the address never sits in the page source as plain text
+  var mailUser = String.fromCharCode(115,117,112,112,111,114,116);          // support
+  var mailHost = String.fromCharCode(100,101,119,102,111,103,46,99,111,109); // dewfog.com
+  var mailAddr = mailUser + String.fromCharCode(64) + mailHost;
+  if (mailLink) {
+    mailLink.href = String.fromCharCode(109,97,105,108,116,111,58) + mailAddr; // mailto:
+    mailLink.textContent = mailAddr;
+  }
+
+  function openContrib() {
+    contribOverlay.classList.add('open');
+    contribOverlay.setAttribute('aria-hidden', 'false');
+    contribClose.focus();
+  }
+  function closeContrib() {
+    contribOverlay.classList.remove('open');
+    contribOverlay.setAttribute('aria-hidden', 'true');
+    contribBtn.focus();
+  }
+
+  contribBtn.addEventListener('click', function (e) { e.stopPropagation(); openContrib(); });
+  contribClose.addEventListener('click', closeContrib);
+  contribOverlay.addEventListener('pointerdown', function (e) {
+    if (e.target === contribOverlay) closeContrib();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && contribOverlay.classList.contains('open')) closeContrib();
   });
 }());
 </script>
