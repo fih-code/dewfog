@@ -154,6 +154,26 @@
       transition: color .2s ease, border-color .2s ease;
     }
     #dewMailLink:hover { color: #fff; border-color: rgba(159,232,219,.8); }
+    /* resolved palette — warm amber (mirrors #dewLinks) */
+    #dewCaseOverlay.resolved #dewCasePanel, #dewContributeOverlay.resolved #dewContributePanel {
+      background: rgb(38,26,18); border-color: rgba(74,54,38,.22);
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+    }
+    #dewCaseOverlay.resolved #dewCasePanel p, #dewContributeOverlay.resolved #dewContributePanel p {
+      color: rgba(230,200,165,.90);
+    }
+    #dewCaseOverlay.resolved #dewCaseClose, #dewContributeOverlay.resolved #dewContributeClose {
+      color: rgba(230,200,165,.55);
+    }
+    #dewCaseOverlay.resolved #dewCaseClose:hover, #dewContributeOverlay.resolved #dewContributeClose:hover {
+      color: #fff5e8;
+    }
+    #dewContributeOverlay.resolved #dewMailLink {
+      color: rgba(230,200,165,.95); border-color: rgba(230,200,165,.4);
+    }
+    #dewContributeOverlay.resolved #dewMailLink:hover {
+      color: #fff5e8; border-color: rgba(230,200,165,.85);
+    }
   </style>
 </head>
 <body>
@@ -879,6 +899,10 @@
     resolveAudio();
     const nav = document.getElementById('dewNav');
     if (nav) nav.classList.add('resolved');
+    const caseOverlay = document.getElementById('dewCaseOverlay');
+    if (caseOverlay) caseOverlay.classList.add('resolved');
+    const contribOverlay = document.getElementById('dewContributeOverlay');
+    if (contribOverlay) contribOverlay.classList.add('resolved');
   }
 
   // ── clock ─────────────────────────────────────────────────────────────────
