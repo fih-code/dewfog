@@ -107,18 +107,18 @@
     #dewNav.resolved #dewLinks { background: rgb(38,26,18); border-color: rgba(74,54,38,.22); backdrop-filter: none; -webkit-backdrop-filter: none; }
     #dewNav.resolved #dewLinks a { color: rgba(230,200,165,.90); }
     #dewNav.resolved #dewLinks a:hover { color: #fff5e8; text-shadow: 0 0 10px rgba(201,122,74,.40); }
-    #dewNav.resolved #dewCase, #dewNav.resolved #dewContribute { color: rgba(74,54,38,.68); }
-    #dewNav.resolved #dewCase:hover, #dewNav.resolved #dewContribute:hover { color: rgba(74,54,38,.95); }
-    /* ── "the case" / "contribute" buttons + overlays ───────────────────────── */
+    #dewNav.resolved #dewCase, #dewNav.resolved #dewContribute, #dewNav.resolved #dewReferences { color: rgba(74,54,38,.68); }
+    #dewNav.resolved #dewCase:hover, #dewNav.resolved #dewContribute:hover, #dewNav.resolved #dewReferences:hover { color: rgba(74,54,38,.95); }
+    /* ── "the case" / "contribute" / "references" buttons + overlays ───────────────────────── */
     #dewNavLeft { display: flex; align-items: center; gap: 1.5em; }
-    #dewCase, #dewContribute {
+    #dewCase, #dewContribute, #dewReferences {
       font-family: 'Space Mono',monospace; font-size: 9px;
       letter-spacing: .36em; text-transform: lowercase;
       color: rgba(159,232,219,.32); background: none; border: none;
-      cursor: pointer; padding: 0; pointer-events: auto;
+      cursor: pointer; padding: 0; pointer-events: auto; text-decoration: none;
       transition: color .25s ease;
     }
-    #dewCase:hover, #dewContribute:hover { color: rgba(159,232,219,.7); }
+    #dewCase:hover, #dewContribute:hover, #dewReferences:hover { color: rgba(159,232,219,.7); }
     #dewCaseOverlay, #dewContributeOverlay {
       display: none; position: fixed; inset: 0; z-index: 9;
       align-items: center; justify-content: center;
@@ -289,6 +289,7 @@
       <a id="dewLogo" href="/">dewfog</a>
       <button id="dewCase">the case</button>
       <button id="dewContribute">contribute</button>
+      <a id="dewReferences" href="/references.html">references</a>
     </div>
     <ul id="dewLinks">
       <li><a href="/double-slit.html">the double slit</a></li>

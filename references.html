@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>References &amp; sources — dewfog</title>
+  <meta name="description" content="Every citation behind dewfog's chapters — 148 sources: peer-reviewed papers, books, and primary documents, with DOIs, live citation counts, and retraction status where independently verifiable.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dewfog.com/references.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dewfog.com/references.html">
+  <meta property="og:title" content="References &amp; sources — dewfog">
+  <meta property="og:description" content="Every citation behind dewfog's chapters — 148 sources: peer-reviewed papers, books, and primary documents, with DOIs, live citation counts, and retraction status where independently verifiable.">
+  <meta property="og:image" content="https://dewfog.com/og.png">
+  <meta property="og:site_name" content="dewfog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="References &amp; sources — dewfog">
+  <meta name="twitter:description" content="Every citation behind dewfog's chapters, with DOIs, live citation counts, and retraction status where verifiable.">
+  <meta name="twitter:image" content="https://dewfog.com/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100%; background: #0b1316; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Space Mono', monospace; color: rgba(223,240,236,.85); }
+
+    #top-nav {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; gap: 16px;
+      padding: 22px clamp(16px,5vw,40px) 14px;
+      background: rgba(11,19,22,.92);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(159,232,219,.08);
+    }
+    #home-btn {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.88); text-decoration: none;
+      transition: color .4s ease;
+    }
+    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #dewContribute, #dewReferences {
+      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      color: rgba(159,232,219,.5); background: none; border: none;
+      cursor: pointer; padding: 0; text-decoration: none;
+      transition: color .4s ease;
+    }
+    #dewReferences { color: rgba(159,232,219,.9); }
+    #dewContribute:hover, #dewReferences:hover { color: rgba(159,232,219,.85); }
+
+    header.page-head {
+      text-align: center; padding: 48px 20px 28px;
+    }
+    h1 {
+      font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.9);
+      font-size: clamp(1.8rem,4vw,3rem); letter-spacing: .06em; margin: 0;
+      text-shadow: 0 0 26px rgba(159,232,219,.4), 0 0 60px rgba(159,232,219,.18);
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: .4em; text-transform: uppercase;
+      color: rgba(159,232,219,.4); margin: .8em 0 0;
+    }
+    .intro {
+      max-width: 640px; margin: 22px auto 0; font-size: 12px; line-height: 1.8;
+      color: rgba(159,232,219,.75); letter-spacing: .02em; padding: 0 20px;
+    }
+    .intro strong { color: rgba(159,232,219,.95); }
+
+    #controls {
+      max-width: 1400px; margin: 0 auto; padding: 0 clamp(16px,4vw,40px) 18px;
+      display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center;
+    }
+    #search {
+      flex: 1 1 260px; font-family: inherit; font-size: 12px;
+      background: rgba(159,232,219,.05); border: 1px solid rgba(159,232,219,.18);
+      color: rgba(223,240,236,.9); padding: 9px 12px; border-radius: 3px;
+      letter-spacing: .03em;
+    }
+    #search::placeholder { color: rgba(159,232,219,.35); }
+    #search:focus { outline: none; border-color: rgba(159,232,219,.5); }
+    #row-count {
+      font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(159,232,219,.4); white-space: nowrap;
+    }
+
+    #table-wrap {
+      max-width: 1400px; margin: 0 auto; padding: 0 clamp(16px,4vw,40px) 60px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 11px; min-width: 1180px;
+    }
+    thead th {
+      position: sticky; top: 68px; z-index: 5;
+      background: #0d1619; text-align: left; font-weight: 400;
+      font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(159,232,219,.55);
+      padding: 10px 10px; border-bottom: 1px solid rgba(159,232,219,.2);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 9px 10px; border-bottom: 1px solid rgba(159,232,219,.07);
+      vertical-align: top; color: rgba(223,240,236,.82); line-height: 1.5;
+    }
+    tbody tr:hover td { background: rgba(159,232,219,.045); }
+    tbody tr.retracted td { background: rgba(201,84,74,.08); }
+    tbody tr.retracted .c-retr { color: rgba(240,140,120,.95); }
+    .c-title { min-width: 260px; color: rgba(223,240,236,.95); }
+    .c-authors { min-width: 140px; color: rgba(159,232,219,.7); }
+    .c-year { white-space: nowrap; }
+    .c-journal { min-width: 160px; color: rgba(159,232,219,.6); font-style: italic; }
+    .c-url a { color: rgba(159,232,219,.85); text-decoration: none; border-bottom: 1px solid rgba(159,232,219,.3); }
+    .c-url a:hover { color: #fff; border-color: rgba(159,232,219,.8); }
+    .c-chapter { color: rgba(159,232,219,.6); white-space: nowrap; }
+    .c-type { color: rgba(159,232,219,.5); white-space: nowrap; }
+    .c-cites { text-align: right; white-space: nowrap; }
+    .c-retr { white-space: nowrap; color: rgba(159,232,219,.45); }
+    tr.hidden { display: none; }
+
+    footer.page-foot {
+      max-width: 640px; margin: 0 auto; padding: 0 20px 60px; text-align: center;
+      font-size: 10px; line-height: 1.9; color: rgba(159,232,219,.4); letter-spacing: .02em;
+    }
+  </style>
+</head>
+<body>
+
+<div id="top-nav">
+  <a id="home-btn" href="/">home</a>
+  <button id="dewContribute">contribute</button>
+  <a id="dewReferences" href="/references.html">references</a>
+</div>
+
+<header class="page-head">
+  <h1>references</h1>
+  <div class="subtitle">sources · citations · retractions</div>
+  <p class="intro">Every citation behind dewfog's chapters, pulled directly from the manuscript's reference list. Where a source has a confirmed DOI, <strong>citation count and retraction status are pulled live from OpenAlex</strong> — verified by title, author, year, and journal all agreeing, not fuzzy-matched. <strong>71 of 148 sources</strong> have that confirmation so far; the rest show a blank rather than a guess, and will be filled in as verification continues. None of the 71 confirmed sources are retracted.</p>
+</header>
+
+<div id="controls">
+  <input id="search" type="text" placeholder="filter by title, author, chapter, or source type…" autocomplete="off">
+  <div id="row-count"></div>
+</div>
+
+<div id="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Authors</th>
+        <th>Year</th>
+        <th>Journal / Publisher</th>
+        <th>URL / DOI</th>
+        <th>Chapter</th>
+        <th>Source type</th>
+        <th>Citations</th>
+        <th>Retraction status</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <tr class="row" data-search="facing up to the problem of consciousness chalmers, d hard problem peer-reviewed journal article">
+        <td class="c-title">Facing Up to the Problem of Consciousness</td>
+        <td class="c-authors">Chalmers, D</td>
+        <td class="c-year">1995</td>
+        <td class="c-journal">Journal of Consciousness Studies</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="an information integration theory of consciousness tononi, g hard problem peer-reviewed journal article">
+        <td class="c-title">An Information Integration Theory of Consciousness</td>
+        <td class="c-authors">Tononi, G</td>
+        <td class="c-year">2004</td>
+        <td class="c-journal">BMC Neuroscience</td>
+        <td class="c-url"><a href="https://doi.org/10.1186/1471-2202-5-42" target="_blank" rel="noopener">doi.org/10.1186/1471-2202-5-42</a></td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1717</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the integrated information theory of consciousness as pseudoscience fleming, s. et al hard problem peer-reviewed journal article">
+        <td class="c-title">The Integrated Information Theory of Consciousness as Pseudoscience</td>
+        <td class="c-authors">Fleming, S. et al</td>
+        <td class="c-year">2023</td>
+        <td class="c-journal">—</td>
+        <td class="c-url"><a href="https://doi.org/10.31234/osf.io/zsr78" target="_blank" rel="noopener">doi.org/10.31234/osf.io/zsr78</a></td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">78</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="adversarial testing of global neuronal workspace and integrated information theories of consciousness cogitate consortium hard problem peer-reviewed journal article">
+        <td class="c-title">Adversarial Testing of Global Neuronal Workspace and Integrated Information Theories of Consciousness</td>
+        <td class="c-authors">Cogitate Consortium</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Nature</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/s41586-025-08888-1" target="_blank" rel="noopener">doi.org/10.1038/s41586-025-08888-1</a></td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">99</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="realistic monism: why physicalism entails panpsychism strawson, g hard problem peer-reviewed journal article">
+        <td class="c-title">Realistic Monism: Why Physicalism Entails Panpsychism</td>
+        <td class="c-authors">Strawson, G</td>
+        <td class="c-year">2006</td>
+        <td class="c-journal">Journal of Consciousness Studies</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="consciousness and its place in nature: why physicalism entails panpsychism strawson, g hard problem book">
+        <td class="c-title">Consciousness and Its Place in Nature: Why Physicalism Entails Panpsychism</td>
+        <td class="c-authors">Strawson, G</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Imprint Academic</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="then i am myself the world: what consciousness is and how to expand it koch, c hard problem book">
+        <td class="c-title">Then I Am Myself the World: What Consciousness Is and How to Expand It</td>
+        <td class="c-authors">Koch, C</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Basic Books</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="galileo&#x27;s error: foundations for a new science of consciousness goff, p hard problem book">
+        <td class="c-title">Galileo&#x27;s Error: Foundations for a New Science of Consciousness</td>
+        <td class="c-authors">Goff, P</td>
+        <td class="c-year">2019</td>
+        <td class="c-journal">Pantheon Books</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="does panpsychism entail anti-realism? the worm in the panpsychist apple albahari, m hard problem peer-reviewed journal article">
+        <td class="c-title">Does Panpsychism Entail Anti-Realism? The Worm in the Panpsychist Apple</td>
+        <td class="c-authors">Albahari, M</td>
+        <td class="c-year">2026</td>
+        <td class="c-journal">Religious Studies</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="analytic idealism in a nutshell kastrup, b hard problem book">
+        <td class="c-title">Analytic Idealism in a Nutshell</td>
+        <td class="c-authors">Kastrup, B</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Iff Books</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="hard problem and free will: an information-theoretical approach d&#x27;ariano, g.m. &amp; faggin, f hard problem book chapter">
+        <td class="c-title">Hard Problem and Free Will: An Information-Theoretical Approach</td>
+        <td class="c-authors">D&#x27;Ariano, G.M. &amp; Faggin, F</td>
+        <td class="c-year">2022</td>
+        <td class="c-journal">In F. Scardigli (Ed.), Artificial Intelligence Versus Natural Intelligence. Springer</td>
+        <td class="c-url"><a href="https://doi.org/10.1007/978-3-030-85480-5_5" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-85480-5_5</a></td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book chapter</td>
+        <td class="c-cites">32</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="irreducible: consciousness, life, computers, and human nature faggin, f hard problem book">
+        <td class="c-title">Irreducible: Consciousness, Life, Computers, and Human Nature</td>
+        <td class="c-authors">Faggin, F</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Essentia Books</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="human immortality: two supposed objections to the doctrine james, w hard problem book">
+        <td class="c-title">Human Immortality: Two Supposed Objections to the Doctrine</td>
+        <td class="c-authors">James, W</td>
+        <td class="c-year">1898</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="matter and memory bergson, h hard problem book">
+        <td class="c-title">Matter and Memory</td>
+        <td class="c-authors">Bergson, H</td>
+        <td class="c-year">1896</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the varieties of religious experience james, w hard problem book">
+        <td class="c-title">The Varieties of Religious Experience</td>
+        <td class="c-authors">James, W</td>
+        <td class="c-year">1902</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the principles of psychology james, w hard problem book">
+        <td class="c-title">The Principles of Psychology</td>
+        <td class="c-authors">James, W</td>
+        <td class="c-year">1890</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">hard problem</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="plasticity and language in the anaesthetized human hippocampus katlowitz, k.a., cole, e.r., sheth, s.a. et al the antenna peer-reviewed journal article">
+        <td class="c-title">Plasticity and Language in the Anaesthetized Human Hippocampus</td>
+        <td class="c-authors">Katlowitz, K.A., Cole, E.R., Sheth, S.A. et al</td>
+        <td class="c-year">2026</td>
+        <td class="c-journal">Nature</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/s41586-026-10448-0" target="_blank" rel="noopener">doi.org/10.1038/s41586-026-10448-0</a></td>
+        <td class="c-chapter">the antenna</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">6</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="tesla: inventor of the electrical age carlson, w.b tesla quote book">
+        <td class="c-title">Tesla: Inventor of the Electrical Age</td>
+        <td class="c-authors">Carlson, W.B</td>
+        <td class="c-year">2013</td>
+        <td class="c-journal">Princeton University Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="wizard: the life and times of nikola tesla seifer, m.j tesla quote book">
+        <td class="c-title">Wizard: The Life and Times of Nikola Tesla</td>
+        <td class="c-authors">Seifer, M.J</td>
+        <td class="c-year">1996</td>
+        <td class="c-journal">Birch Lane Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="system of transmission of electrical energy tesla, n tesla quote patent">
+        <td class="c-title">System of Transmission of Electrical Energy</td>
+        <td class="c-authors">Tesla, N</td>
+        <td class="c-year">1900</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Patent</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="bergstresser, r  tesla quote self-published (uncorroborated)">
+        <td class="c-title">Bergstresser, R</td>
+        <td class="c-authors"></td>
+        <td class="c-year"></td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Self-published (uncorroborated)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="wikiquote contributors  tesla quote collaborative reference work">
+        <td class="c-title">Wikiquote contributors</td>
+        <td class="c-authors"></td>
+        <td class="c-year"></td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Collaborative reference work</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="towards a neurobiological theory of consciousness crick, f. &amp; koch, c tesla quote peer-reviewed journal article">
+        <td class="c-title">Towards a Neurobiological Theory of Consciousness</td>
+        <td class="c-authors">Crick, F. &amp; Koch, C</td>
+        <td class="c-year">1990</td>
+        <td class="c-journal">Seminars in the Neurosciences</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="integrating information in the brain&#x27;s em field: the cemi field theory of consciousness mcfadden, j tesla quote peer-reviewed journal article">
+        <td class="c-title">Integrating Information in the Brain&#x27;s EM Field: The cemi Field Theory of Consciousness</td>
+        <td class="c-authors">McFadden, J</td>
+        <td class="c-year">2020</td>
+        <td class="c-journal">Neuroscience of Consciousness</td>
+        <td class="c-url"><a href="https://doi.org/10.1093/nc/niaa016" target="_blank" rel="noopener">doi.org/10.1093/nc/niaa016</a></td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">152</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the easy part of the hard problem: a resonance theory of consciousness hunt, t. &amp; schooler, j.w tesla quote peer-reviewed journal article">
+        <td class="c-title">The Easy Part of the Hard Problem: A Resonance Theory of Consciousness</td>
+        <td class="c-authors">Hunt, T. &amp; Schooler, J.W</td>
+        <td class="c-year">2019</td>
+        <td class="c-journal">Frontiers in Human Neuroscience</td>
+        <td class="c-url"><a href="https://doi.org/10.3389/fnhum.2019.00378" target="_blank" rel="noopener">doi.org/10.3389/fnhum.2019.00378</a></td>
+        <td class="c-chapter">tesla quote</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">129</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="a historical review of the problem of mitogenetic radiation gurwitsch, a.a biophotons peer-reviewed journal article">
+        <td class="c-title">A Historical Review of the Problem of Mitogenetic Radiation</td>
+        <td class="c-authors">Gurwitsch, A.A</td>
+        <td class="c-year">1988</td>
+        <td class="c-journal">Experientia</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="an experimental study of the problem of mitogenetic radiation hollaender, a. &amp; claus, w.d biophotons report / monograph">
+        <td class="c-title">An Experimental Study of the Problem of Mitogenetic Radiation</td>
+        <td class="c-authors">Hollaender, A. &amp; Claus, W.D</td>
+        <td class="c-year">1937</td>
+        <td class="c-journal">Bulletin of the National Research Council No. 100, Washington, D.C</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Report / monograph</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="pathological science langmuir, i. &amp; hall, r.n., ed biophotons peer-reviewed journal article">
+        <td class="c-title">Pathological Science</td>
+        <td class="c-authors">Langmuir, I. &amp; Hall, R.N., ed</td>
+        <td class="c-year">1989</td>
+        <td class="c-journal">Physics Today</td>
+        <td class="c-url"><a href="https://doi.org/10.1063/1.881205" target="_blank" rel="noopener">doi.org/10.1063/1.881205</a></td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">117</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="weak luminescence from the yeast saccharomyces cerevisiae and the existence of mitogenetic radiation quickenden, t.i. &amp; que hee, s.s biophotons peer-reviewed journal article">
+        <td class="c-title">Weak Luminescence from the Yeast Saccharomyces cerevisiae and the Existence of Mitogenetic Radiation</td>
+        <td class="c-authors">Quickenden, T.I. &amp; Que Hee, S.S</td>
+        <td class="c-year">1974</td>
+        <td class="c-journal">Biochemical and Biophysical Research Communications</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/0006-291x(74)90306-4" target="_blank" rel="noopener">doi.org/10.1016/0006-291x(74)90306-4</a></td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">67</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="experimentelle untersuchungen zur ultraschwachen photonenemission biologischer systeme ruth, b. &amp; popp, f.a biophotons peer-reviewed journal article">
+        <td class="c-title">Experimentelle Untersuchungen zur ultraschwachen Photonenemission biologischer Systeme</td>
+        <td class="c-authors">Ruth, B. &amp; Popp, F.A</td>
+        <td class="c-year">1976</td>
+        <td class="c-journal">Zeitschrift für Naturforschung</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="coherent radiation from dna molecules li, k.h biophotons book chapter">
+        <td class="c-title">Coherent Radiation from DNA Molecules</td>
+        <td class="c-authors">Li, K.H</td>
+        <td class="c-year">1992</td>
+        <td class="c-journal">In Popp, F.A. &amp; Li, K.H. (Eds.), Recent Advances in Biophoton Research and its Application. World Scientific</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Book chapter</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="biophotons, coherence and photocount statistics: a critical review cifra, m., brouder, c., nerudová, m. &amp; kučera, o biophotons peer-reviewed journal article">
+        <td class="c-title">Biophotons, Coherence and Photocount Statistics: A Critical Review</td>
+        <td class="c-authors">Cifra, M., Brouder, C., Nerudová, M. &amp; Kučera, O</td>
+        <td class="c-year">2015</td>
+        <td class="c-journal">Journal of Luminescence</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.jlumin.2015.03.020" target="_blank" rel="noopener">doi.org/10.1016/j.jlumin.2015.03.020</a></td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">54</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="exploring ultraweak photon emissions as optical markers of brain activity casey, h., diberardino, i., bonzanni, m., rouleau, n. &amp; murugan, n.j biophotons peer-reviewed journal article">
+        <td class="c-title">Exploring Ultraweak Photon Emissions as Optical Markers of Brain Activity</td>
+        <td class="c-authors">Casey, H., DiBerardino, I., Bonzanni, M., Rouleau, N. &amp; Murugan, N.J</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">iScience</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.isci.2025.112019" target="_blank" rel="noopener">doi.org/10.1016/j.isci.2025.112019</a></td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">20</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="genomic instantiation of consciousness in neurons through a biophoton field theory cacha, l.a. &amp; poznanski, r.r biophotons peer-reviewed journal article">
+        <td class="c-title">Genomic Instantiation of Consciousness in Neurons Through a Biophoton Field Theory</td>
+        <td class="c-authors">Cacha, L.A. &amp; Poznanski, R.R</td>
+        <td class="c-year">2014</td>
+        <td class="c-journal">Journal of Integrative Neuroscience</td>
+        <td class="c-url"><a href="https://doi.org/10.1142/s0219635214400081" target="_blank" rel="noopener">doi.org/10.1142/s0219635214400081</a></td>
+        <td class="c-chapter">biophotons</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">27</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="&quot;relative state&quot; formulation of quantum mechanics everett, h many worlds peer-reviewed journal article">
+        <td class="c-title">&quot;Relative State&quot; Formulation of Quantum Mechanics</td>
+        <td class="c-authors">Everett, H</td>
+        <td class="c-year">1957</td>
+        <td class="c-journal">Reviews of Modern Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1103/revmodphys.29.454" target="_blank" rel="noopener">doi.org/10.1103/revmodphys.29.454</a></td>
+        <td class="c-chapter">many worlds</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">3405</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="quantum superposition of molecules beyond 25 kda fein, y. et al superposition peer-reviewed journal article">
+        <td class="c-title">Quantum Superposition of Molecules Beyond 25 kDa</td>
+        <td class="c-authors">Fein, Y. et al</td>
+        <td class="c-year">2019</td>
+        <td class="c-journal">Nature Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/s41567-019-0663-9" target="_blank" rel="noopener">doi.org/10.1038/s41567-019-0663-9</a></td>
+        <td class="c-chapter">superposition</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">359</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the large n limit of superconformal field theories and supergravity maldacena, j holographic peer-reviewed journal article">
+        <td class="c-title">The Large N Limit of Superconformal Field Theories and Supergravity</td>
+        <td class="c-authors">Maldacena, J</td>
+        <td class="c-year">1997/1998</td>
+        <td class="c-journal">Advances in Theoretical and Mathematical Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.4310/atmp.1998.v2.n2.a1" target="_blank" rel="noopener">doi.org/10.4310/atmp.1998.v2.n2.a1</a></td>
+        <td class="c-chapter">holographic</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">14628</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="importance of quantum decoherence in brain processes tegmark, m black hole; entanglement peer-reviewed journal article">
+        <td class="c-title">Importance of Quantum Decoherence in Brain Processes</td>
+        <td class="c-authors">Tegmark, M</td>
+        <td class="c-year">2000</td>
+        <td class="c-journal">Physical Review E</td>
+        <td class="c-url"><a href="https://doi.org/10.1103/physreve.61.4194" target="_blank" rel="noopener">doi.org/10.1103/physreve.61.4194</a></td>
+        <td class="c-chapter">black hole; entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">769</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="a snapshot of foundational attitudes toward quantum mechanics schlosshauer, m., kofler, j., &amp; zeilinger, a quantum myths peer-reviewed journal article">
+        <td class="c-title">A Snapshot of Foundational Attitudes Toward Quantum Mechanics</td>
+        <td class="c-authors">Schlosshauer, M., Kofler, J., &amp; Zeilinger, A</td>
+        <td class="c-year">2013</td>
+        <td class="c-journal">Studies in History and Philosophy of Modern Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.shpsb.2013.04.004" target="_blank" rel="noopener">doi.org/10.1016/j.shpsb.2013.04.004</a></td>
+        <td class="c-chapter">quantum myths</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">189</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="remarks on the mind-body question wigner, e.p living the question; what this argument actually claims; double slit; superposition book chapter">
+        <td class="c-title">Remarks on the Mind-Body Question</td>
+        <td class="c-authors">Wigner, E.P</td>
+        <td class="c-year">1961</td>
+        <td class="c-journal">In I.J. Good (Ed.), The Scientist Speculates. Heinemann</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">Living the Question; What This Argument Actually Claims; double slit; superposition</td>
+        <td class="c-type">Book chapter</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="quantum cognition: the possibility of processing with nuclear spins in the brain fisher, m.p.a entanglement peer-reviewed journal article">
+        <td class="c-title">Quantum Cognition: The Possibility of Processing with Nuclear Spins in the Brain</td>
+        <td class="c-authors">Fisher, M.P.A</td>
+        <td class="c-year">2015</td>
+        <td class="c-journal">Annals of Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.aop.2015.08.020" target="_blank" rel="noopener">doi.org/10.1016/j.aop.2015.08.020</a></td>
+        <td class="c-chapter">entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">16</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="entanglement and coherence in pure and doped posner molecules adams, b., sinayskiy, i., agarwal, s., &amp; petruccione, f entanglement peer-reviewed journal article">
+        <td class="c-title">Entanglement and Coherence in Pure and Doped Posner Molecules</td>
+        <td class="c-authors">Adams, B., Sinayskiy, I., Agarwal, S., &amp; Petruccione, F</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Scientific Reports</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/s41598-025-96487-5" target="_blank" rel="noopener">doi.org/10.1038/s41598-025-96487-5</a></td>
+        <td class="c-chapter">entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="satellite-based entanglement distribution over 1200 kilometers yin, j. et al entanglement peer-reviewed journal article">
+        <td class="c-title">Satellite-Based Entanglement Distribution Over 1200 Kilometers</td>
+        <td class="c-authors">Yin, J. et al</td>
+        <td class="c-year">2017</td>
+        <td class="c-journal">Science</td>
+        <td class="c-url"><a href="https://doi.org/10.1126/science.aan3211" target="_blank" rel="noopener">doi.org/10.1126/science.aan3211</a></td>
+        <td class="c-chapter">entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1446</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="nobel prize in physics 2022 citation nobel prize in physics entanglement award citation">
+        <td class="c-title">Nobel Prize in Physics 2022 citation</td>
+        <td class="c-authors">Nobel Prize in Physics</td>
+        <td class="c-year">2022</td>
+        <td class="c-journal">Alain Aspect, John F. Clauser &amp; Anton Zeilinger</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">entanglement</td>
+        <td class="c-type">Award citation</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="broken symmetry and the mass of gauge vector mesons englert, f. &amp; brout, r higgs boson peer-reviewed journal article">
+        <td class="c-title">Broken Symmetry and the Mass of Gauge Vector Mesons</td>
+        <td class="c-authors">Englert, F. &amp; Brout, R</td>
+        <td class="c-year">1964</td>
+        <td class="c-journal">Physical Review Letters</td>
+        <td class="c-url"><a href="https://doi.org/10.1103/physrevlett.13.321" target="_blank" rel="noopener">doi.org/10.1103/physrevlett.13.321</a></td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">3889</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="broken symmetries and the masses of gauge bosons higgs, p.w higgs boson peer-reviewed journal article">
+        <td class="c-title">Broken Symmetries and the Masses of Gauge Bosons</td>
+        <td class="c-authors">Higgs, P.W</td>
+        <td class="c-year">1964</td>
+        <td class="c-journal">Physical Review Letters</td>
+        <td class="c-url"><a href="https://doi.org/10.1103/physrevlett.13.508" target="_blank" rel="noopener">doi.org/10.1103/physrevlett.13.508</a></td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">4437</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="global conservation laws and massless particles guralnik, g.s., hagen, c.r., &amp; kibble, t.w.b higgs boson peer-reviewed journal article">
+        <td class="c-title">Global Conservation Laws and Massless Particles</td>
+        <td class="c-authors">Guralnik, G.S., Hagen, C.R., &amp; Kibble, T.W.B</td>
+        <td class="c-year">1964</td>
+        <td class="c-journal">Physical Review Letters</td>
+        <td class="c-url"><a href="https://doi.org/10.1103/physrevlett.13.585" target="_blank" rel="noopener">doi.org/10.1103/physrevlett.13.585</a></td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">2725</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="observation of a new particle in the search for the standard model higgs boson with the atlas detector at the lhc atlas collaboration higgs boson peer-reviewed journal article">
+        <td class="c-title">Observation of a New Particle in the Search for the Standard Model Higgs Boson with the ATLAS Detector at the LHC</td>
+        <td class="c-authors">ATLAS Collaboration</td>
+        <td class="c-year">2012</td>
+        <td class="c-journal">Physics Letters B</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.physletb.2012.08.020" target="_blank" rel="noopener">doi.org/10.1016/j.physletb.2012.08.020</a></td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">10737</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="observation of a new boson at a mass of 125 gev with the cms experiment at the lhc cms collaboration higgs boson peer-reviewed journal article">
+        <td class="c-title">Observation of a New Boson at a Mass of 125 GeV with the CMS Experiment at the LHC</td>
+        <td class="c-authors">CMS Collaboration</td>
+        <td class="c-year">2012</td>
+        <td class="c-journal">Physics Letters B</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.physletb.2012.08.021" target="_blank" rel="noopener">doi.org/10.1016/j.physletb.2012.08.021</a></td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">10003</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="nobel prize in physics 2013 citation nobel prize in physics higgs boson award citation">
+        <td class="c-title">Nobel Prize in Physics 2013 citation</td>
+        <td class="c-authors">Nobel Prize in Physics</td>
+        <td class="c-year">2013</td>
+        <td class="c-journal">François Englert &amp; Peter W. Higgs</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Award citation</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="combined measurement of the higgs boson mass in pp collisions at √s = 7 and 8 tev atlas and cms collaborations higgs boson peer-reviewed journal article">
+        <td class="c-title">Combined Measurement of the Higgs Boson Mass in pp Collisions at √s = 7 and 8 TeV</td>
+        <td class="c-authors">ATLAS and CMS Collaborations</td>
+        <td class="c-year">2015</td>
+        <td class="c-journal">Physical Review Letters</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="a measurement of the higgs boson mass in the diphoton decay channel cms collaboration higgs boson peer-reviewed journal article">
+        <td class="c-title">A Measurement of the Higgs Boson Mass in the Diphoton Decay Channel</td>
+        <td class="c-authors">CMS Collaboration</td>
+        <td class="c-year">2020</td>
+        <td class="c-journal">Physics Letters B</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.physletb.2020.135425" target="_blank" rel="noopener">doi.org/10.1016/j.physletb.2020.135425</a></td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">166</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="study of higgs boson pair production in the hh→bbγγ final state with 308 fb⁻¹ of data atlas collaboration higgs boson conference note (preprint-style)">
+        <td class="c-title">Study of Higgs Boson Pair Production in the HH→bbγγ Final State with 308 fb⁻¹ of Data</td>
+        <td class="c-authors">ATLAS Collaboration</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Conference note (preprint-style)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="review of particle physics navas, s. et al. (particle data group) higgs boson peer-reviewed journal article">
+        <td class="c-title">Review of Particle Physics</td>
+        <td class="c-authors">Navas, S. et al. (Particle Data Group)</td>
+        <td class="c-year">2024, 2025 update</td>
+        <td class="c-journal">Physical Review D</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the god particle: if the universe is the answer, what is the question? lederman, l.m. &amp; teresi, d higgs boson book">
+        <td class="c-title">The God Particle: If the Universe Is the Answer, What Is the Question?</td>
+        <td class="c-authors">Lederman, L.M. &amp; Teresi, D</td>
+        <td class="c-year">1993</td>
+        <td class="c-journal">Houghton Mifflin</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">higgs boson</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="nobel prize in physics 2015 citation nobel prize in physics superposition award citation">
+        <td class="c-title">Nobel Prize in Physics 2015 citation</td>
+        <td class="c-authors">Nobel Prize in Physics</td>
+        <td class="c-year">2015</td>
+        <td class="c-journal">Takaaki Kajita &amp; Arthur B. McDonald</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">superposition</td>
+        <td class="c-type">Award citation</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="first measurement of reactor neutrino oscillations at juno juno collaboration superposition preprint (arxiv)">
+        <td class="c-title">First Measurement of Reactor Neutrino Oscillations at JUNO</td>
+        <td class="c-authors">JUNO Collaboration</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">arXiv:2511.14593</td>
+        <td class="c-url"><a href="https://arxiv.org/abs/2511.14593" target="_blank" rel="noopener">arxiv.org/abs/2511.14593</a></td>
+        <td class="c-chapter">superposition</td>
+        <td class="c-type">Preprint (arXiv)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="penrose–hawking singularity theorems penrose, r. &amp; hawking, s living the question; what this argument actually claims; black hole; entropy historical/foundational work (multiple papers)">
+        <td class="c-title">Penrose–Hawking singularity theorems</td>
+        <td class="c-authors">Penrose, R. &amp; Hawking, S</td>
+        <td class="c-year">1965 onward</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">Living the Question; What This Argument Actually Claims; black hole; entropy</td>
+        <td class="c-type">Historical/foundational work (multiple papers)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="black holes and entropy bekenstein, j holographic peer-reviewed journal article">
+        <td class="c-title">Black Holes and Entropy</td>
+        <td class="c-authors">Bekenstein, J</td>
+        <td class="c-year">1973</td>
+        <td class="c-journal">Physical Review D</td>
+        <td class="c-url"><a href="https://doi.org/10.1103/physrevd.7.2333" target="_blank" rel="noopener">doi.org/10.1103/physrevd.7.2333</a></td>
+        <td class="c-chapter">holographic</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">7453</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="particle creation by black holes hawking, s.w black hole; holographic peer-reviewed journal article">
+        <td class="c-title">Particle Creation by Black Holes</td>
+        <td class="c-authors">Hawking, S.W</td>
+        <td class="c-year">1975</td>
+        <td class="c-journal">Communications in Mathematical Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1007/bf02345020" target="_blank" rel="noopener">doi.org/10.1007/bf02345020</a></td>
+        <td class="c-chapter">black hole; holographic</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">13055</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="dimensional reduction in quantum gravity. in &#x27;t hooft, g holographic preprint (arxiv)">
+        <td class="c-title">Dimensional Reduction in Quantum Gravity. In</td>
+        <td class="c-authors">&#x27;t Hooft, G</td>
+        <td class="c-year">1993</td>
+        <td class="c-journal">Salamfest</td>
+        <td class="c-url"><a href="https://arxiv.org/abs/gr-qc/9310026" target="_blank" rel="noopener">arxiv.org/abs/gr-qc/9310026</a></td>
+        <td class="c-chapter">holographic</td>
+        <td class="c-type">Preprint (arXiv)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the world as a hologram susskind, l fine-tuning; holographic peer-reviewed journal article">
+        <td class="c-title">The World as a Hologram</td>
+        <td class="c-authors">Susskind, L</td>
+        <td class="c-year">1995</td>
+        <td class="c-journal">Journal of Mathematical Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1063/1.531249" target="_blank" rel="noopener">doi.org/10.1063/1.531249</a></td>
+        <td class="c-chapter">fine-tuning; holographic</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">4046</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the entropy of bulk quantum fields and the entanglement wedge of an evaporating black hole almheiri, a., engelhardt, n., marolf, d., &amp; maxfield, h holographic peer-reviewed journal article">
+        <td class="c-title">The Entropy of Bulk Quantum Fields and the Entanglement Wedge of an Evaporating Black Hole</td>
+        <td class="c-authors">Almheiri, A., Engelhardt, N., Marolf, D., &amp; Maxfield, H</td>
+        <td class="c-year">2019</td>
+        <td class="c-journal">Journal of High Energy Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1007/jhep12(2019)063" target="_blank" rel="noopener">doi.org/10.1007/jhep12(2019)063</a></td>
+        <td class="c-chapter">holographic</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">788</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="entanglement wedge reconstruction and the information paradox penington, g holographic peer-reviewed journal article">
+        <td class="c-title">Entanglement Wedge Reconstruction and the Information Paradox</td>
+        <td class="c-authors">Penington, G</td>
+        <td class="c-year">2020</td>
+        <td class="c-journal">Journal of High Energy Physics</td>
+        <td class="c-url"><a href="https://doi.org/10.1007/jhep09(2020)002" target="_blank" rel="noopener">doi.org/10.1007/jhep09(2020)002</a></td>
+        <td class="c-chapter">holographic</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1005</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="nobel prize in physics 2020 citation nobel prize in physics black hole award citation">
+        <td class="c-title">Nobel Prize in Physics 2020 citation</td>
+        <td class="c-authors">Nobel Prize in Physics</td>
+        <td class="c-year">2020</td>
+        <td class="c-journal">Roger Penrose</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">black hole</td>
+        <td class="c-type">Award citation</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="consciousness in the universe: a review of the &#x27;orch or&#x27; theory hameroff, s. &amp; penrose, r black hole; entanglement peer-reviewed journal article">
+        <td class="c-title">Consciousness in the Universe: A Review of the &#x27;Orch OR&#x27; Theory</td>
+        <td class="c-authors">Hameroff, S. &amp; Penrose, R</td>
+        <td class="c-year">2014</td>
+        <td class="c-journal">Physics of Life Reviews</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">black hole; entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="quantum computation in brain microtubules: decoherence and biological feasibility hagan, s., hameroff, s.r., &amp; tuszynski, j.a entanglement peer-reviewed journal article">
+        <td class="c-title">Quantum Computation in Brain Microtubules: Decoherence and Biological Feasibility</td>
+        <td class="c-authors">Hagan, S., Hameroff, S.R., &amp; Tuszynski, J.A</td>
+        <td class="c-year">2002</td>
+        <td class="c-journal">Physical Review E</td>
+        <td class="c-url"><a href="https://doi.org/10.1103/physreve.65.061901" target="_blank" rel="noopener">doi.org/10.1103/physreve.65.061901</a></td>
+        <td class="c-chapter">entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">386</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="ultraviolet superradiance from mega-networks of tryptophan in biological architectures babcock, n.s. et al black hole; entanglement peer-reviewed journal article">
+        <td class="c-title">Ultraviolet Superradiance from Mega-Networks of Tryptophan in Biological Architectures</td>
+        <td class="c-authors">Babcock, N.S. et al</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Journal of Physical Chemistry B</td>
+        <td class="c-url"><a href="https://doi.org/10.1021/acs.jpcb.3c07936" target="_blank" rel="noopener">doi.org/10.1021/acs.jpcb.3c07936</a></td>
+        <td class="c-chapter">black hole; entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">93</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="a quantum microtubule substrate of consciousness is experimentally supported and solves the binding and epiphenomenalism problems wiest, m.c black hole; entanglement peer-reviewed journal article">
+        <td class="c-title">A Quantum Microtubule Substrate of Consciousness Is Experimentally Supported and Solves the Binding and Epiphenomenalism Problems</td>
+        <td class="c-authors">Wiest, M.C</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Neuroscience of Consciousness</td>
+        <td class="c-url"><a href="https://doi.org/10.1093/nc/niaf011" target="_blank" rel="noopener">doi.org/10.1093/nc/niaf011</a></td>
+        <td class="c-chapter">black hole; entanglement</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">26</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="letter to the besso family (march 1955); commentary by tim maudlin, iai (2022) einstein, a e=mc²; entanglement; present moment primary historical document (letter)">
+        <td class="c-title">Letter to the Besso family (March 1955); commentary by Tim Maudlin, IAI (2022)</td>
+        <td class="c-authors">Einstein, A</td>
+        <td class="c-year">2022</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">e=mc²; entanglement; present moment</td>
+        <td class="c-type">Primary historical document (letter)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="psilocybin desynchronizes the human brain siegel, j.s. et al default mode peer-reviewed journal article">
+        <td class="c-title">Psilocybin Desynchronizes the Human Brain</td>
+        <td class="c-authors">Siegel, J.S. et al</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Nature</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/s41586-024-07624-5" target="_blank" rel="noopener">doi.org/10.1038/s41586-024-07624-5</a></td>
+        <td class="c-chapter">default mode</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">250</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="meditation-related activations are modulated by the practices needed to obtain it and by the expertise: an ale meta-analysis study tomasino, b., fregona, s., skrap, m., &amp; fabbro, f near death peer-reviewed journal article">
+        <td class="c-title">Meditation-Related Activations Are Modulated by the Practices Needed to Obtain It and by the Expertise: An ALE Meta-Analysis Study</td>
+        <td class="c-authors">Tomasino, B., Fregona, S., Skrap, M., &amp; Fabbro, F</td>
+        <td class="c-year">2012</td>
+        <td class="c-journal">Frontiers in Human Neuroscience</td>
+        <td class="c-url"><a href="https://doi.org/10.3389/fnhum.2012.00346" target="_blank" rel="noopener">doi.org/10.3389/fnhum.2012.00346</a></td>
+        <td class="c-chapter">near death</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">152</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="awareness during resuscitation – ii parnia, s. et al near death peer-reviewed journal article">
+        <td class="c-title">AWAreness during REsuscitation – II</td>
+        <td class="c-authors">Parnia, S. et al</td>
+        <td class="c-year">2023</td>
+        <td class="c-journal">Resuscitation</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">near death</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="aware study results, stony brook / university of southampton parnia, s. et al near death preliminary results (non-peer-reviewed)">
+        <td class="c-title">AWARE study results, Stony Brook / University of Southampton</td>
+        <td class="c-authors">Parnia, S. et al</td>
+        <td class="c-year">2014</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">near death</td>
+        <td class="c-type">Preliminary results (non-peer-reviewed)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="a neuroscientific model of near-death experiences martial, c., fritz, p., gosseries, o., et al near death peer-reviewed journal article">
+        <td class="c-title">A Neuroscientific Model of Near-Death Experiences</td>
+        <td class="c-authors">Martial, C., Fritz, P., Gosseries, O., et al</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Nature Reviews Neurology</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/s41582-025-01072-z" target="_blank" rel="noopener">doi.org/10.1038/s41582-025-01072-z</a></td>
+        <td class="c-chapter">near death</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">20</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="does the arousal system contribute to near-death experience? nelson, k.r., mattingly, m., lee, s.a., &amp; schmitt, f.a near death peer-reviewed journal article">
+        <td class="c-title">Does the Arousal System Contribute to Near-Death Experience?</td>
+        <td class="c-authors">Nelson, K.R., Mattingly, M., Lee, S.A., &amp; Schmitt, F.A</td>
+        <td class="c-year">2006</td>
+        <td class="c-journal">Neurology</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">near death</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="research on ketamine and nmda-receptor models of near-death experience jansen, k.l.r near death historical/foundational work (multiple papers)">
+        <td class="c-title">Research on ketamine and NMDA-receptor models of near-death experience</td>
+        <td class="c-authors">Jansen, K.L.R</td>
+        <td class="c-year">1989, 1990, 2000</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">near death</td>
+        <td class="c-type">Historical/foundational work (multiple papers)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="a neuroscientific model of near-death experiences reconsidered greyson, b. &amp; pehlivanova, m near death peer-reviewed journal article">
+        <td class="c-title">A Neuroscientific Model of Near-Death Experiences Reconsidered</td>
+        <td class="c-authors">Greyson, B. &amp; Pehlivanova, M</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Psychology of Consciousness: Theory, Research, and Practice</td>
+        <td class="c-url"><a href="https://doi.org/10.1037/cns0000448" target="_blank" rel="noopener">doi.org/10.1037/cns0000448</a></td>
+        <td class="c-chapter">near death</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">3</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="terminal lucidity in patients with chronic schizophrenia and dementia: a survey of the literature nahm, m. &amp; greyson, b terminal lucidity peer-reviewed journal article">
+        <td class="c-title">Terminal Lucidity in Patients With Chronic Schizophrenia and Dementia: A Survey of the Literature</td>
+        <td class="c-authors">Nahm, M. &amp; Greyson, B</td>
+        <td class="c-year">2009</td>
+        <td class="c-journal">The Journal of Nervous and Mental Disease</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="paradoxical lucidity: a potential paradigm shift for the neurobiology and treatment of severe dementias mashour, g.a., frank, l., batthyány, a., kolanowski, a.m., nahm, m., schulman-green, d., et al terminal lucidity peer-reviewed journal article">
+        <td class="c-title">Paradoxical Lucidity: A Potential Paradigm Shift for the Neurobiology and Treatment of Severe Dementias</td>
+        <td class="c-authors">Mashour, G.A., Frank, L., Batthyány, A., Kolanowski, A.M., Nahm, M., Schulman-Green, D., et al</td>
+        <td class="c-year">2019</td>
+        <td class="c-journal">Alzheimer&#x27;s &amp; Dementia</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.jalz.2019.04.002" target="_blank" rel="noopener">doi.org/10.1016/j.jalz.2019.04.002</a></td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">71</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="a prospective observational study of lucid episodes in advanced dementia gilmore-bykovskyi, a., kottler, h., cochran, a., dillon, k., coulson, a., benson, c., fehland, j., &amp; mueller, k terminal lucidity peer-reviewed journal article">
+        <td class="c-title">A Prospective Observational Study of Lucid Episodes in Advanced Dementia</td>
+        <td class="c-authors">Gilmore-Bykovskyi, A., Kottler, H., Cochran, A., Dillon, K., Coulson, A., Benson, C., Fehland, J., &amp; Mueller, K</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">The Gerontologist</td>
+        <td class="c-url"><a href="https://doi.org/10.1093/geront/gnaf178" target="_blank" rel="noopener">doi.org/10.1093/geront/gnaf178</a></td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="prevalence and patterns of unexpected lucidity among deeply forgetful patients: findings from a u.s. population-based study levin, j., bonhag, r., johnson, b.r., &amp; post, s.g terminal lucidity peer-reviewed journal article">
+        <td class="c-title">Prevalence and Patterns of Unexpected Lucidity Among Deeply Forgetful Patients: Findings From a U.S. Population-Based Study</td>
+        <td class="c-authors">Levin, J., Bonhag, R., Johnson, B.R., &amp; Post, S.G</td>
+        <td class="c-year">2026</td>
+        <td class="c-journal">International Journal of Psychiatry in Medicine</td>
+        <td class="c-url"><a href="https://doi.org/10.1177/00912174261453176" target="_blank" rel="noopener">doi.org/10.1177/00912174261453176</a></td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">0</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="threshold: terminal lucidity and the border of life and death batthyány, a terminal lucidity book">
+        <td class="c-title">Threshold: Terminal Lucidity and the Border of Life and Death</td>
+        <td class="c-authors">Batthyány, A</td>
+        <td class="c-year">2023</td>
+        <td class="c-journal">St. Martin&#x27;s Essentials</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="can science reckon with the human soul? murray, c terminal lucidity op-ed / commentary">
+        <td class="c-title">Can Science Reckon With the Human Soul?</td>
+        <td class="c-authors">Murray, C</td>
+        <td class="c-year">2025, October 16</td>
+        <td class="c-journal">The Wall Street Journal</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Op-ed / commentary</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="charles murray&#x27;s unscientific case for the soul pinker, s terminal lucidity op-ed / commentary">
+        <td class="c-title">Charles Murray&#x27;s Unscientific Case for the Soul</td>
+        <td class="c-authors">Pinker, S</td>
+        <td class="c-year">2025, October 29</td>
+        <td class="c-journal">The Wall Street Journal</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Op-ed / commentary</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="pinker whiffs at my case for the human soul murray, c terminal lucidity op-ed / commentary">
+        <td class="c-title">Pinker Whiffs at My Case for the Human Soul</td>
+        <td class="c-authors">Murray, C</td>
+        <td class="c-year">2025, November 5</td>
+        <td class="c-journal">American Enterprise Institute</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">terminal lucidity</td>
+        <td class="c-type">Op-ed / commentary</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="dose-response study of n,n-dimethyltryptamine in humans. i. neuroendocrine, autonomic, and cardiovascular effects strassman, r.j. &amp; qualls, c.r dmt peer-reviewed journal article">
+        <td class="c-title">Dose-Response Study of N,N-Dimethyltryptamine in Humans. I. Neuroendocrine, Autonomic, and Cardiovascular Effects</td>
+        <td class="c-authors">Strassman, R.J. &amp; Qualls, C.R</td>
+        <td class="c-year">1994</td>
+        <td class="c-journal">Archives of General Psychiatry</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="monoamine oxidase inhibitors in south american hallucinogenic plants: tryptamine and β-carboline constituents of ayahuasca mckenna, d.j., towers, g.h.n., &amp; abbott, f dmt peer-reviewed journal article">
+        <td class="c-title">Monoamine Oxidase Inhibitors in South American Hallucinogenic Plants: Tryptamine and β-Carboline Constituents of Ayahuasca</td>
+        <td class="c-authors">McKenna, D.J., Towers, G.H.N., &amp; Abbott, F</td>
+        <td class="c-year">1984</td>
+        <td class="c-journal">Journal of Ethnopharmacology</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/0378-8741(84)90003-5" target="_blank" rel="noopener">doi.org/10.1016/0378-8741(84)90003-5</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">400</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="human brain effects of dmt assessed via eeg–fmri timmermann, c. et al dmt peer-reviewed journal article">
+        <td class="c-title">Human Brain Effects of DMT Assessed via EEG–fMRI</td>
+        <td class="c-authors">Timmermann, C. et al</td>
+        <td class="c-year">2023</td>
+        <td class="c-journal">Proceedings of the National Academy of Sciences</td>
+        <td class="c-url"><a href="https://doi.org/10.1073/pnas.2218949120" target="_blank" rel="noopener">doi.org/10.1073/pnas.2218949120</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">220</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="dmt-induced shifts in criticality correlate with self-dissolution irrmischer, m., aqil, m., luan, l., wang, t., engelbregt, h., carhart-harris, r., linkenkaer-hansen, k., &amp; timmermann, c dmt peer-reviewed journal article">
+        <td class="c-title">DMT-Induced Shifts in Criticality Correlate with Self-Dissolution</td>
+        <td class="c-authors">Irrmischer, M., Aqil, M., Luan, L., Wang, T., Engelbregt, H., Carhart-Harris, R., Linkenkaer-Hansen, K., &amp; Timmermann, C</td>
+        <td class="c-year">2026</td>
+        <td class="c-journal">Journal of Neuroscience</td>
+        <td class="c-url"><a href="https://doi.org/10.1523/jneurosci.0344-25.2025" target="_blank" rel="noopener">doi.org/10.1523/jneurosci.0344-25.2025</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">0</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="phenomenology and content of the inhaled n,n-dimethyltryptamine (n,n-dmt) experience lawrence, d.w., carhart-harris, r., griffiths, r., &amp; timmermann, c dmt peer-reviewed journal article">
+        <td class="c-title">Phenomenology and Content of the Inhaled N,N-Dimethyltryptamine (N,N-DMT) Experience</td>
+        <td class="c-authors">Lawrence, D.W., Carhart-Harris, R., Griffiths, R., &amp; Timmermann, C</td>
+        <td class="c-year">2022</td>
+        <td class="c-journal">Scientific Reports</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/s41598-022-11999-8" target="_blank" rel="noopener">doi.org/10.1038/s41598-022-11999-8</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">65</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="entity and environment relationships in psychedelic experiences resulting from inhalation of n,n-dimethyltryptamine kagan, s dmt peer-reviewed journal article">
+        <td class="c-title">Entity and Environment Relationships in Psychedelic Experiences Resulting From Inhalation of N,N-Dimethyltryptamine</td>
+        <td class="c-authors">Kagan, S</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Journal of Psychedelic Studies</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="predicting and exploring ayahuasca effects: perception, mind-wandering, and eeg oscillations silva-costa, n., andrade pessoa, j., andrade, k.c., mota-rolim, s., palhano-fontes, f., araujo, d.b., &amp; wießner, i dmt peer-reviewed journal article">
+        <td class="c-title">Predicting and Exploring Ayahuasca Effects: Perception, Mind-Wandering, and EEG Oscillations</td>
+        <td class="c-authors">Silva-Costa, N., Andrade Pessoa, J., Andrade, K.C., Mota-Rolim, S., Palhano-Fontes, F., Araujo, D.B., &amp; Wießner, I</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Journal of Psychopharmacology</td>
+        <td class="c-url"><a href="https://doi.org/10.1177/02698811251389563" target="_blank" rel="noopener">doi.org/10.1177/02698811251389563</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">0</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="safety, tolerability and subjective effects of vaporized n,n-dimethyltryptamine: a randomized double-blind clinical trial wießner, i. et al dmt peer-reviewed journal article">
+        <td class="c-title">Safety, Tolerability and Subjective Effects of Vaporized N,N-Dimethyltryptamine: A Randomized Double-Blind Clinical Trial</td>
+        <td class="c-authors">Wießner, I. et al</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">European Neuropsychopharmacology</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.euroneuro.2025.06.002" target="_blank" rel="noopener">doi.org/10.1016/j.euroneuro.2025.06.002</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">7</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="dmt: the spirit molecule: a doctor&#x27;s revolutionary research into the biology of near-death and mystical experiences strassman, r.j dmt book">
+        <td class="c-title">DMT: The Spirit Molecule: A Doctor&#x27;s Revolutionary Research into the Biology of Near-Death and Mystical Experiences</td>
+        <td class="c-authors">Strassman, R.J</td>
+        <td class="c-year">2001</td>
+        <td class="c-journal">Park Street Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="n,n-dimethyltryptamine (dmt) is neither formed nor retained in serotonin terminals in the rat brain palner, m., kolesnik, e., baun, c., poetzsch, s.n., &amp; cumming, p dmt peer-reviewed journal article">
+        <td class="c-title">N,N-Dimethyltryptamine (DMT) Is Neither Formed Nor Retained in Serotonin Terminals in the Rat Brain</td>
+        <td class="c-authors">Palner, M., Kolesnik, E., Baun, C., Poetzsch, S.N., &amp; Cumming, P</td>
+        <td class="c-year">2026</td>
+        <td class="c-journal">Neuropharmacology</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.neuropharm.2026.110874" target="_blank" rel="noopener">doi.org/10.1016/j.neuropharm.2026.110874</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">0</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="an encounter with death: a comparative thematic and content analysis of naturalistic dmt experiences and the near-death experience michael, p., luke, d., &amp; robinson, o dmt peer-reviewed journal article">
+        <td class="c-title">An Encounter With Death: A Comparative Thematic and Content Analysis of Naturalistic DMT Experiences and the Near-Death Experience</td>
+        <td class="c-authors">Michael, P., Luke, D., &amp; Robinson, O</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Frontiers in Psychology</td>
+        <td class="c-url"><a href="https://doi.org/10.3389/fpsyg.2025.1532937" target="_blank" rel="noopener">doi.org/10.3389/fpsyg.2025.1532937</a></td>
+        <td class="c-chapter">dmt</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">3</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="stimulating illusory own-body perceptions blanke, o., ortigue, s., landis, t., &amp; seeck, m out-of-body experience peer-reviewed journal article">
+        <td class="c-title">Stimulating Illusory Own-Body Perceptions</td>
+        <td class="c-authors">Blanke, O., Ortigue, S., Landis, T., &amp; Seeck, M</td>
+        <td class="c-year">2002</td>
+        <td class="c-journal">Nature</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/419269a" target="_blank" rel="noopener">doi.org/10.1038/419269a</a></td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">805</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the out-of-body experience: disturbed self-processing at the temporo-parietal junction blanke, o. &amp; arzy, s out-of-body experience peer-reviewed journal article">
+        <td class="c-title">The Out-of-Body Experience: Disturbed Self-Processing at the Temporo-Parietal Junction</td>
+        <td class="c-authors">Blanke, O. &amp; Arzy, S</td>
+        <td class="c-year">2005</td>
+        <td class="c-journal">The Neuroscientist</td>
+        <td class="c-url"><a href="https://doi.org/10.1177/1073858404270885" target="_blank" rel="noopener">doi.org/10.1177/1073858404270885</a></td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">468</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the experimental induction of out-of-body experiences ehrsson, h.h out-of-body experience peer-reviewed journal article">
+        <td class="c-title">The Experimental Induction of Out-of-Body Experiences</td>
+        <td class="c-authors">Ehrsson, H.H</td>
+        <td class="c-year">2007</td>
+        <td class="c-journal">Science</td>
+        <td class="c-url"><a href="https://doi.org/10.1126/science.1142175" target="_blank" rel="noopener">doi.org/10.1126/science.1142175</a></td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">968</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="video ergo sum: manipulating bodily self-consciousness lenggenhager, b., tadi, t., metzinger, t., &amp; blanke, o out-of-body experience peer-reviewed journal article">
+        <td class="c-title">Video Ergo Sum: Manipulating Bodily Self-Consciousness</td>
+        <td class="c-authors">Lenggenhager, B., Tadi, T., Metzinger, T., &amp; Blanke, O</td>
+        <td class="c-year">2007</td>
+        <td class="c-journal">Science</td>
+        <td class="c-url"><a href="https://doi.org/10.1126/science.1143439" target="_blank" rel="noopener">doi.org/10.1126/science.1143439</a></td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1277</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="a virtual out-of-body experience reduces fear of death bourdin, p., barberia, i., oliva, r., &amp; slater, m out-of-body experience peer-reviewed journal article">
+        <td class="c-title">A Virtual Out-of-Body Experience Reduces Fear of Death</td>
+        <td class="c-authors">Bourdin, P., Barberia, I., Oliva, R., &amp; Slater, M</td>
+        <td class="c-year">2017</td>
+        <td class="c-journal">PLOS ONE</td>
+        <td class="c-url"><a href="https://doi.org/10.1371/journal.pone.0169343" target="_blank" rel="noopener">doi.org/10.1371/journal.pone.0169343</a></td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">120</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="human bodies in virtual worlds: a systematic review of implicit sense of agency and ownership measured in immersive virtual reality environments girondini, m., mariano, m., stanco, g., gallace, a., &amp; zapparoli, l out-of-body experience peer-reviewed journal article">
+        <td class="c-title">Human Bodies in Virtual Worlds: A Systematic Review of Implicit Sense of Agency and Ownership Measured in Immersive Virtual Reality Environments</td>
+        <td class="c-authors">Girondini, M., Mariano, M., Stanco, G., Gallace, A., &amp; Zapparoli, L</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Frontiers in Human Neuroscience</td>
+        <td class="c-url"><a href="https://doi.org/10.3389/fnhum.2025.1553574" target="_blank" rel="noopener">doi.org/10.3389/fnhum.2025.1553574</a></td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">8</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="aware—awareness during resuscitation—a prospective study parnia, s. et al out-of-body experience peer-reviewed journal article">
+        <td class="c-title">AWARE—AWAreness during REsuscitation—A Prospective Study</td>
+        <td class="c-authors">Parnia, S. et al</td>
+        <td class="c-year">2014</td>
+        <td class="c-journal">Resuscitation</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.resuscitation.2014.09.004" target="_blank" rel="noopener">doi.org/10.1016/j.resuscitation.2014.09.004</a></td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">239</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="aware results finally published — no evidence of nde novella, s out-of-body experience op-ed / commentary">
+        <td class="c-title">AWARE Results Finally Published — No Evidence of NDE</td>
+        <td class="c-authors">Novella, S</td>
+        <td class="c-year">2014</td>
+        <td class="c-journal">NeuroLogica Blog</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-type">Op-ed / commentary</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="reincarnation and biology: a contribution to the etiology of birthmarks and birth defects stevenson, i reincarnation book">
+        <td class="c-title">Reincarnation and Biology: A Contribution to the Etiology of Birthmarks and Birth Defects</td>
+        <td class="c-authors">Stevenson, I</td>
+        <td class="c-year">1997</td>
+        <td class="c-journal">Praeger (2 vols.)</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">reincarnation</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="children who claim to remember previous lives: past, present, and future research tucker, j.b reincarnation peer-reviewed journal article">
+        <td class="c-title">Children Who Claim to Remember Previous Lives: Past, Present, and Future Research</td>
+        <td class="c-authors">Tucker, J.B</td>
+        <td class="c-year">2007</td>
+        <td class="c-journal">Journal of Scientific Exploration</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">reincarnation</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="academic studies on claimed past-life memories: a scoping review moraes, l.j., barbosa, g.s., castro, j.p.g.b., tucker, j.b., &amp; moreira-almeida, a reincarnation peer-reviewed journal article">
+        <td class="c-title">Academic Studies on Claimed Past-Life Memories: A Scoping Review</td>
+        <td class="c-authors">Moraes, L.J., Barbosa, G.S., Castro, J.P.G.B., Tucker, J.B., &amp; Moreira-Almeida, A</td>
+        <td class="c-year">2022</td>
+        <td class="c-journal">Explore</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.explore.2021.05.006" target="_blank" rel="noopener">doi.org/10.1016/j.explore.2021.05.006</a></td>
+        <td class="c-chapter">reincarnation</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">17</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="reincarnation: a critical examination edwards, p reincarnation book">
+        <td class="c-title">Reincarnation: A Critical Examination</td>
+        <td class="c-authors">Edwards, P</td>
+        <td class="c-year">1996</td>
+        <td class="c-journal">Prometheus Books</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">reincarnation</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="perception, evolution, and the explanatory scope of scientific theories hoffman, d. &amp; singh, m interface theory peer-reviewed journal article">
+        <td class="c-title">Perception, Evolution, and the Explanatory Scope of Scientific Theories</td>
+        <td class="c-authors">Hoffman, D. &amp; Singh, M</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Journal of Consciousness Studies</td>
+        <td class="c-url"><a href="https://doi.org/10.53765/20512201.31.9.029" target="_blank" rel="noopener">doi.org/10.53765/20512201.31.9.029</a></td>
+        <td class="c-chapter">interface theory</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="fitness beats truth in the evolution of perception prakash, c., stephens, k.d., hoffman, d.d., singh, m., &amp; fields, c interface theory peer-reviewed journal article">
+        <td class="c-title">Fitness Beats Truth in the Evolution of Perception</td>
+        <td class="c-authors">Prakash, C., Stephens, K.D., Hoffman, D.D., Singh, M., &amp; Fields, C</td>
+        <td class="c-year">2021</td>
+        <td class="c-journal">Acta Biotheoretica</td>
+        <td class="c-url"><a href="https://doi.org/10.1007/s10441-020-09400-0" target="_blank" rel="noopener">doi.org/10.1007/s10441-020-09400-0</a></td>
+        <td class="c-chapter">interface theory</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">68</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the case against reality: why evolution hid the truth from our eyes hoffman, d interface theory book">
+        <td class="c-title">The Case Against Reality: Why Evolution Hid the Truth from Our Eyes</td>
+        <td class="c-authors">Hoffman, D</td>
+        <td class="c-year">2019</td>
+        <td class="c-journal">W.W. Norton</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">interface theory</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="debunking interface theory: why hoffman&#x27;s skepticism (really) is self-defeating bagwell, j.n interface theory peer-reviewed journal article">
+        <td class="c-title">Debunking Interface Theory: Why Hoffman&#x27;s Skepticism (Really) Is Self-Defeating</td>
+        <td class="c-authors">Bagwell, J.N</td>
+        <td class="c-year">2023</td>
+        <td class="c-journal">Synthese</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">interface theory</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="allan, l. hoffman&#x27;s conscious realism: a critical review  interface theory op-ed / commentary">
+        <td class="c-title">Allan, L. Hoffman&#x27;s Conscious Realism: A Critical Review</td>
+        <td class="c-authors"></td>
+        <td class="c-year"></td>
+        <td class="c-journal">Rational Realm</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">interface theory</td>
+        <td class="c-type">Op-ed / commentary</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="retrospective birth dating of cells in humans spalding, k.l., bhardwaj, r.d., buchholz, b.a., druid, h., &amp; frisén, j cell turnover peer-reviewed journal article">
+        <td class="c-title">Retrospective Birth Dating of Cells in Humans</td>
+        <td class="c-authors">Spalding, K.L., Bhardwaj, R.D., Buchholz, B.A., Druid, H., &amp; Frisén, J</td>
+        <td class="c-year">2005</td>
+        <td class="c-journal">Cell</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.cell.2005.04.028" target="_blank" rel="noopener">doi.org/10.1016/j.cell.2005.04.028</a></td>
+        <td class="c-chapter">cell turnover</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">622</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="dynamics of hippocampal neurogenesis in adult humans spalding, k.l., bergmann, o., alkass, k., et al cell turnover peer-reviewed journal article">
+        <td class="c-title">Dynamics of Hippocampal Neurogenesis in Adult Humans</td>
+        <td class="c-authors">Spalding, K.L., Bergmann, O., Alkass, K., et al</td>
+        <td class="c-year">2013</td>
+        <td class="c-journal">Cell</td>
+        <td class="c-url"><a href="https://doi.org/10.1016/j.cell.2013.05.002" target="_blank" rel="noopener">doi.org/10.1016/j.cell.2013.05.002</a></td>
+        <td class="c-chapter">cell turnover</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1822</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="an essay concerning human understanding locke, j cell turnover book">
+        <td class="c-title">An Essay Concerning Human Understanding</td>
+        <td class="c-authors">Locke, J</td>
+        <td class="c-year">1689</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">cell turnover</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="reasons and persons parfit, d cell turnover book">
+        <td class="c-title">Reasons and Persons</td>
+        <td class="c-authors">Parfit, D</td>
+        <td class="c-year">1984</td>
+        <td class="c-journal">Oxford University Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">cell turnover</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="some effects of disconnecting the cerebral hemispheres sperry, r.w split brain peer-reviewed journal article">
+        <td class="c-title">Some Effects of Disconnecting the Cerebral Hemispheres</td>
+        <td class="c-authors">Sperry, R.W</td>
+        <td class="c-year">1982</td>
+        <td class="c-journal">Science</td>
+        <td class="c-url"><a href="https://doi.org/10.1126/science.7112125" target="_blank" rel="noopener">doi.org/10.1126/science.7112125</a></td>
+        <td class="c-chapter">split brain</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">464</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="split brain: divided perception but undivided consciousness pinto, y., neville, d.a., otten, m., corballis, p.m., lamme, v.a.f., de haan, e.h.f., foschi, n., &amp; fabri, m split brain peer-reviewed journal article">
+        <td class="c-title">Split Brain: Divided Perception but Undivided Consciousness</td>
+        <td class="c-authors">Pinto, Y., Neville, D.A., Otten, M., Corballis, P.M., Lamme, V.A.F., de Haan, E.H.F., Foschi, N., &amp; Fabri, M</td>
+        <td class="c-year">2017</td>
+        <td class="c-journal">Brain</td>
+        <td class="c-url"><a href="https://doi.org/10.1093/brain/aww358" target="_blank" rel="noopener">doi.org/10.1093/brain/aww358</a></td>
+        <td class="c-chapter">split brain</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">96</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="interaction in isolation: 50 years of insights from split-brain research volz, l.j. &amp; gazzaniga, m.s split brain peer-reviewed journal article">
+        <td class="c-title">Interaction in Isolation: 50 Years of Insights From Split-Brain Research</td>
+        <td class="c-authors">Volz, L.J. &amp; Gazzaniga, M.S</td>
+        <td class="c-year">2017</td>
+        <td class="c-journal">Brain</td>
+        <td class="c-url"><a href="https://doi.org/10.1093/brain/awx139" target="_blank" rel="noopener">doi.org/10.1093/brain/awx139</a></td>
+        <td class="c-chapter">split brain</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">88</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="full interhemispheric integration sustained by a fraction of posterior callosal fibers santander, t., bekir, s., paul, t., et al., gazzaniga, m.s., volz, l.j., &amp; miller, m.b split brain peer-reviewed journal article">
+        <td class="c-title">Full Interhemispheric Integration Sustained by a Fraction of Posterior Callosal Fibers</td>
+        <td class="c-authors">Santander, T., Bekir, S., Paul, T., et al., Gazzaniga, M.S., Volz, L.J., &amp; Miller, M.B</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Proceedings of the National Academy of Sciences</td>
+        <td class="c-url"><a href="https://doi.org/10.1073/pnas.2520190122" target="_blank" rel="noopener">doi.org/10.1073/pnas.2520190122</a></td>
+        <td class="c-chapter">split brain</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">1</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="time of conscious intention to act in relation to onset of cerebral activity (readiness-potential) libet, b., gleason, c.a., wright, e.w., &amp; pearl, d.k free will peer-reviewed journal article">
+        <td class="c-title">Time of Conscious Intention to Act in Relation to Onset of Cerebral Activity (Readiness-Potential)</td>
+        <td class="c-authors">Libet, B., Gleason, C.A., Wright, E.W., &amp; Pearl, D.K</td>
+        <td class="c-year">1983</td>
+        <td class="c-journal">Brain</td>
+        <td class="c-url"><a href="https://doi.org/10.1093/brain/106.3.623" target="_blank" rel="noopener">doi.org/10.1093/brain/106.3.623</a></td>
+        <td class="c-chapter">free will</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">2492</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="an accumulator model for spontaneous neural activity prior to self-initiated movement schurger, a., sitt, j.d., &amp; dehaene, s free will peer-reviewed journal article">
+        <td class="c-title">An Accumulator Model for Spontaneous Neural Activity Prior to Self-Initiated Movement</td>
+        <td class="c-authors">Schurger, A., Sitt, J.D., &amp; Dehaene, S</td>
+        <td class="c-year">2012</td>
+        <td class="c-journal">Proceedings of the National Academy of Sciences</td>
+        <td class="c-url"><a href="https://doi.org/10.1073/pnas.1210467109" target="_blank" rel="noopener">doi.org/10.1073/pnas.1210467109</a></td>
+        <td class="c-chapter">free will</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">529</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="neural precursors of decisions that matter—an erp study of deliberate and arbitrary choice maoz, u., yaffe, g., koch, c., &amp; mudrik, l free will peer-reviewed journal article">
+        <td class="c-title">Neural Precursors of Decisions That Matter—An ERP Study of Deliberate and Arbitrary Choice</td>
+        <td class="c-authors">Maoz, U., Yaffe, G., Koch, C., &amp; Mudrik, L</td>
+        <td class="c-year">2019</td>
+        <td class="c-journal">eLife</td>
+        <td class="c-url"><a href="https://doi.org/10.7554/elife.39787" target="_blank" rel="noopener">doi.org/10.7554/elife.39787</a></td>
+        <td class="c-chapter">free will</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">63</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the readiness potential and the soul: what happens when you resect their seat in the brain? sjöberg, r.l free will peer-reviewed journal article">
+        <td class="c-title">The Readiness Potential and the Soul: What Happens When You Resect Their Seat in the Brain?</td>
+        <td class="c-authors">Sjöberg, R.L</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">Brain</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">free will</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="a multi-measurement study of the relation between deliberation and volition pech, g.p., caspar, e.a., pacherie, e., cleeremans, a., &amp; maoz, u free will peer-reviewed journal article">
+        <td class="c-title">A Multi-Measurement Study of the Relation Between Deliberation and Volition</td>
+        <td class="c-authors">Pech, G.P., Caspar, E.A., Pacherie, E., Cleeremans, A., &amp; Maoz, U</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Neuroscience of Consciousness</td>
+        <td class="c-url"><a href="https://doi.org/10.31234/osf.io/6qmsf_v3" target="_blank" rel="noopener">doi.org/10.31234/osf.io/6qmsf_v3</a></td>
+        <td class="c-chapter">free will</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">0</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the integrated mind gazzaniga, m.s. &amp; ledoux, j.e free will book">
+        <td class="c-title">The Integrated Mind</td>
+        <td class="c-authors">Gazzaniga, M.S. &amp; LeDoux, J.E</td>
+        <td class="c-year">1978</td>
+        <td class="c-journal">Plenum Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">free will</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="cerebral specialization and interhemispheric communication: does the corpus callosum enable the human condition? gazzaniga, m.s free will peer-reviewed journal article">
+        <td class="c-title">Cerebral Specialization and Interhemispheric Communication: Does the Corpus Callosum Enable the Human Condition?</td>
+        <td class="c-authors">Gazzaniga, M.S</td>
+        <td class="c-year">2000</td>
+        <td class="c-journal">Brain</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">free will</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="being no one: the self-model theory of subjectivity metzinger, t self-inquiry book">
+        <td class="c-title">Being No One: The Self-Model Theory of Subjectivity</td>
+        <td class="c-authors">Metzinger, T</td>
+        <td class="c-year">2003</td>
+        <td class="c-journal">MIT Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">self-inquiry</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the elephant and the blind: the experience of pure consciousness — philosophy, science, and 500+ experiential reports metzinger, t self-inquiry book">
+        <td class="c-title">The Elephant and the Blind: The Experience of Pure Consciousness — Philosophy, Science, and 500+ Experiential Reports</td>
+        <td class="c-authors">Metzinger, T</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">MIT Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">self-inquiry</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="waking up: a guide to spirituality without religion harris, s self-inquiry book">
+        <td class="c-title">Waking Up: A Guide to Spirituality Without Religion</td>
+        <td class="c-authors">Harris, S</td>
+        <td class="c-year">2014</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">self-inquiry</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="on having no head harding, d self-inquiry book">
+        <td class="c-title">On Having No Head</td>
+        <td class="c-authors">Harding, D</td>
+        <td class="c-year">1961</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">self-inquiry</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="śaṅkara dalal, n self-inquiry peer-reviewed journal article">
+        <td class="c-title">Śaṅkara</td>
+        <td class="c-authors">Dalal, N</td>
+        <td class="c-year">2021</td>
+        <td class="c-journal">Stanford Encyclopedia of Philosophy</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">self-inquiry</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the early upanishads: annotated text and translation olivelle, p self-inquiry book">
+        <td class="c-title">The Early Upanishads: Annotated Text and Translation</td>
+        <td class="c-authors">Olivelle, P</td>
+        <td class="c-year">1998</td>
+        <td class="c-journal">Oxford University Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">self-inquiry</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the book: on the taboo against knowing who you are watts, a self-inquiry book">
+        <td class="c-title">The Book: On the Taboo Against Knowing Who You Are</td>
+        <td class="c-authors">Watts, A</td>
+        <td class="c-year">1966</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">self-inquiry</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="mysticism and philosophy stace, w.t oneness book">
+        <td class="c-title">Mysticism and Philosophy</td>
+        <td class="c-authors">Stace, W.T</td>
+        <td class="c-year">1960</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">oneness</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="language, epistemology, and mysticism katz, s oneness book chapter">
+        <td class="c-title">Language, Epistemology, and Mysticism</td>
+        <td class="c-authors">Katz, S</td>
+        <td class="c-year">1978</td>
+        <td class="c-journal">In Mysticism and Philosophical Analysis</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">oneness</td>
+        <td class="c-type">Book chapter</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="cosmological fine-tuning: the view from 2025 lewis, g., barnes, l., &amp; goff, p fine-tuning peer-reviewed journal article">
+        <td class="c-title">Cosmological Fine-Tuning: The View from 2025</td>
+        <td class="c-authors">Lewis, G., Barnes, L., &amp; Goff, P</td>
+        <td class="c-year">2025</td>
+        <td class="c-journal">Religious Studies</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the cosmic landscape: string theory and the illusion of intelligent design susskind, l fine-tuning book">
+        <td class="c-title">The Cosmic Landscape: String Theory and the Illusion of Intelligent Design</td>
+        <td class="c-authors">Susskind, L</td>
+        <td class="c-year">2005</td>
+        <td class="c-journal">Little, Brown and Company</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="why? the purpose of the universe goff, p fine-tuning book">
+        <td class="c-title">Why? The Purpose of the Universe</td>
+        <td class="c-authors">Goff, P</td>
+        <td class="c-year">2023</td>
+        <td class="c-journal">Oxford University Press</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Book</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="dirac&#x27;s cosmology and mach&#x27;s principle dicke, r fine-tuning peer-reviewed journal article">
+        <td class="c-title">Dirac&#x27;s Cosmology and Mach&#x27;s Principle</td>
+        <td class="c-authors">Dicke, R</td>
+        <td class="c-year">1961</td>
+        <td class="c-journal">Nature</td>
+        <td class="c-url"><a href="https://doi.org/10.1038/192440a0" target="_blank" rel="noopener">doi.org/10.1038/192440a0</a></td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">375</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="the fine-tuning argument against the multiverse boyce, k. &amp; swenson, p fine-tuning peer-reviewed journal article">
+        <td class="c-title">The Fine-Tuning Argument Against the Multiverse</td>
+        <td class="c-authors">Boyce, K. &amp; Swenson, P</td>
+        <td class="c-year">2026</td>
+        <td class="c-journal">The Philosophical Quarterly</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the evolution of galaxy number density at z &lt; 8 conselice, c. et al fine-tuning peer-reviewed journal article">
+        <td class="c-title">The Evolution of Galaxy Number Density at z &lt; 8</td>
+        <td class="c-authors">Conselice, C. et al</td>
+        <td class="c-year">2016</td>
+        <td class="c-journal">The Astrophysical Journal</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="new horizons observations of the cosmic optical background lauer, t.r. et al fine-tuning peer-reviewed journal article">
+        <td class="c-title">New Horizons Observations of the Cosmic Optical Background</td>
+        <td class="c-authors">Lauer, T.R. et al</td>
+        <td class="c-year">2021</td>
+        <td class="c-journal">The Astrophysical Journal</td>
+        <td class="c-url"><a href="https://doi.org/10.3847/1538-4357/abc881" target="_blank" rel="noopener">doi.org/10.3847/1538-4357/abc881</a></td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">79</td>
+        <td class="c-retr">not retracted</td>
+      </tr>
+      <tr class="row" data-search="new synoptic observations of the cosmic optical background with new horizons lauer, t.r. et al fine-tuning peer-reviewed journal article">
+        <td class="c-title">New Synoptic Observations of the Cosmic Optical Background with New Horizons</td>
+        <td class="c-authors">Lauer, T.R. et al</td>
+        <td class="c-year">2024</td>
+        <td class="c-journal">The Astrophysical Journal</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">fine-tuning</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="research on the &quot;specious present&quot; and the 2–3 second subjective window pöppel, e the only place anything happens historical/foundational work (multiple papers)">
+        <td class="c-title">Research on the &quot;specious present&quot; and the 2–3 second subjective window</td>
+        <td class="c-authors">Pöppel, E</td>
+        <td class="c-year">1997, 2004</td>
+        <td class="c-journal">—</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">The Only Place Anything Happens</td>
+        <td class="c-type">Historical/foundational work (multiple papers)</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+      <tr class="row" data-search="the three-second &quot;subjective present&quot;: a critical review white, p.a the only place anything happens peer-reviewed journal article">
+        <td class="c-title">The Three-Second &quot;Subjective Present&quot;: A Critical Review</td>
+        <td class="c-authors">White, P.A</td>
+        <td class="c-year">2017</td>
+        <td class="c-journal">Psychological Bulletin</td>
+        <td class="c-url">—</td>
+        <td class="c-chapter">The Only Place Anything Happens</td>
+        <td class="c-type">Peer-reviewed journal article</td>
+        <td class="c-cites">—</td>
+        <td class="c-retr">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<footer class="page-foot">
+  Chapter attribution follows the manuscript's own reference groupings, refined with direct textual citation matches where a subsection spans several chapters. Sources with no chapter page yet on the site are shown under their working chapter title.
+</footer>
+
+<script>
+(function () {
+  var input = document.getElementById('search');
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#table-body tr'));
+  var count = document.getElementById('row-count');
+
+  function update() {
+    var q = input.value.trim().toLowerCase();
+    var shown = 0;
+    rows.forEach(function (r) {
+      var match = !q || r.getAttribute('data-search').indexOf(q) !== -1;
+      r.classList.toggle('hidden', !match);
+      if (match) shown++;
+    });
+    count.textContent = shown + ' / ' + rows.length + ' sources';
+  }
+
+  input.addEventListener('input', update);
+  update();
+}());
+</script>
+
+</body>
+</html>
