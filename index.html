@@ -57,6 +57,10 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px clamp(20px,4vw,44px);
       pointer-events: none;
+      background: rgba(7,13,16,.72);
+      border-bottom: 1px solid rgba(159,232,219,.08);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      transition: background .6s ease, border-color .6s ease;
     }
     #dewLogo {
       font-family: 'Space Mono',monospace; font-size: 11px;
@@ -101,6 +105,7 @@
     #dewNav.open #dewBurger span:first-child { transform: translateY(3px) rotate(45deg); }
     #dewNav.open #dewBurger span:last-child  { transform: translateY(-3px) rotate(-45deg); }
     /* resolved palette — warm amber */
+    #dewNav.resolved { background: rgba(38,26,18,.72); border-bottom-color: rgba(74,54,38,.18); }
     #dewNav.resolved #dewLogo { color: rgba(74,54,38,.78); }
     #dewNav.resolved #dewLogo:hover { color: rgba(74,54,38,.98); text-shadow: 0 0 10px rgba(201,122,74,.22); }
     #dewNav.resolved #dewBurger span { background: rgba(74,54,38,.78); }
