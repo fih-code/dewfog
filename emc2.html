@@ -204,7 +204,7 @@
     </div>
   </div>
   <div id="title-wrap">
-    <h1>e <span style="text-shadow: 0 0 4px rgba(159,232,219,.9), 0 0 10px rgba(159,232,219,.4);">=</span> mc²</h1>
+    <h1>e <span style="font-family: serif; text-shadow: 0 0 4px rgba(159,232,219,.9), 0 0 10px rgba(159,232,219,.4);">=</span> mc²</h1>
     <div class="subtitle">mass · energy · equivalence</div>
   </div>
   <div id="status"></div>
@@ -450,10 +450,23 @@ function rEquation() {
     : Math.min(t * 2.5, 1) * .14;
   const sz = Math.min(W * .048, 44);
   ctx.save();
-  ctx.font = `${sz}px 'Italiana', serif`;
   ctx.fillStyle = `rgba(${TEAL},${a})`;
-  ctx.textAlign = 'center';
-  ctx.fillText('E = mc²', cx, cy + H * .28);
+  ctx.textAlign = 'left';
+  // Italiana's '=' glyph is a near-invisible hairline, so draw it in a fallback
+  // serif font while keeping the rest of the label in Italiana.
+  const fItaliana = `${sz}px 'Italiana', serif`;
+  const fEquals   = `${sz}px serif`;
+  const partA = 'E ', partB = '=', partC = ' mc²';
+  ctx.font = fItaliana;
+  const wA = ctx.measureText(partA).width;
+  const wC = ctx.measureText(partC).width;
+  ctx.font = fEquals;
+  const wB = ctx.measureText(partB).width;
+  let x = cx - (wA + wB + wC) / 2;
+  const y = cy + H * .28;
+  ctx.font = fItaliana; ctx.fillText(partA, x, y); x += wA;
+  ctx.font = fEquals;   ctx.fillText(partB, x, y); x += wB;
+  ctx.font = fItaliana; ctx.fillText(partC, x, y);
   ctx.restore();
 }
 
