@@ -262,11 +262,11 @@
   </div>
   <div id="title-wrap">
     <h1>the double slit</h1>
-    <div class="subtitle">wave &middot; particle &middot; observer</div>
+    <div class="subtitle">wave &middot; particle &middot; detector</div>
   </div>
   <div id="bottom-ui">
-    <div id="status">not watched &mdash; a wave pattern is building up</div>
-    <button id="observer-btn">observe</button>
+    <div id="status">undetected &mdash; a wave pattern is building up</div>
+    <button id="observer-btn">detect</button>
   </div>
   <div id="info">Fire a single particle at two slits, and it lands like a wave that went through both at once — building up a striped pattern over time. But detect which slit it actually uses — with any physical measurement, no one needs to be watching — and that pattern disappears, leaving two plain bands instead. It's the physical interaction that changes the result, not anyone's attention.</div>
 </div>
@@ -653,14 +653,14 @@ btn.addEventListener('click', () => {
   particles = []; wavefronts = []; waveTimer = 0;
 
   if (observed) {
-    btn.textContent = 'stop observing';
+    btn.textContent = 'stop detecting';
     btn.classList.add('observed');
-    statusEl.textContent = 'watched — the pattern collapses to two bands';
+    statusEl.textContent = 'detected — the pattern collapses to two bands';
     statusEl.classList.add('observed');
   } else {
-    btn.textContent = 'observe';
+    btn.textContent = 'detect';
     btn.classList.remove('observed');
-    statusEl.textContent = 'not watched — a wave pattern is building up';
+    statusEl.textContent = 'undetected — a wave pattern is building up';
     statusEl.classList.remove('observed');
   }
 });
