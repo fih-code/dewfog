@@ -1,0 +1,40 @@
+# dewfog
+
+> A research project investigating one open question: could consciousness be fundamental to reality, rather than something the brain merely produces? It follows physics, neuroscience, and philosophy as far as the actual evidence goes, takes spiritual and contemplative claims seriously enough to test rather than dismiss, and is explicit about the difference between what's established, what's a genuine open question, and what's overreach in either direction.
+
+Each page below is a short, animated, plainly-explained look at one topic — a physics result, a piece of neuroscience, or a philosophical argument — with what's actually established, what popular coverage tends to get wrong about it, and where (if anywhere) it touches the question of consciousness.
+
+## Topics
+
+- [The hard problem of consciousness](https://dewfog.com/hard-problem.html)
+- [Is the brain a receiver, or does it make consciousness?](https://dewfog.com/antenna.html)
+- [Can you talk to someone while they're dreaming?](https://dewfog.com/lucid-dreaming.html)
+- [References & sources](https://dewfog.com/references.html): the citation list behind the claims on this site — papers, books, and primary documents, with DOIs and citation counts where available.
+- [What is the default mode network?](https://dewfog.com/default-mode.html)
+- [What happens in a near-death experience?](https://dewfog.com/near-death.html)
+- [Why do dementia patients suddenly become lucid before death?](https://dewfog.com/terminal-lucidity.html)
+- [Does DMT reveal a hidden reality, or make one up?](https://dewfog.com/realer-than-real.html)
+- [Can you be tricked into leaving your body?](https://dewfog.com/leaving-on-command.html)
+- [Is there real evidence that children remember past lives?](https://dewfog.com/reincarnation.html)
+- [Interface theory: does evolution hide reality?](https://dewfog.com/interface-theory.html)
+- [Do split-brain patients have two minds?](https://dewfog.com/split-brain.html)
+- [Are your cells really replaced every 7 years?](https://dewfog.com/cell-turnover.html)
+- [Does your brain decide before you do?](https://dewfog.com/free-will.html)
+- [Self-inquiry: what happens when you look for the looker?](https://dewfog.com/self-inquiry.html)
+- [Oneness: what do all religions agree on?](https://dewfog.com/oneness.html)
+- [The double slit experiment, explained simply](https://dewfog.com/double-slit.html)
+- [Quantum entanglement, explained simply](https://dewfog.com/entanglement.html)
+- [Quantum superposition, explained simply](https://dewfog.com/superposition.html)
+- [The quantum physics myths, corrected](https://dewfog.com/quantum-myths.html)
+- [e = mc²: how mass and energy are the same](https://dewfog.com/emc2.html)
+- [Why does a particle weigh anything at all?](https://dewfog.com/the-particle-they-didnt-want-to-name.html)
+- [What happens if you fall into a black hole?](https://dewfog.com/black-hole.html)
+- [How gravity really works: spacetime curvature](https://dewfog.com/spacetime.html)
+- [Many worlds: does every choice create a universe?](https://dewfog.com/many-worlds.html)
+- [The holographic universe theory, explained](https://dewfog.com/holographic.html)
+- [How big is the universe, really?](https://dewfog.com/universe.html)
+- [Fine-tuning: why do the universe's constants allow life?](https://dewfog.com/fine-tuning.html)
+- [Why does time only move forward? Entropy explained](https://dewfog.com/entropy.html)
+- [Why does "now" feel special? The block universe](https://dewfog.com/present-moment.html)
+- [Do human cells actually emit light?](https://dewfog.com/biophotons.html)
+- [Did Tesla really say "energy, frequency, and vibration"?](https://dewfog.com/tesla-quote.html)
