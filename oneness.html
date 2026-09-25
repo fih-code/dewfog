@@ -54,6 +54,9 @@
       transform: translateX(-50%);
       text-align: center; white-space: nowrap;
     }
+    /* narrow screens: drop the title below the top nav so they don't collide */
+    @media (max-width: 1180px) { #title-wrap { top: calc(5% + 30px); } }
+    @media (max-width: 600px)  { #title-wrap { white-space: normal; width: 90vw; } }
     h1 {
       font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
       color: rgba(223,240,236,.65);
