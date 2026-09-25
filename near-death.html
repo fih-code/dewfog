@@ -159,7 +159,7 @@
     @keyframes navDrop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
     #info {
       position: absolute; bottom: 16%; max-height: calc(79vh - 90px); overflow-y: auto; pointer-events: auto; right: 5%;
-      max-width: 240px; font-size: 10px; line-height: 1.9;
+      max-width: min(max(280px, 26vw), 380px, 84vw); font-size: 10px; line-height: 1.9;
       letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
       background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
       padding: 12px 14px; border-radius: 3px;
