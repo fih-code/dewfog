@@ -42,14 +42,58 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="preload" href="/models/brain.ply" as="fetch" crossorigin>
+  <script type="importmap">
+  { "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  } }
+  </script>
   <style>
     html, body { margin: 0; padding: 0; height: 100%; background: #0b1316; overflow: hidden; }
     * { box-sizing: border-box; }
-    @keyframes dewWhisper  { 0%,100% { opacity: .78; letter-spacing: .34em } 50% { opacity: 1; letter-spacing: .38em } }
     @keyframes dewBlob     { 0%,100% { transform: translate3d(0,0,0) scale(1); opacity: .5 } 50% { transform: translate3d(2%,-2%,0) scale(1.08); opacity: .78 } }
-    @keyframes dewHint     { 0%,100% { opacity: .75 } 50% { opacity: 1 } }
-    @keyframes dewMote     { 0% { transform: translate3d(0,0,0); opacity: 0 } 12% { opacity: .7 } 88% { opacity: .6 } 100% { transform: translate3d(14px,-120px,0); opacity: 0 } }
-    @keyframes dewFrag     { 0%,100% { opacity: 1 } 50% { opacity: .72 } }
+    @keyframes dewFadeIn   { from { opacity: 0 } to { opacity: 1 } }
+    /* ── brain network ────────────────────────────────────────────────────── */
+    #stage { position: fixed; inset: 0; overflow: hidden; font-family: 'Space Mono',monospace; background: radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%); }
+    .dewBlob { position: absolute; border-radius: 50%; pointer-events: none; animation: dewBlob 18s ease-in-out infinite; }
+    #hero {
+      position: absolute; left: 50%; top: max(6.5%, 64px); transform: translateX(-50%);
+      z-index: 5; width: min(90vw, 720px); text-align: center; pointer-events: none;
+    }
+    #hero h1 {
+      margin: 0; font-family: 'Italiana',serif; font-weight: 400; text-transform: lowercase;
+      color: rgba(223,240,236,.92); font-size: clamp(1.6rem,3.6vw,2.8rem); line-height: 1.18;
+      letter-spacing: .02em; text-shadow: 0 0 26px rgba(159,232,219,.35); text-wrap: balance;
+    }
+    #brainWrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    #brain { position: relative; width: min(94vw,980px); height: min(94vh,980px); opacity: 0; transition: opacity 2.4s ease-in-out; }
+    #brain.ready { opacity: 1; }
+    #brain canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .dewDot {
+      position: absolute; left: 0; top: 0; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+      border-radius: 50%; opacity: 0; transition: box-shadow .4s ease-in-out;
+      background: radial-gradient(circle, #fff 0%, rgba(190,225,235,.9) 45%, rgba(159,232,219,.55) 100%);
+      box-shadow: 0 0 10px rgba(190,225,235,.85);
+    }
+    /* larger invisible hit area so the 7px dot is easy to tap */
+    .dewDot::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; }
+    .dewDot:hover, .dewDot:focus-visible, .dewDot.hot { box-shadow: 0 0 18px rgba(255,255,255,.95); outline: none; }
+    .dewLabel {
+      position: absolute; left: 0; top: 0; white-space: nowrap; opacity: 0;
+      transition: opacity .6s ease-in-out, color .3s ease-in-out;
+      font-size: 10.5px; letter-spacing: 1.6px; text-transform: lowercase; text-decoration: none;
+      color: rgba(214,232,230,.9); text-shadow: 0 0 8px rgba(159,232,219,.4);
+    }
+    .dewLabel:hover, .dewLabel.hot { color: rgba(255,255,255,.98); }
+    #vignette { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55); }
+    #status {
+      position: absolute; left: 50%; bottom: 3.2%; transform: translateX(-50%); z-index: 5;
+      pointer-events: none; white-space: nowrap;
+      font-size: 11px; letter-spacing: .22em; text-transform: lowercase;
+      color: rgba(159,232,219,.5); text-shadow: 0 0 10px rgba(159,232,219,.3);
+      animation: dewFadeIn 2.4s ease-in-out both;
+    }
     /* ── site nav ─────────────────────────────────────────────────────────── */
     @keyframes dewDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     #dewNav {
@@ -104,16 +148,6 @@
     }
     #dewNav.open #dewBurger span:first-child { transform: translateY(3px) rotate(45deg); }
     #dewNav.open #dewBurger span:last-child  { transform: translateY(-3px) rotate(-45deg); }
-    /* resolved palette — warm amber */
-    #dewNav.resolved { background: none; border-bottom-color: transparent; }
-    #dewNav.resolved #dewLogo { color: rgba(74,54,38,.78); }
-    #dewNav.resolved #dewLogo:hover { color: rgba(74,54,38,.98); text-shadow: 0 0 10px rgba(201,122,74,.22); }
-    #dewNav.resolved #dewBurger span { background: rgba(74,54,38,.78); }
-    #dewNav.resolved #dewLinks { background: rgb(38,26,18); border-color: rgba(74,54,38,.22); backdrop-filter: none; -webkit-backdrop-filter: none; }
-    #dewNav.resolved #dewLinks a { color: rgba(230,200,165,.90); }
-    #dewNav.resolved #dewLinks a:hover { color: #fff5e8; text-shadow: 0 0 10px rgba(201,122,74,.40); }
-    #dewNav.resolved #dewCase, #dewNav.resolved #dewContribute, #dewNav.resolved #dewReferences { color: rgba(74,54,38,.68); }
-    #dewNav.resolved #dewCase:hover, #dewNav.resolved #dewContribute:hover, #dewNav.resolved #dewReferences:hover { color: rgba(74,54,38,.95); }
     /* ── "the case" / "contribute" / "references" buttons + overlays ───────────────────────── */
     #dewNavLeft { display: flex; align-items: center; gap: 1.5em; }
     #dewCase, #dewContribute, #dewReferences {
@@ -159,134 +193,27 @@
       transition: color .2s ease, border-color .2s ease;
     }
     #dewMailLink:hover { color: #fff; border-color: rgba(159,232,219,.8); }
-    /* resolved palette — warm amber (mirrors #dewLinks) */
-    #dewCaseOverlay.resolved #dewCasePanel, #dewContributeOverlay.resolved #dewContributePanel {
-      background: rgb(38,26,18); border-color: rgba(74,54,38,.22);
-      backdrop-filter: none; -webkit-backdrop-filter: none;
-    }
-    #dewCaseOverlay.resolved #dewCasePanel p, #dewContributeOverlay.resolved #dewContributePanel p {
-      color: rgba(230,200,165,.90);
-    }
-    #dewCaseOverlay.resolved #dewCaseClose, #dewContributeOverlay.resolved #dewContributeClose {
-      color: rgba(230,200,165,.55);
-    }
-    #dewCaseOverlay.resolved #dewCaseClose:hover, #dewContributeOverlay.resolved #dewContributeClose:hover {
-      color: #fff5e8;
-    }
-    #dewContributeOverlay.resolved #dewMailLink {
-      color: rgba(230,200,165,.95); border-color: rgba(230,200,165,.4);
-    }
-    #dewContributeOverlay.resolved #dewMailLink:hover {
-      color: #fff5e8; border-color: rgba(230,200,165,.85);
+    @media (prefers-reduced-motion: reduce) {
+      .dewBlob { animation: none; }
     }
   </style>
 </head>
 <body>
 
-<div id="stage" style="position:fixed;inset:0;overflow:hidden;cursor:none;background:#0b1316;font-family:'Space Mono',monospace;touch-action:none;">
+<div id="stage">
+  <!-- drifting blur blobs (z:0) -->
+  <div class="dewBlob" style="left:22%;top:26%;width:44vw;height:44vw;filter:blur(70px);background:radial-gradient(circle,rgba(159,232,219,.10) 0%,rgba(159,232,219,0) 70%);"></div>
+  <div class="dewBlob" style="left:42%;top:12%;width:26vw;height:20vw;filter:blur(60px);background:radial-gradient(circle,rgba(214,120,196,.14) 0%,rgba(214,120,196,0) 70%);animation-duration:20s;animation-delay:-4s;"></div>
+  <div class="dewBlob" style="left:60%;top:60%;width:38vw;height:38vw;filter:blur(80px);background:radial-gradient(circle,rgba(159,232,219,.08) 0%,rgba(159,232,219,0) 70%);animation-duration:22s;animation-delay:-7s;"></div>
 
-  <!-- DAWN / RESOLUTION (z:1 — bottom, revealed on resolve) -->
-  <div id="dawn" style="position:absolute;inset:0;z-index:1;opacity:0;transition:opacity 1.6s ease;background:radial-gradient(135% 120% at 50% 9%, #fdf4e8 0%, #f6dcc0 26%, #f0c69a 46%, #d8a37e 64%, #9a705a 82%, #3a2a22 100%);">
-    <div style="position:absolute;left:50%;top:8%;width:80vw;height:80vw;max-width:900px;max-height:900px;transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(255,244,228,.85) 0%, rgba(240,198,154,.35) 36%, rgba(240,198,154,0) 66%);pointer-events:none;"></div>
-    <div style="position:absolute;left:8%;top:60%;width:5px;height:5px;border-radius:50%;background:rgba(255,250,240,.9);box-shadow:0 0 8px rgba(255,245,225,.9);animation:dewMote 13s linear infinite;animation-delay:-2s;"></div>
-    <div style="position:absolute;left:22%;top:72%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 16s linear infinite;animation-delay:-7s;"></div>
-    <div style="position:absolute;left:74%;top:66%;width:5px;height:5px;border-radius:50%;background:rgba(255,250,240,.9);box-shadow:0 0 8px rgba(255,245,225,.9);animation:dewMote 15s linear infinite;animation-delay:-4s;"></div>
-    <div style="position:absolute;left:86%;top:78%;width:3px;height:3px;border-radius:50%;background:rgba(255,250,240,.8);box-shadow:0 0 6px rgba(255,245,225,.7);animation:dewMote 18s linear infinite;animation-delay:-11s;"></div>
-    <div style="position:absolute;left:48%;top:80%;width:4px;height:4px;border-radius:50%;background:rgba(255,250,240,.85);box-shadow:0 0 7px rgba(255,245,225,.8);animation:dewMote 14s linear infinite;animation-delay:-9s;"></div>
-    <!-- resolution message: outer owns state opacity, inner owns keyframe — so transition can override animation -->
-    <div id="resMsgWrap" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6vw;opacity:0;transform:translateY(16px);transition:opacity 1.6s ease .3s,transform 1.6s ease .3s;">
-      <div style="width:clamp(108px,14vw,162px);aspect-ratio:1;margin:0 0 clamp(24px,4.5vh,52px);filter:drop-shadow(0 0 8px rgba(201,122,74,.28));">
-        <svg viewBox="0 0 200 200" style="display:block;width:100%;height:100%;overflow:visible;">
-          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(74,54,38,.5)" stroke-width="1.1"></circle>
-          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(74,54,38,.22)" stroke-width="0.8"></circle>
-          <g>
-            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="200s" repeatCount="indefinite"></animateTransform>
-            <g transform="rotate(0 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
-            <g transform="rotate(30 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-            <g transform="rotate(60 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-            <g transform="rotate(90 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
-            <g transform="rotate(120 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-            <g transform="rotate(150 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-            <g transform="rotate(180 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
-            <g transform="rotate(210 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-            <g transform="rotate(240 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-            <g transform="rotate(270 100 100)"><line x1="100" y1="8" x2="100" y2="18" stroke="rgba(74,54,38,.6)" stroke-width="1.2"></line></g>
-            <g transform="rotate(300 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-            <g transform="rotate(330 100 100)"><line x1="100" y1="8" x2="100" y2="15" stroke="rgba(74,54,38,.4)" stroke-width="1"></line></g>
-          </g>
-          <g>
-            <animateTransform attributeName="transform" type="rotate" from="360 100 100" to="0 100 100" dur="120s" repeatCount="indefinite"></animateTransform>
-            <circle cx="100" cy="100" r="64" fill="none" stroke="rgba(201,122,74,.5)" stroke-width="1" stroke-dasharray="1.5 9"></circle>
-          </g>
-          <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(74,54,38,.3)" stroke-width="0.9"></circle>
-          <g stroke-linecap="round" fill="none">
-            <line x1="100" y1="100" x2="100" y2="34" stroke="rgba(74,54,38,.72)" stroke-width="1.7"></line>
-            <g transform="rotate(123 100 100)"><line x1="100" y1="100" x2="100" y2="52" stroke="rgba(74,54,38,.48)" stroke-width="1.2"></line></g>
-            <g transform="rotate(241 100 100)"><line x1="100" y1="100" x2="100" y2="44" stroke="rgba(160,96,58,.62)" stroke-width="1.3"></line></g>
-          </g>
-          <circle cx="100" cy="34" r="1.8" fill="rgba(74,54,38,.7)"></circle>
-          <circle cx="100" cy="100" r="3.2" fill="rgba(201,122,74,.9)">
-            <animate attributeName="r" values="3;4.2;3" dur="6s" repeatCount="indefinite"></animate>
-            <animate attributeName="opacity" values=".7;1;.7" dur="6s" repeatCount="indefinite"></animate>
-          </circle>
-          <g>
-            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="28s" repeatCount="indefinite"></animateTransform>
-            <circle cx="100" cy="8" r="2.3" fill="rgba(255,250,240,.95)" style="filter:drop-shadow(0 0 4px rgba(255,245,225,.9));"></circle>
-          </g>
-        </svg>
-      </div>
-      <h1 style="margin:0;font-family:'Italiana',serif;font-weight:400;text-transform:lowercase;color:#412e1e;font-size:clamp(2rem,5.4vw,4.6rem);line-height:1.12;letter-spacing:.06em;max-width:16ch;text-wrap:balance;">you are the feeling no mechanism explains</h1>
-      <p style="margin:1.6em 0 0;font-family:'Italiana',serif;font-size:clamp(1rem,2vw,1.5rem);letter-spacing:.16em;text-transform:lowercase;color:#7a5a44;">not settled. not nothing. yours to notice.</p>
-      <p id="closingLog" style="margin:2.8em 0 0;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.28em;text-transform:lowercase;color:#9a705a;opacity:0;transition:opacity 1.2s ease 4.8s;"></p>
-    </div>
-  </div>
+  <!-- HERO (z:5 — pointer-events:none) -->
+  <div id="hero"><h1>you are the thing you came here to find</h1></div>
 
-  <!-- MYSTERY (z:2 — deep teal scene, sits behind the frost canvas) -->
-  <div id="mystery" style="position:absolute;inset:0;z-index:2;background:radial-gradient(125% 105% at 50% 38%, #122226 0%, #0b1316 56%, #060c0e 100%);opacity:1;transition:opacity 1.4s ease;">
-    <!-- time-of-day tint overlay — color set by JS based on local hour -->
-    <div id="timeTint" style="position:absolute;inset:0;pointer-events:none;"></div>
-    <div style="position:absolute;left:30%;top:30%;width:46vw;height:46vw;border-radius:50%;filter:blur(70px);background:radial-gradient(circle, rgba(159,232,219,.10) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 17s ease-in-out infinite;"></div>
-    <div style="position:absolute;left:58%;top:58%;width:40vw;height:40vw;border-radius:50%;filter:blur(80px);background:radial-gradient(circle, rgba(159,232,219,.08) 0%, rgba(159,232,219,0) 70%);animation:dewBlob 21s ease-in-out infinite;animation-delay:-6s;"></div>
+  <!-- BRAIN STAGE (WebGL canvas + projected essay nodes, filled in by the script below) -->
+  <div id="brainWrap"><div id="brain"><canvas id="brainCanvas" aria-hidden="true"></canvas></div></div>
 
-    <!-- fragments wrapper owns state opacity; each child owns its flicker keyframe -->
-    <!-- text is injected by JS from a rotating pool so return visitors see different notes -->
-    <div id="frags" style="position:absolute;inset:0;opacity:1;transition:opacity 1.0s ease;color:rgba(173,240,228,.92);white-space:nowrap;">
-      <div id="frag0" style="position:absolute;left:10%;top:19%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
-      <div id="frag1" style="position:absolute;left:58%;top:26%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
-      <div id="frag2" style="position:absolute;left:13%;top:34%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
-      <div id="frag3" style="position:absolute;left:52%;top:36%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
-      <div id="frag4" style="position:absolute;left:12%;top:62%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
-      <div id="frag5" style="position:absolute;left:58%;top:64%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0.40;transition:opacity 1.4s ease;"></div>
-      <div id="frag6" style="position:absolute;left:15%;top:70%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag7" style="position:absolute;left:55%;top:72%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="frag8" style="position:absolute;left:30%;top:79%;font-size:13px;letter-spacing:.03em;text-shadow:0 0 14px rgba(159,232,219,.55);opacity:0;transition:opacity 1.4s ease;"></div>
-      <div id="fragTop" style="position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;color:rgba(173,240,228,.8);text-shadow:0 0 12px rgba(159,232,219,.5);white-space:nowrap;opacity:0;transition:opacity 1.4s ease;"></div>
-    </div>
-
-    <!-- whisper: outer owns state opacity, inner owns breathing keyframe -->
-    <div id="whisperWrap" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:1;transition:opacity 1.4s ease;">
-      <div id="whisperInner" style="font-family:'Italiana',serif;text-transform:lowercase;font-size:clamp(2rem,5.2vw,4.2rem);color:rgba(223,240,236,.62);letter-spacing:.36em;text-indent:.36em;text-shadow:0 0 26px rgba(159,232,219,.55),0 0 60px rgba(159,232,219,.25);animation:dewWhisper 7s ease-in-out infinite;">it was never out there</div>
-    </div>
-  </div>
-
-  <!-- FROST CANVAS (z:3 — the glass you wipe) -->
-  <canvas id="fog" style="position:absolute;inset:0;z-index:3;width:100%;height:100%;opacity:1;transition:opacity 1.4s ease;"></canvas>
-
-  <!-- HUD (z:4 — timestamp + hint, pointer-events:none) -->
-  <div id="clock" style="position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.22em;color:rgba(159,232,219,.5);text-shadow:0 0 10px rgba(159,232,219,.3);pointer-events:none;opacity:1;transition:opacity 1.4s ease;">observed: 03:14:07</div>
-  <!-- hint: outer owns reveal opacity, inner owns pulse keyframe -->
-  <div id="hintWrap" style="position:absolute;left:50%;bottom:11%;transform:translateX(-50%);z-index:4;pointer-events:none;opacity:0.85;transition:opacity .8s ease;">
-    <span id="hintSpan" style="display:block;font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:rgba(16,28,30,.85);text-shadow:0 0 6px rgba(255,255,255,.4);animation:dewHint 4.2s ease-in-out infinite;">wipe the glass</span>
-  </div>
-
-  <!-- vignette (z:4) -->
-  <div style="position:absolute;inset:0;z-index:4;pointer-events:none;box-shadow:inset 0 0 200px 40px rgba(6,12,14,.55);"></div>
-
-  <!-- FINGERTIP CURSOR (z:6 — glowing dot tracking the pointer) -->
-  <div id="tip" style="position:fixed;left:0;top:0;z-index:6;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;pointer-events:none;background:radial-gradient(circle, rgba(159,232,219,.16) 0%, rgba(159,232,219,.05) 45%, rgba(159,232,219,0) 70%);border:1px solid rgba(159,232,219,.22);opacity:0;transition:background .9s ease,border-color .9s ease;"></div>
-
-  <!-- MUTE (z:6 — bottom-right corner, remembers choice in localStorage) -->
-  <button id="muteBtn" style="position:fixed;bottom:3.5%;right:2.5%;z-index:6;background:none;border:none;padding:6px;cursor:pointer;font-size:13px;color:rgba(159,232,219,.32);font-family:'Space Mono',monospace;line-height:1;transition:color .3s ease;" title="toggle sound">◎</button>
+  <div id="vignette"></div>
+  <div id="status" aria-hidden="true"></div>
 
   <!-- SITE NAV (z:7 — inside stage so iOS compositing always puts it on top) -->
   <nav id="dewNav">
@@ -352,9 +279,9 @@
 
 <!-- crawlers and no-JS visitors see the full content below -->
 <noscript>
-<style>body{background:#0b1316;color:#9fe8db;font-family:monospace;margin:0;}</style>
+<style>body{background:#0b1316;color:#9fe8db;font-family:monospace;margin:0;overflow:auto;}#stage{display:none;}</style>
 <main style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;gap:1rem;">
-  <h1 style="font-family:Georgia,serif;font-weight:400;color:rgba(223,240,236,.85);font-size:2.4rem;letter-spacing:.2em;margin:0 0 2rem;">it was never out there</h1>
+  <h1 style="font-family:Georgia,serif;font-weight:400;color:rgba(223,240,236,.85);font-size:2.4rem;letter-spacing:.06em;margin:0 0 2rem;">you are the thing you came here to find</h1>
 
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">whether the brain produces this or filters it remains, genuinely, unsettled.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">what if matter is the residue, and the looking comes first?</p>
@@ -380,13 +307,8 @@
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">quantum entanglement — instant correlation across any distance. confirmed. no agreed explanation.</p>
   <p style="font-size:13px;color:rgba(159,232,219,.7);margin:.4rem 0;">what if consciousness is not produced by the brain, but is the ground of reality itself?</p>
 
-  <div style="margin:3rem 0;padding:2.5rem 3rem;background:#f0c69a;border-radius:4px;">
-    <h2 style="font-family:Georgia,serif;font-weight:400;color:#412e1e;font-size:2rem;letter-spacing:.06em;margin:0 0 1rem;">you are the feeling no mechanism explains</h2>
-    <p style="font-family:Georgia,serif;color:#7a5a44;font-size:1.1rem;letter-spacing:.1em;margin:0;">not settled. not nothing. yours to notice.</p>
-  </div>
-
   <nav style="margin-top:3rem;">
-    <h3 style="font-size:11px;letter-spacing:.32em;color:rgba(159,232,219,.55);text-transform:uppercase;margin:0 0 1.2rem;">interactive simulations</h3>
+    <h2 style="font-size:11px;font-weight:400;letter-spacing:.32em;color:rgba(159,232,219,.55);text-transform:uppercase;margin:0 0 1.2rem;">interactive simulations</h2>
     <ul style="list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem 2.2rem;">
       <li><a href="/double-slit.html" style="color:rgba(159,232,219,.7);font-size:12px;">the double slit</a></li>
       <li><a href="/emc2.html" style="color:rgba(159,232,219,.7);font-size:12px;">e = mc²</a></li>
@@ -424,585 +346,173 @@
 </main>
 </noscript>
 
-<script>
-(function () {
+<script type="module">
+import * as THREE from 'three';
+import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 
-  // ── fragment pool ─────────────────────────────────────────────────────────
+const BRAIN_MODEL_URL = '/models/brain.ply';
 
-  const FRAGMENT_POOL = [
-    '2023: EEG picked up organized brain activity returning during CPR — up to an hour after the heart stopped, in a window once assumed silent.',
-    'what if matter is the residue, and the looking comes first?',
-    'what if the brain is the instrument, not the source?',
-    'what if the signal precedes the receiver?',
-    'a century before anyone named the hard problem, james and bergson asked: does the brain make the signal, or only limit it?',
-    'particles are temporary. the field is not.',
-    'why does it feel like anything at all',
-    'they all reported the same place. no coordinates.',
-    '2006: philosopher galen strawson argued physicalism itself implies panpsychism, once you follow it all the way through.',
-    'it was here before the matter. we think.',
-    'what if the observer isn\'t produced by what it observes?',
-    'christof koch: consciousness may be a matter of degree — present wherever a system is richly enough wired together, not switched on only in brains like ours.',
-    'the hard problem has not been solved. only quieted.',
-    'what if you\'re not the excitation — what if you\'re the field?',
-    'bernardo kastrup: matter is what consciousness looks like from outside. not the other way around.',
-    '2009: two researchers combed two centuries of medical journals and found 49 documented cases of sudden clarity before death.',
-    'every culture. every century. the same coordinates.',
-    '2025: a hospice study watched 20 dementia patients for 1,433 hours straight. nine of them came back, briefly — some nine months before the end.',
-    'the lesion changed what he could say. not what he knew.',
-    '2026: 43.6% of dementia caregivers, in a national survey, reported watching it happen.',
-    'it does not make it. it limits it.',
-    'what if the looking is prior, and the looked-at is secondary?',
-    'damage to one exact spot can erase one exact channel — a face, a memory, a word — and leave everything else untouched. a receiver breaks with that same precision. so does a generator.',
-    'you cannot examine the watching from outside the watching.',
-    'they all stopped where the self ended. none could say where that was.',
-    'e=mc². what appears solid is a temporary arrangement of something else.',
-    'the equation says the solid is not. physics confirmed it. we are working on the rest.',
-    'vedanta: tat tvam asi. the student and the infinite were never separate. twenty-five centuries of pointing.',
-    'vedanta called it brahman. does the field they describe actually match — or just rhyme?',
-    'dzogchen calls it rigpa. we have a different word. same location — or just the same shape of guess?',
-    'zen, ninth century: before thinking, what are you? the question is older than the field that\'s now asking it too.',
-    'the sufi accounts of fana and near-death reports describe a similar dissolving boundary, centuries and continents apart — coincidence, or something structural?',
-    'the islamic mystical tradition points to an interior. a different name — the same location, or just the same instinct?',
-    'the christian mystical tradition found it interior. not above. not after. within.',
-    'the tao that can be named is not it. they knew the problem.',
-    'plotinus: the one. not a deity. a ground. we think he was right.',
-    'did every tradition find the same place — or just the same shape of question?',
-    'panpsychism and idealism aren\'t the same claim, and they don\'t agree with each other. worth getting right before dismissing either.',
-    'the wave function collapses when something physical interacts with it — not when a conscious mind pays attention. that part is often gotten backwards.',
-    'quantum entanglement — two particles, instant correlation, no distance between them. confirmed in labs. we are asking what it means.',
-    'mass is energy that paused. e=mc². einstein\'s own equation, not a slogan built on top of it.',
-    'energy is never spent. it only changes address.',
-    'the brain emits measurable waves. whether it generates the experience or receives it is still, genuinely, an open question.',
-    'matter is the excitation. the looking comes first.',
-  ];
+// essay nodes — built from the nav drawer so the two lists can never drift apart
+const ESSAYS = [...document.querySelectorAll('#dewLinks a')].map(a => [a.getAttribute('href'), a.textContent]);
 
-  const CLOSING_POOL = [
-    'what\'s real here is checkable — dates, studies, named researchers.',
-    'the evidence doesn\'t settle it. it doesn\'t close it either.',
-    'the field holds. the argument stays honest.',
-    'nothing here needed to be invented.',
-    'the glass was always clear on one side.',
-    'what you found was here before you looked.',
-    'open, not solved. that\'s the honest end of it.',
-  ];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const seeded = i => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
+const FIT = 2.64;                                  // longest axis of the brain, in world units
+const EDGE_ANGLE = 12, EDGE_OPACITY = 0.42, FILL_OPACITY = 0.12;   // wireframe look; tune against the model's density
+const TOP = new THREE.Color(0xe08fd0), MID = new THREE.Color(0x8f7fe0), BOT = new THREE.Color(0x5fd0e6);
+function colorFor(t) { const c = new THREE.Color(); return t > 0.55 ? c.copy(MID).lerp(TOP, (t - 0.55) / 0.45) : c.copy(BOT).lerp(MID, t / 0.55); }
 
-  // Phase 1: 4 fragments barely visible from the start (opacity MIN_OP1).
-  // Each smoothly brightens to full as clearing crosses its window.
-  // Phase 2: 2 more fragments hidden until all phase-1 messages are found,
-  // then appear at MIN_OP2 (even more shaded) for continued discovery.
-  // maxClearFraction is a ratchet — revealed text never dims back when
-  // frost recondenses, so progress is always kept.
-  const MIN_OP1     = 0.40;
-  const MIN_OP2     = 0.20;
-  const PHASE1_DONE = 0.58;
-  const PHASE1_FRAGS = [
-    { id: 'frag0', s: 0.04, f: 0.18 },
-    { id: 'frag1', s: 0.12, f: 0.26 },
-    { id: 'frag2', s: 0.20, f: 0.34 },
-    { id: 'frag3', s: 0.28, f: 0.42 },
-    { id: 'frag4', s: 0.36, f: 0.50 },
-    { id: 'frag5', s: 0.44, f: 0.58 },
-  ];
-  const PHASE2_FRAGS = [
-    { id: 'frag6', s: 0.62, f: 0.72 },
-    { id: 'frag7', s: 0.67, f: 0.76 },
-    { id: 'frag8', s: 0.73, f: 0.80 },
-  ];
+// ── DOM: one dot + one label per essay ────────────────────────────────────
+const brainEl = document.getElementById('brain'), canvas = document.getElementById('brainCanvas');
+const hero = document.getElementById('hero'), statusEl = document.getElementById('status');
+statusEl.textContent = ESSAYS.length + ' signals — live';
+const dots = [], labels = [];
+ESSAYS.forEach(([href, label]) => {
+  const d = document.createElement('a'); d.className = 'dewDot'; d.href = href; d.setAttribute('aria-label', label);
+  // the label duplicates the dot's link, so keep it out of the tab order and the accessibility tree
+  const l = document.createElement('a'); l.className = 'dewLabel'; l.href = href; l.textContent = label;
+  l.tabIndex = -1; l.setAttribute('aria-hidden', 'true');
+  const hot = on => { d.classList.toggle('hot', on); l.classList.toggle('hot', on); };
+  [d, l].forEach(el => { el.addEventListener('pointerenter', () => hot(true)); el.addEventListener('pointerleave', () => hot(false)); });
+  brainEl.append(d, l); dots.push(d); labels.push(l);
+});
 
-  function fragOp(cf, s, f, min) {
-    if (cf <= s) return min;
-    if (cf >= f) return 1;
-    return min + (1 - min) * (cf - s) / (f - s);
-  }
+// ── three.js scene ────────────────────────────────────────────────────────
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+camera.position.set(0, 0, 5.6);
+const group = new THREE.Group(); scene.add(group);
+const brainMats = [];                              // fill + edge materials, dimmed by resize()
+let dimFactor = 1;
+function resize() {
+  const w = brainEl.clientWidth, h = brainEl.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h;
+  camera.position.z = Math.max(5.6, 6.6 / camera.aspect);   // pull back on portrait screens so the brain fits the width
+  camera.updateProjectionMatrix();
+  // a smaller brain packs the same lines into fewer pixels, so dim the additive layers to match
+  const brainPx = FIT * h / (2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+  dimFactor = Math.min(1, brainPx / 560);
+  brainMats.forEach(m => { m.opacity = m.userData.base * dimFactor; });
+  labels.forEach(l => { l._w = 0; });            // re-measure label widths after font / zoom changes
+}
+addEventListener('resize', resize); resize();
+document.fonts.ready.then(resize);
 
-  let clearFraction    = 0;
-  let maxClearFraction = 0;
+// ── brain mesh: faint additive fill + glowing edges, recoloured bottom → top ──
+function addBrain(geo) {
+  geo.computeBoundingBox(); geo.center();
+  const size = new THREE.Vector3(); geo.boundingBox.getSize(size);
+  const s = FIT / Math.max(size.x, size.y, size.z);
+  geo.scale(s, s, s);
+  geo.computeBoundingBox();
+  const minY = geo.boundingBox.min.y, spanY = geo.boundingBox.max.y - minY;
+  const paint = g => {
+    const p = g.attributes.position, cols = new Float32Array(p.count * 3);
+    for (let i = 0; i < p.count; i++) { const c = colorFor((p.getY(i) - minY) / spanY); cols.set([c.r, c.g, c.b], i * 3); }
+    g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+  };
+  paint(geo);
+  const fillMat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const edgeMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  fillMat.userData.base = FILL_OPACITY; edgeMat.userData.base = EDGE_OPACITY;
+  [fillMat, edgeMat].forEach(m => { m.opacity = m.userData.base * dimFactor; brainMats.push(m); });
+  group.add(new THREE.Mesh(geo, fillMat));
+  const edges = new THREE.EdgesGeometry(geo, EDGE_ANGLE);
+  paint(edges);
+  group.add(new THREE.LineSegments(edges, edgeMat));
+  return geo;
+}
 
-  function shuffle(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+// ── node anchors: evenly spread directions snapped onto the brain surface ──
+const nodes = [], pulses = [];
+function buildNetwork(geo) {
+  const pos = geo.attributes.position, N = ESSAYS.length, glow = makeGlowTexture();
+  const step = Math.max(1, Math.floor(pos.count / 20000)), v = new THREE.Vector3();
+  for (let i = 0; i < N; i++) {
+    const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(Math.max(0, 1 - y * y)), th = Math.PI * (1 + Math.sqrt(5)) * i;
+    const dir = new THREE.Vector3(Math.cos(th) * r, y, Math.sin(th) * r).normalize();
+    let best = new THREE.Vector3(), bestDot = -2;  // surface vertex most aligned with dir
+    for (let k = 0; k < pos.count; k += step) {
+      v.fromBufferAttribute(pos, k);
+      const d = v.dot(dir) / (v.length() || 1);
+      if (d > bestDot) { bestDot = d; best.copy(v); }
     }
-    return a;
+    const inner = best, outer = best.clone().addScaledVector(dir, 0.55);
+    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([inner, outer]), new THREE.LineBasicMaterial({ color: 0x9fe8db, transparent: true, opacity: 0.22 })));
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: 0xbfe8ee, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+    spr.scale.set(0.16, 0.16, 1); spr.visible = !reduceMotion; group.add(spr);
+    nodes.push({ outer, dir });
+    pulses.push({ spr, inner, outer, dur: 2 + seeded(i * 6.4) * 2.6, phase: seeded(i * 8.1) * 6 });
   }
+}
+function makeGlowTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+  const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(190,225,235,.8)'); g.addColorStop(1, 'rgba(159,232,219,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
+}
 
-  function fragHTML(f) {
-    if (f && f.redacted) {
-      return 'the <span id="redactSpan" style="background:rgba(159,232,219,.22);color:transparent;padding:0 .15em;letter-spacing:0;">██████</span> is not lost — nothing here is';
-    }
-    if (f && f.anomaly) {
-      return 'this shouldn\'t be visible. you found it anyway.';
-    }
-    return f;
-  }
-
-  // ── scarcity & visit state ─────────────────────────────────────────────────
-
-  function simpleHash(s) {
-    let h = 0;
-    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-    return Math.abs(h);
-  }
-
-  const visits   = parseInt(localStorage.getItem('dw_v') || '0') + 1;
-  localStorage.setItem('dw_v', String(visits));
-  const isReturn  = visits > 1;
-  const isRare    = simpleHash(new Date().toDateString() + String(visits)) % 20 === 0;
-
-  const chosen = shuffle(FRAGMENT_POOL).slice(0, 9);
-
-  // on rare visit: if redacted fragment is showing, schedule a 2s word-reveal;
-  // otherwise surface the anomaly entry in the last slot
-  if (isRare) {
-    const ri = chosen.findIndex(f => f && f.redacted);
-    if (ri === -1) { chosen[8] = { anomaly: true }; }
-  }
-
-  // animation delays per slot — inner span owns the flicker so outer opacity:0→1 works cleanly
-  const FRAG_DELAYS    = ['0s', '-3s', '-2s', '-8s', '-5s', '-4s', '-6s', '-7s', '-9s'];
-  const FRAG_DURATIONS = ['9s', '11s', '13s', '10s', '12s', '9.5s', '11.5s', '10s', '12.5s'];
-  ['frag0','frag1','frag2','frag3','frag4','frag5','frag6','frag7','frag8'].forEach(function (id, i) {
-    const anim = 'animation:dewFrag ' + FRAG_DURATIONS[i] + ' ease-in-out infinite;animation-delay:' + FRAG_DELAYS[i] + ';display:block;';
-    document.getElementById(id).innerHTML = '<span style="' + anim + '">' + fragHTML(chosen[i]) + '</span>';
+// ── animation loop ────────────────────────────────────────────────────────
+const SPIN = reduceMotion ? 0.02 : 0.14;           // rad/s
+const tmp = new THREE.Vector3(), facing = new THREE.Vector3(), wn = new THREE.Vector3();
+const boxes = [];
+function tick() {
+  requestAnimationFrame(tick);
+  const t = performance.now() / 1000;
+  group.rotation.y = t * SPIN;
+  group.rotation.x = reduceMotion ? 0 : Math.sin(t * 0.09) * 0.06;
+  group.updateMatrixWorld(true);
+  if (!reduceMotion) pulses.forEach(p => {
+    const f = ((t + p.phase) % p.dur) / p.dur;
+    p.spr.position.lerpVectors(p.inner, p.outer, f); p.spr.material.opacity = Math.sin(f * Math.PI) * 0.9;
   });
 
-  if (isRare) {
-    const ri = chosen.findIndex(f => f && f.redacted);
-    if (ri !== -1) {
-      setTimeout(function () {
-        const span = document.getElementById('redactSpan');
-        if (!span || resolved) return;
-        span.style.transition = 'color .9s ease, background .9s ease';
-        span.textContent = 'you';
-        span.style.color = 'rgba(159,232,219,.88)';
-        span.style.background = 'none';
-        setTimeout(function () {
-          span.style.color = 'transparent';
-          span.style.background = 'rgba(159,232,219,.22)';
-          setTimeout(function () { span.textContent = '██████'; }, 900);
-        }, 2000);
-      }, 4500);
-    }
-  }
-
-  const closingLog = document.getElementById('closingLog');
-  closingLog.textContent = CLOSING_POOL[Math.floor(Math.random() * CLOSING_POOL.length)];
-
-  document.getElementById('fragTop').textContent =
-    'you are the ' + (2316 + visits).toLocaleString() + 'th to wipe the glass';
-
-  // return visitor — hint text changes, letter-spacing tightens to "remembers"
-  if (isReturn) {
-    const hs = document.getElementById('hintSpan');
-    if (hs) { hs.textContent = 'the glass remembers you'; hs.style.letterSpacing = '.28em'; }
-  }
-
-  // ── DOM refs ──────────────────────────────────────────────────────────────
-
-  const stage       = document.getElementById('stage');
-  const fogCanvas   = document.getElementById('fog');
-  const tip         = document.getElementById('tip');
-  const clock       = document.getElementById('clock');
-  const dawn        = document.getElementById('dawn');
-  const frags       = document.getElementById('frags');
-  const mystery     = document.getElementById('mystery');
-  const whisperWrap = document.getElementById('whisperWrap');
-  const hintWrap    = document.getElementById('hintWrap');
-  const resMsgWrap  = document.getElementById('resMsgWrap');
-  const muteBtn     = document.getElementById('muteBtn');
-
-  const RADIUS_MOUSE = 78;
-  const RADIUS_TOUCH = 50;
-  const THRESHOLD    = 0.60;
-  const MIN_READ_MS  = 9000;
-
-  const pageLoadTime = Date.now();
-
-  let resolved     = false;
-  let touched      = false;
-  let last         = null;
-  let dpr          = 1;
-  let offscreen    = null;
-  let checkTimer   = null;
-  let clockTimer   = null;
-  let refrostTimer = null;
-
-  // ── time palette ──────────────────────────────────────────────────────────
-  // Shift mystery scene and dawn layer subtly by visitor's local hour
-
-  (function applyTimePalette() {
-    const h = new Date().getHours();
-    const tint = document.getElementById('timeTint');
-    if (tint) {
-      if      (h >= 22 || h < 4) tint.style.background = 'rgba(4,8,28,0.12)';   // deep night
-      else if (h >= 4  && h < 7) tint.style.background = 'rgba(35,18,0,0.08)';  // pre-dawn
-      else if (h >= 7  && h < 9) tint.style.background = 'rgba(55,28,0,0.07)';  // dawn
-    }
-    if (h >= 4 && h < 9) dawn.style.filter = 'brightness(1.07) saturate(1.08)';
-  }());
-
-  // ── audio (Web Audio API only — no files, no libraries) ───────────────────
-  // Fades in on first pointer touch. At resolve, drone softens and a warm
-  // tone blooms. Mute glyph bottom-right remembers choice in localStorage.
-
-  let audioCtx  = null;
-  let masterGain = null;
-  let isMuted = false;
-  localStorage.removeItem('dw_mute');
-
-  if (muteBtn) muteBtn.textContent = '◎';
-
-  let audioRampStarted = false;
-
-  function initAudio() {
-    if (audioCtx) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      return;
-    }
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    // iOS requires a silent buffer played synchronously within the gesture
-    // handler to fully unlock the AudioContext. resume() alone is not enough
-    // on older iOS versions.
-    try {
-      const sil = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
-      const src = audioCtx.createBufferSource();
-      src.buffer = sil;
-      src.connect(audioCtx.destination);
-      src.start(0);
-    } catch (_) {}
-
-    const compressor = audioCtx.createDynamicsCompressor();
-    compressor.threshold.value = -18;
-    compressor.knee.value = 6;
-    compressor.ratio.value = 3;
-    compressor.attack.value = 0.02;
-    compressor.release.value = 0.25;
-    compressor.connect(audioCtx.destination);
-
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0;
-    masterGain.connect(compressor);
-
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 900;
-    filter.Q.value = 0.6;
-    filter.connect(masterGain);
-
-    [[174.0, 0.42], [174.7, 0.32], [261.0, 0.26]].forEach(function (pair) {
-      const osc = audioCtx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.value = pair[0];
-      const g = audioCtx.createGain();
-      g.gain.value = pair[1];
-      osc.connect(g);
-      g.connect(filter);
-      osc.start();
-    });
-
-    function startRamp() {
-      if (isMuted || !masterGain || audioRampStarted) return;
-      if (audioCtx.state !== 'running') return;
-      audioRampStarted = true;
-      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-      masterGain.gain.linearRampToValueAtTime(0.38, audioCtx.currentTime + 1.5);
-    }
-
-    // Three paths to cover all browsers: immediate check, Promise, statechange event.
-    audioCtx.onstatechange = startRamp;
-    audioCtx.resume().then(startRamp).catch(function () {});
-    startRamp();
-    // Fallback: if onstatechange never fires (seen on some iOS versions), retry once.
-    setTimeout(function () {
-      if (!audioRampStarted && audioCtx) audioCtx.resume().then(startRamp).catch(function () {});
-    }, 500);
-  }
-
-  function resolveAudio() {
-    if (!audioCtx || !masterGain) return;
-    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(0.016, audioCtx.currentTime + 3);
-
-    const bloom = audioCtx.createOscillator();
-    bloom.type = 'sine';
-    bloom.frequency.value = 220;
-    const bg = audioCtx.createGain();
-    bg.gain.setValueAtTime(0, audioCtx.currentTime);
-    bg.gain.linearRampToValueAtTime(0.07, audioCtx.currentTime + 1.8);
-    bg.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 8);
-    bloom.connect(bg);
-    bg.connect(audioCtx.destination);
-    bloom.start();
-    bloom.stop(audioCtx.currentTime + 9);
-  }
-
-  if (muteBtn) {
-    muteBtn.addEventListener('click', function () {
-      isMuted = !isMuted;
-      muteBtn.textContent = isMuted ? '○' : '◎';
-      if (masterGain && audioCtx) {
-        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        masterGain.gain.linearRampToValueAtTime(
-          isMuted ? 0 : 0.38, audioCtx.currentTime + 0.6
-        );
-      }
-    });
-  }
-
-  // ── canvas ────────────────────────────────────────────────────────────────
-
-  function initCanvas() {
-    const rect = fogCanvas.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    fogCanvas.width  = Math.max(1, Math.round(rect.width  * dpr));
-    fogCanvas.height = Math.max(1, Math.round(rect.height * dpr));
-    paintFrost();
-  }
-
-  function paintFrost() {
-    const ctx = fogCanvas.getContext('2d');
-    const w = fogCanvas.width, h = fogCanvas.height;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.clearRect(0, 0, w, h);
-
-    const g = ctx.createRadialGradient(w*0.5, h*0.42, 0, w*0.5, h*0.42, Math.max(w,h)*0.72);
-    g.addColorStop(0,   'rgba(190,212,210,0.80)');
-    g.addColorStop(0.5, 'rgba(176,198,196,0.90)');
-    g.addColorStop(1,   'rgba(150,172,172,0.96)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, w, h);
-
-    const n = Math.round((w * h) / 5200);
-    for (let i = 0; i < n; i++) {
-      const x   = Math.random() * w;
-      const y   = Math.random() * h;
-      const rad = (Math.random() * 1.6 + 0.4) * dpr;
-      ctx.beginPath();
-      ctx.arc(x, y, rad, 0, Math.PI * 2);
-      ctx.fillStyle = Math.random() > 0.5
-        ? 'rgba(232,242,240,' + (Math.random() * 0.18 + 0.05) + ')'
-        : 'rgba(120,142,142,' + (Math.random() * 0.14 + 0.04) + ')';
-      ctx.fill();
-    }
-  }
-
-  // ── re-condensation ───────────────────────────────────────────────────────
-  // Paints a faint frost layer every 1.4s so cleared areas slowly haze back.
-  // Alpha ~0.021/tick → fully re-frosted in ~48s of no wiping.
-
-  function refrostTick() {
-    if (resolved || !touched) return;
-    const ctx = fogCanvas.getContext('2d');
-    const w = fogCanvas.width, h = fogCanvas.height;
-    const a = 0.021;
-    ctx.globalCompositeOperation = 'source-over';
-    const g = ctx.createRadialGradient(w*0.5, h*0.42, 0, w*0.5, h*0.42, Math.max(w,h)*0.72);
-    g.addColorStop(0,   'rgba(190,212,210,' + (a*0.85).toFixed(4) + ')');
-    g.addColorStop(0.5, 'rgba(176,198,196,' + a.toFixed(4) + ')');
-    g.addColorStop(1,   'rgba(150,172,172,' + (a*1.15).toFixed(4) + ')');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, w, h);
-  }
-
-  // ── wipe ──────────────────────────────────────────────────────────────────
-
-  function wipeTo(clientX, clientY, radius) {
-    const ctx  = fogCanvas.getContext('2d');
-    const rect = fogCanvas.getBoundingClientRect();
-    const x    = (clientX - rect.left) / rect.width  * fogCanvas.width;
-    const y    = (clientY - rect.top)  / rect.height * fogCanvas.height;
-    const R    = radius * dpr;
-
-    ctx.globalCompositeOperation = 'destination-out';
-
-    function stamp(px, py) {
-      const rg = ctx.createRadialGradient(px, py, 0, px, py, R);
-      rg.addColorStop(0,    'rgba(0,0,0,0.95)');
-      rg.addColorStop(0.55, 'rgba(0,0,0,0.55)');
-      rg.addColorStop(1,    'rgba(0,0,0,0)');
-      ctx.fillStyle = rg;
-      ctx.beginPath();
-      ctx.arc(px, py, R, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    if (last) {
-      const dx    = x - last.x, dy = y - last.y;
-      const dist  = Math.hypot(dx, dy);
-      const steps = Math.max(1, Math.floor(dist / (R / 3)));
-      for (let i = 1; i <= steps; i++) stamp(last.x + dx*i/steps, last.y + dy*i/steps);
-    } else {
-      stamp(x, y);
-    }
-
-    last = { x, y };
-    ctx.globalCompositeOperation = 'source-over';
-  }
-
-  // ── resolve check ─────────────────────────────────────────────────────────
-
-  function maybeResolve() {
-    if (resolved) return;
-    if (!offscreen) offscreen = document.createElement('canvas');
-    const sw = 100;
-    const sh = Math.max(1, Math.round(100 * fogCanvas.height / fogCanvas.width));
-    offscreen.width  = sw;
-    offscreen.height = sh;
-    const o = offscreen.getContext('2d');
-    o.clearRect(0, 0, sw, sh);
-    o.drawImage(fogCanvas, 0, 0, sw, sh);
-    const data = o.getImageData(0, 0, sw, sh).data;
-    let clear = 0;
-    for (let i = 3; i < data.length; i += 4) if (data[i] < 36) clear++;
-    clearFraction    = clear / (sw * sh);
-    maxClearFraction = Math.max(maxClearFraction, clearFraction);
-
-    // fragTop brightens from 0 with the very first wipe
-    const ftEl = document.getElementById('fragTop');
-    if (ftEl) ftEl.style.opacity = fragOp(maxClearFraction, 0.02, 0.12, 0).toFixed(3);
-
-    // phase 1 — barely visible from page load, smoothly brighten as glass clears
-    PHASE1_FRAGS.forEach(function (fr) {
-      const el = document.getElementById(fr.id);
-      if (el) el.style.opacity = fragOp(maxClearFraction, fr.s, fr.f, MIN_OP1).toFixed(3);
-    });
-
-    // phase 2 — appear shaded once all phase-1 messages are found; keep wiping to read them
-    if (maxClearFraction >= PHASE1_DONE) {
-      PHASE2_FRAGS.forEach(function (fr) {
-        const el = document.getElementById(fr.id);
-        if (el) el.style.opacity = fragOp(maxClearFraction, fr.s, fr.f, MIN_OP2).toFixed(3);
-      });
-    }
-
-    if (Date.now() - pageLoadTime < MIN_READ_MS) return;
-    if (maxClearFraction >= THRESHOLD) {
-      clearInterval(checkTimer);
-      triggerResolve();
-    }
-  }
-
-  function triggerResolve() {
-    resolved = true;
-    clearInterval(refrostTimer);
-
-    fogCanvas.style.opacity    = '0';
-    mystery.style.opacity      = '0';
-    frags.style.opacity        = '0';
-    whisperWrap.style.opacity  = '0';
-    clock.style.opacity        = '0';
-
-    dawn.style.opacity         = '1';
-    resMsgWrap.style.opacity   = '1';
-    resMsgWrap.style.transform = 'translateY(0)';
-
-    tip.style.background  = 'radial-gradient(circle, rgba(65,46,30,.28) 0%, rgba(65,46,30,.1) 45%, rgba(65,46,30,0) 70%)';
-    tip.style.borderColor = 'rgba(65,46,30,.55)';
-    closingLog.style.opacity = '1';
-
-    localStorage.setItem('dw_resolved', '1');
-    resolveAudio();
-    const nav = document.getElementById('dewNav');
-    if (nav) nav.classList.add('resolved');
-    const caseOverlay = document.getElementById('dewCaseOverlay');
-    if (caseOverlay) caseOverlay.classList.add('resolved');
-    const contribOverlay = document.getElementById('dewContributeOverlay');
-    if (contribOverlay) contribOverlay.classList.add('resolved');
-  }
-
-  // ── clock ─────────────────────────────────────────────────────────────────
-
-  function startClock() {
-    let s = 3 * 3600 + 14 * 60 + 7;
-    const pad = n => String(n).padStart(2, '0');
-    clockTimer = setInterval(function () {
-      if (resolved) return;
-      s++;
-      clock.textContent = 'observed: '
-        + pad(Math.floor(s / 3600) % 24) + ':'
-        + pad(Math.floor(s / 60) % 60)   + ':'
-        + pad(s % 60);
-    }, 1000);
-  }
-
-  // ── pointer ───────────────────────────────────────────────────────────────
-
-  function bindPointer() {
-    const fragEls = ['frag0','frag1','frag2','frag3','frag4','frag5','frag6','frag7','frag8'].map(function (id) {
-      return document.getElementById(id);
-    });
-
-    let isDown = false;
-
-    function onMove(e) {
-      if (e.type === 'pointerdown') {
-        // nav links are inside stage — don't start a wipe when tapping them
-        if (e.target.closest && e.target.closest('#dewNav')) return;
-        isDown = true;
-      }
-
-      const p = (e.touches && e.touches[0]) || e;
-      const x = p.clientX, y = p.clientY;
-      tip.style.opacity   = '1';
-      tip.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-
-      if (!resolved) {
-        // proximity brightening works on hover — no press needed
-        fragEls.forEach(function (el) {
-          if (!el) return;
-          const r = el.getBoundingClientRect();
-          const d = Math.hypot(x - (r.left + r.width * 0.5), y - (r.top + r.height * 0.5));
-          const t = Math.max(0, 1 - d / 160);
-          el.style.color = 'rgba(159,232,219,' + (0.62 + 0.35 * t).toFixed(2) + ')';
-          el.style.textShadow = '0 0 ' + Math.round(12 + 14*t) + 'px rgba(159,232,219,'
-            + (0.40 + 0.45*t).toFixed(2) + ')';
-        });
-
-        // wipe only while button / finger is held — pointerdown is a trusted
-        // gesture so AudioContext always starts on the same event as the first wipe
-        if (isDown) {
-          const radius = e.pointerType === 'touch' ? RADIUS_TOUCH : RADIUS_MOUSE;
-          wipeTo(x, y, radius);
-
-          if (!touched) {
-            touched = true;
-            hintWrap.style.opacity = '0';
-            initAudio();
-          } else if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-          }
-        }
-      }
-    }
-
-    stage.addEventListener('pointerdown',  onMove);
-    stage.addEventListener('pointermove',  onMove);
-    stage.addEventListener('pointerup',    function () { isDown = false; last = null; });
-    stage.addEventListener('pointercancel',function () { isDown = false; last = null; });
-    stage.addEventListener('pointerleave', function () { last = null; tip.style.opacity = '0'; });
-  }
-
-  // ── init ──────────────────────────────────────────────────────────────────
-
-  initCanvas();
-  startClock();
-  bindPointer();
-  checkTimer   = setInterval(maybeResolve, 600);
-  refrostTimer = setInterval(refrostTick, 1400);
-  window.addEventListener('resize', initCanvas);
-
-  // iOS Safari only unlocks AudioContext on touchstart/click — not pointermove.
-  // Add one-shot listeners so audio starts on the very first finger contact.
-  ['touchstart', 'mousedown'].forEach(function (evt) {
-    document.addEventListener(evt, function once() {
-      initAudio();
-      document.removeEventListener(evt, once);
-    }, { passive: true });
+  const w = brainEl.clientWidth, h = brainEl.clientHeight, br = brainEl.getBoundingClientRect();
+  const minX = 8 - br.left, maxX = innerWidth - 8 - br.left;   // viewport edges in brain-box coords
+  const heroLimit = hero.getBoundingClientRect().bottom + 14, statusLimit = statusEl.getBoundingClientRect().top - 14;
+  nodes.forEach((n, i) => {
+    tmp.copy(n.outer).applyMatrix4(group.matrixWorld);
+    n.z = tmp.z; n.i = i;
+    facing.copy(tmp).sub(camera.position).normalize();
+    wn.copy(n.dir).transformDirection(group.matrixWorld);
+    tmp.project(camera);
+    const sx = (tmp.x * .5 + .5) * w, sy = (-tmp.y * .5 + .5) * h;
+    const vis = wn.dot(facing) < 0.15 ? 1 : 0.16;  // back-facing nodes dim to 16%
+    dots[i].style.transform = `translate(${sx.toFixed(1)}px,${sy.toFixed(1)}px)`; dots[i].style.opacity = vis;
+    const l = labels[i], lw = l._w || (l._w = l.offsetWidth);
+    const x0 = Math.max(minX, Math.min(maxX - lw, sx > w / 2 ? sx + 10 : sx - 10 - lw));
+    l.style.transform = `translate(${x0.toFixed(1)}px,${(sy - 5).toFixed(1)}px)`;
+    const vy = br.top + sy;
+    boxes[i] = { x0, x1: x0 + lw, y0: sy - 5, y1: sy + 9, hidden: vy < heroLimit || vy > statusLimit, vis };
   });
-}());
+  // front-most labels win; a label overlapping one already shown is hidden (its dot stays clickable)
+  const placed = [];
+  nodes.slice().sort((a, b) => b.z - a.z).forEach(({ i }) => {
+    const b = boxes[i];
+    const hide = b.hidden || placed.some(o => b.x0 < o.x1 + 4 && b.x1 > o.x0 - 4 && b.y0 < o.y1 + 2 && b.y1 > o.y0 - 2);
+    if (!hide) placed.push(b);
+    labels[i].style.opacity = hide ? 0 : (b.vis * 0.85).toFixed(2);
+    labels[i].style.pointerEvents = hide ? 'none' : 'auto';
+  });
+  renderer.render(scene, camera);
+}
+
+function start(geo) {
+  buildNetwork(geo);
+  tick();
+  requestAnimationFrame(() => brainEl.classList.add('ready'));
+}
+new PLYLoader().load(BRAIN_MODEL_URL,
+  geo => start(addBrain(geo)),
+  undefined,
+  err => {
+    // no model: keep the essay nodes usable on an invisible sphere
+    console.warn('brain model failed to load', err);
+    const g = new THREE.IcosahedronGeometry(1, 3); g.scale(1.32, 1, 1.12); start(g);
+  }
+);
 </script>
 <script>
 (function () {
