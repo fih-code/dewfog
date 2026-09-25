@@ -1,45 +1,34 @@
 User-agent: *
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: GPTBot
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: OAI-SearchBot
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: ChatGPT-User
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: ClaudeBot
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: Claude-SearchBot
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: Claude-User
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: PerplexityBot
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: Perplexity-User
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: Google-Extended
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 User-agent: Applebot-Extended
 Allow: /
-Disallow: /design_handoff_dewfog_landing/
 
 Sitemap: https://dewfog.com/sitemap.xml
