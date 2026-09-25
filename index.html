@@ -150,22 +150,22 @@
     #dewNav.open #dewBurger span:last-child  { transform: translateY(-3px) rotate(-45deg); }
     /* ── "the case" / "contribute" / "references" buttons + overlays ───────────────────────── */
     #dewNavLeft { display: flex; align-items: center; gap: 1.5em; }
-    #dewCase, #dewContribute, #dewReferences {
+    #dewCase, #dewQuestion, #dewContribute, #dewReferences {
       font-family: 'Space Mono',monospace; font-size: 9px;
       letter-spacing: .36em; text-transform: lowercase;
       color: rgba(159,232,219,.32); background: none; border: none;
       cursor: pointer; padding: 0; pointer-events: auto; text-decoration: none;
       transition: color .25s ease;
     }
-    #dewCase:hover, #dewContribute:hover, #dewReferences:hover { color: rgba(159,232,219,.7); }
-    #dewCaseOverlay, #dewContributeOverlay {
+    #dewCase:hover, #dewQuestion:hover, #dewContribute:hover, #dewReferences:hover { color: rgba(159,232,219,.7); }
+    #dewCaseOverlay, #dewQuestionOverlay, #dewContributeOverlay {
       display: none; position: fixed; inset: 0; z-index: 9;
       align-items: center; justify-content: center;
       background: rgba(6,12,14,.58);
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     }
-    #dewCaseOverlay.open, #dewContributeOverlay.open { display: flex; animation: dewDrop .22s ease; }
-    #dewCasePanel, #dewContributePanel {
+    #dewCaseOverlay.open, #dewQuestionOverlay.open, #dewContributeOverlay.open { display: flex; animation: dewDrop .22s ease; }
+    #dewCasePanel, #dewQuestionPanel, #dewContributePanel {
       position: relative; max-width: 520px; width: 90%;
       padding: 36px 40px;
       background: rgba(7,13,16,.96);
@@ -173,15 +173,15 @@
       border-radius: 3px;
       backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     }
-    #dewCaseClose, #dewContributeClose {
+    #dewCaseClose, #dewQuestionClose, #dewContributeClose {
       position: absolute; top: 14px; right: 18px;
       font-family: 'Space Mono',monospace; font-size: 13px;
       color: rgba(159,232,219,.28); background: none; border: none;
       cursor: pointer; padding: 4px; line-height: 1;
       transition: color .2s ease;
     }
-    #dewCaseClose:hover, #dewContributeClose:hover { color: rgba(159,232,219,.7); }
-    #dewCasePanel p, #dewContributePanel p {
+    #dewCaseClose:hover, #dewQuestionClose:hover, #dewContributeClose:hover { color: rgba(159,232,219,.7); }
+    #dewCasePanel p, #dewQuestionPanel p, #dewContributePanel p {
       font-family: 'Space Mono',monospace; font-size: 10px;
       line-height: 2.1; letter-spacing: .05em;
       color: rgba(159,232,219,.82); margin: 0;
@@ -194,11 +194,11 @@
     }
     #dewMailLink:hover { color: #fff; border-color: rgba(159,232,219,.8); }
     /* phones: tighten the nav row so the menu button stays on screen */
-    @media (max-width: 480px) {
+    @media (max-width: 560px) {
       #dewNav { padding-left: 16px; padding-right: 16px; }
       #dewNavLeft { gap: .8em; }
-      #dewLogo { letter-spacing: .2em; }
-      #dewCase, #dewContribute, #dewReferences { letter-spacing: .12em; white-space: nowrap; }
+      #dewLogo { display: none; }  /* links to this same page; frees room for the menu items */
+      #dewCase, #dewQuestion, #dewContribute, #dewReferences { letter-spacing: .12em; white-space: nowrap; }
       #dewLinks { left: 16px; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -228,6 +228,7 @@
     <div id="dewNavLeft">
       <a id="dewLogo" href="/">dewfog</a>
       <button id="dewCase">the case</button>
+      <button id="dewQuestion">the question</button>
       <button id="dewContribute">contribute</button>
       <a id="dewReferences" href="/references.html">references</a>
       <button id="dewBurger" aria-label="menu" aria-expanded="false">
@@ -274,6 +275,13 @@
   <div id="dewCasePanel" role="dialog">
     <button id="dewCaseClose" aria-label="close">×</button>
     <p>Science and physics have never fully explained the reality we live in. Spiritualism often borrows their language to claim credibility it hasn't earned. The truth is simpler: we don't yet understand our own reality. Dewfog is a research project that follows science and physics as far as they can go, while taking spiritualist claims seriously enough to test them rather than dismiss them — investigating one open question: could consciousness be fundamental, rather than something the brain merely produces? From there, quantum physics, neuroscience, and the question of who you even are all become different angles on the same open investigation. If consciousness turns out to be part of the fabric reality is built from, rather than just a byproduct of it, it would change how we read all of it — that's the question being tested here, not a conclusion this project starts from.</p>
+  </div>
+</div>
+
+<div id="dewQuestionOverlay" aria-hidden="true">
+  <div id="dewQuestionPanel" role="dialog">
+    <button id="dewQuestionClose" aria-label="close">×</button>
+    <p>Your brain is made of the same stuff as everything else: protons, neutrons and electrons, the same particles that make up a rock, a river or a star. Arranged one way, they make a stone. Arranged as roughly 86 billion neurons trading electrical and chemical signals, they seem to produce something no stone is thought to have — the felt experience of being you: the redness of red, the ache of loss, the taste of coffee. Neuroscience has mapped, in growing detail, which brain activity goes along with which experience. What it hasn't explained is why any of that activity should feel like anything from the inside at all, rather than running in the dark. Philosophers call this the hard problem of consciousness. Either experience somehow switches on once matter is organized in the right way — and no one yet knows how, or where that line would be — or it was never entirely absent from matter to begin with, or the question itself rests on a mistake about what experience is. Which of those is true is the question this project keeps returning to.</p>
   </div>
 </div>
 
@@ -547,29 +555,32 @@ new PLYLoader().load(BRAIN_MODEL_URL,
 </script>
 <script>
 (function () {
-  var caseBtn     = document.getElementById('dewCase');
-  var caseOverlay = document.getElementById('dewCaseOverlay');
-  var caseClose   = document.getElementById('dewCaseClose');
-  if (!caseBtn || !caseOverlay) return;
+  // "the case" and "the question" popups share the same open/close behaviour
+  ['Case', 'Question'].forEach(function (name) {
+    var btn     = document.getElementById('dew' + name);
+    var overlay = document.getElementById('dew' + name + 'Overlay');
+    var close   = document.getElementById('dew' + name + 'Close');
+    if (!btn || !overlay) return;
 
-  function openCase() {
-    caseOverlay.classList.add('open');
-    caseOverlay.setAttribute('aria-hidden', 'false');
-    caseClose.focus();
-  }
-  function closeCase() {
-    caseOverlay.classList.remove('open');
-    caseOverlay.setAttribute('aria-hidden', 'true');
-    caseBtn.focus();
-  }
+    function openPopup() {
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      close.focus();
+    }
+    function closePopup() {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      btn.focus();
+    }
 
-  caseBtn.addEventListener('click', function (e) { e.stopPropagation(); openCase(); });
-  caseClose.addEventListener('click', closeCase);
-  caseOverlay.addEventListener('pointerdown', function (e) {
-    if (e.target === caseOverlay) closeCase();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && caseOverlay.classList.contains('open')) closeCase();
+    btn.addEventListener('click', function (e) { e.stopPropagation(); openPopup(); });
+    close.addEventListener('click', closePopup);
+    overlay.addEventListener('pointerdown', function (e) {
+      if (e.target === overlay) closePopup();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closePopup();
+    });
   });
 }());
 </script>
