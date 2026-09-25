@@ -118,7 +118,7 @@
       list-style: none; margin: 0;
       padding: 20px 26px 24px;
       display: none;
-      position: fixed; top: 50px; right: clamp(20px,4vw,44px); z-index: 7;
+      position: fixed; top: 50px; left: clamp(20px,4vw,44px); z-index: 7;
       flex-direction: column; gap: 18px;
       background: rgba(7,13,16,.94);
       border: 1px solid rgba(159,232,219,.08);
@@ -193,6 +193,14 @@
       transition: color .2s ease, border-color .2s ease;
     }
     #dewMailLink:hover { color: #fff; border-color: rgba(159,232,219,.8); }
+    /* phones: tighten the nav row so the menu button stays on screen */
+    @media (max-width: 480px) {
+      #dewNav { padding-left: 16px; padding-right: 16px; }
+      #dewNavLeft { gap: .8em; }
+      #dewLogo { letter-spacing: .2em; }
+      #dewCase, #dewContribute, #dewReferences { letter-spacing: .12em; white-space: nowrap; }
+      #dewLinks { left: 16px; }
+    }
     @media (prefers-reduced-motion: reduce) {
       .dewBlob { animation: none; }
     }
@@ -222,6 +230,9 @@
       <button id="dewCase">the case</button>
       <button id="dewContribute">contribute</button>
       <a id="dewReferences" href="/references.html">references</a>
+      <button id="dewBurger" aria-label="menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
     </div>
     <ul id="dewLinks">
       <li><a href="/double-slit.html">the double slit</a></li>
@@ -256,9 +267,6 @@
       <li><a href="/tesla-quote.html">tesla quote</a></li>
       <li><a href="/biophotons.html">biophotons</a></li>
     </ul>
-    <button id="dewBurger" aria-label="menu" aria-expanded="false">
-      <span></span><span></span>
-    </button>
   </nav>
 </div>
 
