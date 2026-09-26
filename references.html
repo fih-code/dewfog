@@ -130,7 +130,15 @@
       color: rgba(223,240,236,.9); padding: 9px 12px; border-radius: 3px;
       letter-spacing: .03em;
     }
-    #search::placeholder { color: rgba(159,232,219,.35); }
+    #search::placeholder { color: rgba(159,232,219,.55); }
+    #signal {
+      flex: 0 1 240px; font-family: inherit; font-size: 12px; letter-spacing: .03em;
+      background: rgba(159,232,219,.05); border: 1px solid rgba(159,232,219,.18);
+      color: rgba(223,240,236,.9); padding: 9px 10px; border-radius: 3px; cursor: pointer;
+    }
+    #signal:focus { outline: none; border-color: rgba(159,232,219,.5); }
+    #signal option { background: #0b1316; color: rgba(223,240,236,.9); }
+    @media (max-width: 560px) { #signal { flex: 1 1 100%; } }
     #search:focus { outline: none; border-color: rgba(159,232,219,.5); }
     #row-count {
       font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
@@ -198,7 +206,8 @@
 </header>
 
 <div id="controls">
-  <input id="search" type="text" placeholder="filter by title, author, chapter, or source type…" autocomplete="off">
+  <select id="signal" aria-label="show the papers behind one signal"><option value="">all signals</option></select>
+  <input id="search" type="search" placeholder="search a signal, title, author, journal or year — e.g. near death" aria-label="search sources" autocomplete="off">
   <div id="row-count"></div>
 </div>
 
@@ -211,7 +220,7 @@
         <th>Year</th>
         <th>Journal / Publisher</th>
         <th>URL / DOI</th>
-        <th>Chapter</th>
+        <th>Signal / chapter</th>
         <th>Source type</th>
         <th>Citations</th>
         <th>Retraction status</th>
@@ -1109,13 +1118,13 @@
         <td class="c-cites">2</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="letter to the besso family (march 1955); commentary by tim maudlin, iai (2022) einstein, a e=mc²; entanglement; present moment primary historical document (letter)">
+      <tr class="row" data-search="letter to the besso family (march 1955); commentary by tim maudlin, iai (2022) einstein, a e=mc²; entanglement; present moment; spacetime primary historical document (letter)">
         <td class="c-title">Letter to the Besso family (March 1955); commentary by Tim Maudlin, IAI (2022)</td>
         <td class="c-authors">Einstein, A</td>
         <td class="c-year">2022</td>
         <td class="c-journal">—</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">e=mc²; entanglement; present moment</td>
+        <td class="c-chapter">e=mc²; entanglement; present moment; spacetime</td>
         <td class="c-type">Primary historical document (letter)</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
@@ -1186,13 +1195,13 @@
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="aware study results, stony brook / university of southampton parnia, s. et al near death preliminary results (non-peer-reviewed)">
+      <tr class="row" data-search="aware study results, stony brook / university of southampton parnia, s. et al near death; advaita vedanta preliminary results (non-peer-reviewed)">
         <td class="c-title">AWARE study results, Stony Brook / University of Southampton</td>
         <td class="c-authors">Parnia, S. et al</td>
         <td class="c-year">2014</td>
         <td class="c-journal">—</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">near death</td>
+        <td class="c-chapter">near death; advaita vedanta</td>
         <td class="c-type">Preliminary results (non-peer-reviewed)</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
@@ -1549,13 +1558,13 @@
         <td class="c-cites">8</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="aware—awareness during resuscitation—a prospective study parnia, s. et al out-of-body experience peer-reviewed journal article">
+      <tr class="row" data-search="aware—awareness during resuscitation—a prospective study parnia, s. et al out-of-body experience; advaita vedanta peer-reviewed journal article">
         <td class="c-title">AWARE—AWAreness during REsuscitation—A Prospective Study</td>
         <td class="c-authors">Parnia, S. et al</td>
         <td class="c-year">2014</td>
         <td class="c-journal">Resuscitation</td>
         <td class="c-url"><a href="https://doi.org/10.1016/j.resuscitation.2014.09.004" target="_blank" rel="noopener">doi.org/10.1016/j.resuscitation.2014.09.004</a></td>
-        <td class="c-chapter">out-of-body experience</td>
+        <td class="c-chapter">out-of-body experience; advaita vedanta</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">239</td>
         <td class="c-retr">not retracted</td>
@@ -1769,24 +1778,24 @@
         <td class="c-cites">464</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="split brain: divided perception but undivided consciousness pinto, y., neville, d.a., otten, m., corballis, p.m., lamme, v.a.f., de haan, e.h.f., foschi, n., &amp; fabri, m split brain peer-reviewed journal article">
+      <tr class="row" data-search="split brain: divided perception but undivided consciousness pinto, y., neville, d.a., otten, m., corballis, p.m., lamme, v.a.f., de haan, e.h.f., foschi, n., &amp; fabri, m split brain; advaita vedanta peer-reviewed journal article">
         <td class="c-title">Split Brain: Divided Perception but Undivided Consciousness</td>
         <td class="c-authors">Pinto, Y., Neville, D.A., Otten, M., Corballis, P.M., Lamme, V.A.F., de Haan, E.H.F., Foschi, N., &amp; Fabri, M</td>
         <td class="c-year">2017</td>
         <td class="c-journal">Brain</td>
         <td class="c-url"><a href="https://doi.org/10.1093/brain/aww358" target="_blank" rel="noopener">doi.org/10.1093/brain/aww358</a></td>
-        <td class="c-chapter">split brain</td>
+        <td class="c-chapter">split brain; advaita vedanta</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">96</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="interaction in isolation: 50 years of insights from split-brain research volz, l.j. &amp; gazzaniga, m.s split brain peer-reviewed journal article">
+      <tr class="row" data-search="interaction in isolation: 50 years of insights from split-brain research volz, l.j. &amp; gazzaniga, m.s split brain; advaita vedanta peer-reviewed journal article">
         <td class="c-title">Interaction in Isolation: 50 Years of Insights From Split-Brain Research</td>
         <td class="c-authors">Volz, L.J. &amp; Gazzaniga, M.S</td>
         <td class="c-year">2017</td>
         <td class="c-journal">Brain</td>
         <td class="c-url"><a href="https://doi.org/10.1093/brain/awx139" target="_blank" rel="noopener">doi.org/10.1093/brain/awx139</a></td>
-        <td class="c-chapter">split brain</td>
+        <td class="c-chapter">split brain; advaita vedanta</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">88</td>
         <td class="c-retr">not retracted</td>
@@ -1967,35 +1976,35 @@
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="śaṅkara dalal, n self-inquiry peer-reviewed journal article">
+      <tr class="row" data-search="śaṅkara dalal, n self-inquiry; advaita vedanta peer-reviewed journal article">
         <td class="c-title">Śaṅkara</td>
         <td class="c-authors">Dalal, N</td>
         <td class="c-year">2021</td>
         <td class="c-journal">Stanford Encyclopedia of Philosophy</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">self-inquiry</td>
+        <td class="c-chapter">self-inquiry; advaita vedanta</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="the early upanishads: annotated text and translation olivelle, p self-inquiry book">
+      <tr class="row" data-search="the early upanishads: annotated text and translation olivelle, p self-inquiry; advaita vedanta book">
         <td class="c-title">The Early Upanishads: Annotated Text and Translation</td>
         <td class="c-authors">Olivelle, P</td>
         <td class="c-year">1998</td>
         <td class="c-journal">Oxford University Press</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">self-inquiry</td>
+        <td class="c-chapter">self-inquiry; advaita vedanta</td>
         <td class="c-type">Book</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="the book: on the taboo against knowing who you are watts, a self-inquiry book">
+      <tr class="row" data-search="the book: on the taboo against knowing who you are watts, a self-inquiry; advaita vedanta book">
         <td class="c-title">The Book: On the Taboo Against Knowing Who You Are</td>
         <td class="c-authors">Watts, A</td>
         <td class="c-year">1966</td>
         <td class="c-journal">—</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">self-inquiry</td>
+        <td class="c-chapter">self-inquiry; advaita vedanta</td>
         <td class="c-type">Book</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
@@ -2011,13 +2020,13 @@
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="language, epistemology, and mysticism katz, s oneness book chapter">
+      <tr class="row" data-search="language, epistemology, and mysticism katz, s oneness; advaita vedanta book chapter">
         <td class="c-title">Language, Epistemology, and Mysticism</td>
         <td class="c-authors">Katz, S</td>
         <td class="c-year">1978</td>
         <td class="c-journal">In Mysticism and Philosophical Analysis</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">oneness</td>
+        <td class="c-chapter">oneness; advaita vedanta</td>
         <td class="c-type">Book chapter</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
@@ -2077,57 +2086,57 @@
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="the evolution of galaxy number density at z &lt; 8 conselice, c. et al fine-tuning peer-reviewed journal article">
+      <tr class="row" data-search="the evolution of galaxy number density at z &lt; 8 conselice, c. et al universe peer-reviewed journal article">
         <td class="c-title">The Evolution of Galaxy Number Density at z &lt; 8</td>
         <td class="c-authors">Conselice, C. et al</td>
         <td class="c-year">2016</td>
         <td class="c-journal">The Astrophysical Journal</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">fine-tuning</td>
+        <td class="c-chapter">universe</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="new horizons observations of the cosmic optical background lauer, t.r. et al fine-tuning peer-reviewed journal article">
+      <tr class="row" data-search="new horizons observations of the cosmic optical background lauer, t.r. et al universe peer-reviewed journal article">
         <td class="c-title">New Horizons Observations of the Cosmic Optical Background</td>
         <td class="c-authors">Lauer, T.R. et al</td>
         <td class="c-year">2021</td>
         <td class="c-journal">The Astrophysical Journal</td>
         <td class="c-url"><a href="https://doi.org/10.3847/1538-4357/abc881" target="_blank" rel="noopener">doi.org/10.3847/1538-4357/abc881</a></td>
-        <td class="c-chapter">fine-tuning</td>
+        <td class="c-chapter">universe</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">79</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="new synoptic observations of the cosmic optical background with new horizons lauer, t.r. et al fine-tuning peer-reviewed journal article">
+      <tr class="row" data-search="new synoptic observations of the cosmic optical background with new horizons lauer, t.r. et al universe peer-reviewed journal article">
         <td class="c-title">New Synoptic Observations of the Cosmic Optical Background with New Horizons</td>
         <td class="c-authors">Lauer, T.R. et al</td>
         <td class="c-year">2024</td>
         <td class="c-journal">The Astrophysical Journal</td>
         <td class="c-url"><a href="https://doi.org/10.3847/1538-4357/ad5ffc" target="_blank" rel="noopener">doi.org/10.3847/1538-4357/ad5ffc</a></td>
-        <td class="c-chapter">fine-tuning</td>
+        <td class="c-chapter">universe</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">23</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="research on the &quot;specious present&quot; and the 2–3 second subjective window pöppel, e the only place anything happens historical/foundational work (multiple papers)">
+      <tr class="row" data-search="research on the &quot;specious present&quot; and the 2–3 second subjective window pöppel, e present moment historical/foundational work (multiple papers)">
         <td class="c-title">Research on the &quot;specious present&quot; and the 2–3 second subjective window</td>
         <td class="c-authors">Pöppel, E</td>
         <td class="c-year">1997, 2004</td>
         <td class="c-journal">—</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">The Only Place Anything Happens</td>
+        <td class="c-chapter">present moment</td>
         <td class="c-type">Historical/foundational work (multiple papers)</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="the three-second &quot;subjective present&quot;: a critical review white, p.a the only place anything happens peer-reviewed journal article">
+      <tr class="row" data-search="the three-second &quot;subjective present&quot;: a critical review white, p.a present moment peer-reviewed journal article">
         <td class="c-title">The Three-Second &quot;Subjective Present&quot;: A Critical Review</td>
         <td class="c-authors">White, P.A</td>
         <td class="c-year">2017</td>
         <td class="c-journal">Psychological Bulletin</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">The Only Place Anything Happens</td>
+        <td class="c-chapter">present moment</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
@@ -2242,35 +2251,35 @@
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="two concepts of consciousness rosenthal, d.m islands of order peer-reviewed journal article">
+      <tr class="row" data-search="two concepts of consciousness rosenthal, d.m entropy peer-reviewed journal article">
         <td class="c-title">Two Concepts of Consciousness</td>
         <td class="c-authors">Rosenthal, D.M</td>
         <td class="c-year">1986</td>
         <td class="c-journal">Philosophical Studies</td>
         <td class="c-url"><a href="https://doi.org/10.1007/bf00355521" target="_blank" rel="noopener">doi.org/10.1007/bf00355521</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">1008</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="some like it hot: consciousness and higher-order thoughts byrne, a islands of order peer-reviewed journal article">
+      <tr class="row" data-search="some like it hot: consciousness and higher-order thoughts byrne, a entropy peer-reviewed journal article">
         <td class="c-title">Some Like It HOT: Consciousness and Higher-Order Thoughts</td>
         <td class="c-authors">Byrne, A</td>
         <td class="c-year">1997</td>
         <td class="c-journal">Philosophical Studies</td>
         <td class="c-url"><a href="https://doi.org/10.1023/a:1017959107565" target="_blank" rel="noopener">doi.org/10.1023/a:1017959107565</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">122</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="the division of phenomenal labor: a problem for representational theories of consciousness neander, k islands of order peer-reviewed journal article">
+      <tr class="row" data-search="the division of phenomenal labor: a problem for representational theories of consciousness neander, k entropy peer-reviewed journal article">
         <td class="c-title">The Division of Phenomenal Labor: A Problem for Representational Theories of Consciousness</td>
         <td class="c-authors">Neander, K</td>
         <td class="c-year">1998</td>
         <td class="c-journal">Philosophical Perspectives</td>
         <td class="c-url"><a href="https://doi.org/10.1111/0029-4624.32.s12.18" target="_blank" rel="noopener">doi.org/10.1111/0029-4624.32.s12.18</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">124</td>
         <td class="c-retr">not retracted</td>
@@ -2308,35 +2317,35 @@
         <td class="c-cites">37</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="human consciousness and its relationship to social neuroscience: a novel hypothesis graziano, m.s.a. &amp; kastner, s islands of order peer-reviewed journal article">
+      <tr class="row" data-search="human consciousness and its relationship to social neuroscience: a novel hypothesis graziano, m.s.a. &amp; kastner, s entropy peer-reviewed journal article">
         <td class="c-title">Human Consciousness and Its Relationship to Social Neuroscience: A Novel Hypothesis</td>
         <td class="c-authors">Graziano, M.S.A. &amp; Kastner, S</td>
         <td class="c-year">2011</td>
         <td class="c-journal">Cognitive Neuroscience</td>
         <td class="c-url"><a href="https://doi.org/10.1080/17588928.2011.565121" target="_blank" rel="noopener">doi.org/10.1080/17588928.2011.565121</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">200</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="toward a standard model of consciousness: reconciling the attention schema, global workspace, higher-order thought, and illusionist theories graziano, m.s.a. et al islands of order peer-reviewed journal article">
+      <tr class="row" data-search="toward a standard model of consciousness: reconciling the attention schema, global workspace, higher-order thought, and illusionist theories graziano, m.s.a., guterstam, a., bio, b.j., &amp; wilterson, a.i entropy peer-reviewed journal article">
         <td class="c-title">Toward a Standard Model of Consciousness: Reconciling the Attention Schema, Global Workspace, Higher-Order Thought, and Illusionist Theories</td>
         <td class="c-authors">Graziano, M.S.A., Guterstam, A., Bio, B.J., &amp; Wilterson, A.I</td>
         <td class="c-year">2020</td>
         <td class="c-journal">Cognitive Neuropsychology</td>
         <td class="c-url"><a href="https://doi.org/10.1080/02643294.2019.1670630" target="_blank" rel="noopener">doi.org/10.1080/02643294.2019.1670630</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">130</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="what explains the hard problem of consciousness? commentary on graziano et al., toward a standard model of consciousness masciari, c.f. &amp; carruthers, p islands of order peer-reviewed journal article">
+      <tr class="row" data-search="what explains the &quot;hard&quot; problem of consciousness? commentary on graziano et al., &quot;toward a standard model of consciousness&quot; masciari, c.f. &amp; carruthers, p entropy peer-reviewed journal article">
         <td class="c-title">What Explains the &quot;Hard&quot; Problem of Consciousness? Commentary on Graziano et al., &quot;Toward a Standard Model of Consciousness&quot;</td>
         <td class="c-authors">Masciari, C.F. &amp; Carruthers, P</td>
         <td class="c-year">2020</td>
         <td class="c-journal">Cognitive Neuropsychology</td>
         <td class="c-url"><a href="https://doi.org/10.1080/02643294.2020.1729712" target="_blank" rel="noopener">doi.org/10.1080/02643294.2020.1729712</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">23</td>
         <td class="c-retr">not retracted</td>
@@ -2352,46 +2361,46 @@
         <td class="c-cites">106</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="the cambridge declaration on consciousness low, p islands of order report / monograph">
+      <tr class="row" data-search="the cambridge declaration on consciousness low, p entropy report / monograph">
         <td class="c-title">The Cambridge Declaration on Consciousness</td>
         <td class="c-authors">Low, P</td>
         <td class="c-year">2012</td>
         <td class="c-journal">Publicly proclaimed at the Francis Crick Memorial Conference, Churchill College, University of Cambridge</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Report / monograph</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="background to the new york declaration on animal consciousness andrews, k., birch, j., sebo, j., &amp; sims, t islands of order report / monograph">
+      <tr class="row" data-search="background to the new york declaration on animal consciousness andrews, k., birch, j., sebo, j., &amp; sims, t entropy report / monograph">
         <td class="c-title">Background to the New York Declaration on Animal Consciousness</td>
         <td class="c-authors">Andrews, K., Birch, J., Sebo, J., &amp; Sims, T</td>
         <td class="c-year">2024</td>
         <td class="c-journal">—</td>
         <td class="c-url">—</td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Report / monograph</td>
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="neuroscience of animal consciousness: still agnostic after all gutfreund, y islands of order peer-reviewed journal article">
+      <tr class="row" data-search="neuroscience of animal consciousness: still agnostic after all gutfreund, y entropy peer-reviewed journal article">
         <td class="c-title">Neuroscience of Animal Consciousness: Still Agnostic After All</td>
         <td class="c-authors">Gutfreund, Y</td>
         <td class="c-year">2024</td>
         <td class="c-journal">Frontiers in Psychology</td>
         <td class="c-url"><a href="https://doi.org/10.3389/fpsyg.2024.1456403" target="_blank" rel="noopener">doi.org/10.3389/fpsyg.2024.1456403</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">5</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="disturbing implications of a cosmological constant dyson, l., kleban, m., &amp; susskind, l islands of order peer-reviewed journal article">
+      <tr class="row" data-search="disturbing implications of a cosmological constant dyson, l., kleban, m., &amp; susskind, l entropy peer-reviewed journal article">
         <td class="c-title">Disturbing Implications of a Cosmological Constant</td>
         <td class="c-authors">Dyson, L., Kleban, M., &amp; Susskind, L</td>
         <td class="c-year">2002</td>
         <td class="c-journal">Journal of High Energy Physics</td>
         <td class="c-url"><a href="https://doi.org/10.1088/1126-6708/2002/10/011" target="_blank" rel="noopener">doi.org/10.1088/1126-6708/2002/10/011</a></td>
-        <td class="c-chapter">Islands of Order</td>
+        <td class="c-chapter">entropy</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">318</td>
         <td class="c-retr">not retracted</td>
@@ -2418,46 +2427,46 @@
         <td class="c-cites">—</td>
         <td class="c-retr">—</td>
       </tr>
-      <tr class="row" data-search="lucid dreaming verified by volitional communication during rem sleep laberge, s., nagel, l.e., dement, w.c., &amp; zarcone, v.p the dream that talks back peer-reviewed journal article">
+      <tr class="row" data-search="lucid dreaming verified by volitional communication during rem sleep laberge, s., nagel, l.e., dement, w.c., &amp; zarcone, v.p lucid dreaming peer-reviewed journal article">
         <td class="c-title">Lucid Dreaming Verified by Volitional Communication During REM Sleep</td>
         <td class="c-authors">LaBerge, S., Nagel, L.E., Dement, W.C., &amp; Zarcone, V.P</td>
         <td class="c-year">1981</td>
         <td class="c-journal">Perceptual and Motor Skills</td>
         <td class="c-url"><a href="https://doi.org/10.2466/pms.1981.52.3.727" target="_blank" rel="noopener">doi.org/10.2466/pms.1981.52.3.727</a></td>
-        <td class="c-chapter">The Dream That Talks Back</td>
+        <td class="c-chapter">lucid dreaming</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">241</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="lucid dreaming: a state of consciousness with features of both waking and non-lucid dreaming voss, u., holzmann, r., tuin, i., &amp; hobson, j.a the dream that talks back peer-reviewed journal article">
+      <tr class="row" data-search="lucid dreaming: a state of consciousness with features of both waking and non-lucid dreaming voss, u., holzmann, r., tuin, i., &amp; hobson, j.a lucid dreaming peer-reviewed journal article">
         <td class="c-title">Lucid Dreaming: A State of Consciousness with Features of Both Waking and Non-Lucid Dreaming</td>
         <td class="c-authors">Voss, U., Holzmann, R., Tuin, I., &amp; Hobson, J.A</td>
         <td class="c-year">2009</td>
         <td class="c-journal">Sleep</td>
         <td class="c-url"><a href="https://doi.org/10.1093/sleep/32.9.1191" target="_blank" rel="noopener">doi.org/10.1093/sleep/32.9.1191</a></td>
-        <td class="c-chapter">The Dream That Talks Back</td>
+        <td class="c-chapter">lucid dreaming</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">449</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="induction of self awareness in dreams through frontal low current stimulation of gamma activity voss, u., holzmann, r., hobson, a. et al the dream that talks back peer-reviewed journal article">
+      <tr class="row" data-search="induction of self awareness in dreams through frontal low current stimulation of gamma activity voss, u., holzmann, r., hobson, a. et al lucid dreaming peer-reviewed journal article">
         <td class="c-title">Induction of Self Awareness in Dreams Through Frontal Low Current Stimulation of Gamma Activity</td>
         <td class="c-authors">Voss, U., Holzmann, R., Hobson, A. et al</td>
         <td class="c-year">2014</td>
         <td class="c-journal">Nature Neuroscience</td>
         <td class="c-url"><a href="https://doi.org/10.1038/nn.3719" target="_blank" rel="noopener">doi.org/10.1038/nn.3719</a></td>
-        <td class="c-chapter">The Dream That Talks Back</td>
+        <td class="c-chapter">lucid dreaming</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">347</td>
         <td class="c-retr">not retracted</td>
       </tr>
-      <tr class="row" data-search="real-time dialogue between experimenters and dreamers during rem sleep konkoly, k.r., appel, k., chabani, e. et al the dream that talks back peer-reviewed journal article">
+      <tr class="row" data-search="real-time dialogue between experimenters and dreamers during rem sleep konkoly, k.r., appel, k., chabani, e. et al lucid dreaming peer-reviewed journal article">
         <td class="c-title">Real-Time Dialogue Between Experimenters and Dreamers During REM Sleep</td>
         <td class="c-authors">Konkoly, K.R., Appel, K., Chabani, E. et al</td>
         <td class="c-year">2021</td>
         <td class="c-journal">Current Biology</td>
         <td class="c-url"><a href="https://doi.org/10.1016/j.cub.2021.01.026" target="_blank" rel="noopener">doi.org/10.1016/j.cub.2021.01.026</a></td>
-        <td class="c-chapter">The Dream That Talks Back</td>
+        <td class="c-chapter">lucid dreaming</td>
         <td class="c-type">Peer-reviewed journal article</td>
         <td class="c-cites">131</td>
         <td class="c-retr">not retracted</td>
@@ -2468,22 +2477,58 @@
 
 <script>
 (function () {
-  var input = document.getElementById('search');
-  var rows = Array.prototype.slice.call(document.querySelectorAll('#table-body tr'));
-  var count = document.getElementById('row-count');
+  // every signal on dewfog: [page slug, label used in the Chapter column, name used on the homepage]
+  var SIGNALS = [["double-slit", "double slit", "the double slit"], ["emc2", "e=mc²", "e = mc²"], ["entanglement", "entanglement", "entanglement"], ["near-death", "near death", "near death"], ["oneness", "oneness", "oneness"], ["superposition", "superposition", "superposition"], ["holographic", "holographic", "holographic universe"], ["many-worlds", "many worlds", "many worlds"], ["hard-problem", "hard problem", "the hard problem"], ["entropy", "entropy", "entropy"], ["universe", "universe", "scale of the universe"], ["black-hole", "black hole", "black hole"], ["spacetime", "spacetime", "spacetime curvature"], ["present-moment", "present moment", "the present moment"], ["default-mode", "default mode", "default mode network"], ["interface-theory", "interface theory", "interface theory"], ["antenna", "the antenna", "the antenna"], ["quantum-myths", "quantum myths", "quantum myths"], ["fine-tuning", "fine-tuning", "fine-tuning"], ["self-inquiry", "self-inquiry", "self-inquiry"], ["cell-turnover", "cell turnover", "cell turnover"], ["split-brain", "split brain", "split brain"], ["realer-than-real", "dmt", "dmt"], ["leaving-on-command", "out-of-body experience", "out-of-body experience"], ["the-particle-they-didnt-want-to-name", "higgs boson", "higgs boson"], ["free-will", "free will", "free will"], ["terminal-lucidity", "terminal lucidity", "terminal lucidity"], ["lucid-dreaming", "lucid dreaming", "lucid dreaming"], ["reincarnation", "reincarnation", "reincarnation"], ["tesla-quote", "tesla quote", "tesla quote"], ["biophotons", "biophotons", "biophotons"], ["advaita", "advaita vedanta", "advaita vedanta"]];
+  var input  = document.getElementById('search');
+  var select = document.getElementById('signal');
+  var rows   = Array.prototype.slice.call(document.querySelectorAll('#table-body tr'));
+  var count  = document.getElementById('row-count');
+
+  // each row's signals, and search text that also knows the homepage names ("default mode network", "the double slit"…)
+  rows.forEach(function (r) {
+    var labels = r.querySelector('.c-chapter').textContent.split(';').map(function (x) { return x.trim(); });
+    r._labels = labels;
+    var extra = SIGNALS.filter(function (sg) { return labels.indexOf(sg[1]) !== -1; }).map(function (sg) { return sg[2]; }).join(' ');
+    var cell = function (c) { var el = r.querySelector(c); return el ? el.textContent : ''; };
+    r._search = (r.getAttribute('data-search') + ' ' + extra + ' ' + cell('.c-year') + ' ' + cell('.c-journal')).toLowerCase();
+  });
+
+  // dropdown: signals by homepage name, each with its number of sources
+  SIGNALS.slice().sort(function (a, b) { return a[2].replace(/^the /, '').localeCompare(b[2].replace(/^the /, '')); })
+    .forEach(function (sg) {
+      var n = rows.filter(function (r) { return r._labels.indexOf(sg[1]) !== -1; }).length;
+      if (!n) return;
+      var o = document.createElement('option');
+      o.value = sg[0]; o.textContent = sg[2] + ' (' + n + ')';
+      select.appendChild(o);
+    });
 
   function update() {
     var q = input.value.trim().toLowerCase();
+    var sg = SIGNALS.filter(function (x) { return x[0] === select.value; })[0];
     var shown = 0;
     rows.forEach(function (r) {
-      var match = !q || r.getAttribute('data-search').indexOf(q) !== -1;
+      var match = (!sg || r._labels.indexOf(sg[1]) !== -1) && (!q || r._search.indexOf(q) !== -1);
       r.classList.toggle('hidden', !match);
       if (match) shown++;
     });
     count.textContent = shown + ' / ' + rows.length + ' sources';
+    // keep the address shareable: references.html?signal=near-death
+    try {
+      var url = new URL(location.href);
+      if (select.value) url.searchParams.set('signal', select.value); else url.searchParams.delete('signal');
+      history.replaceState(history.state, '', url);
+    } catch (e) {}
   }
 
+  // phones: a placeholder short enough to be read in full
+  if (innerWidth < 560) input.placeholder = 'search: near death, penrose, 2023…';
   input.addEventListener('input', update);
+  select.addEventListener('change', update);
+  try {
+    var want = new URL(location.href).searchParams.get('signal');
+    if (want && select.querySelector('option[value="' + want.replace(/[^a-z0-9-]/g, '') + '"]')) select.value = want;
+  } catch (e) {}
   update();
 }());
 
