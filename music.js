@@ -54,12 +54,14 @@
     };
   }
 
-  // calls fn on the first click, tap or key press that isn't on the switch itself
-  function onFirstInteraction(fn) {
-    var types = ['pointerdown', 'keydown', 'touchstart'];
+  // calls fn on every click, tap or key press (except on the switch itself) until isDone() says the music started.
+  // iOS only lets a page start sound from a completed gesture — click / touchend, not touchstart or pointerdown —
+  // and a refused attempt must not stop us listening for the next one.
+  function onGestureUntil(fn, isDone) {
+    var types = ['click', 'touchend', 'pointerup', 'keydown'];
     function handler(e) {
+      if (isDone()) { types.forEach(function (t) { removeEventListener(t, handler, true); }); return; }
       if (e.target.closest && e.target.closest('.dewMusic')) return;
-      types.forEach(function (t) { removeEventListener(t, handler, true); });
       fn();
     }
     types.forEach(function (t) { addEventListener(t, handler, true); });
@@ -73,7 +75,7 @@
     var sync = function () { renderInFrame(shellPlayer.enabled(), shellPlayer.playing()); };
     shellPlayer.onchange = sync;    // only the current frame page listens
     sync();
-    onFirstInteraction(function () { shellPlayer.play(); });
+    onGestureUntil(function () { shellPlayer.play(); }, function () { return shellPlayer.playing() || !shellPlayer.enabled(); });
     // a link to another site with no target would open inside the frame; send it to the whole tab
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href]');
@@ -111,25 +113,45 @@
   audio.addEventListener('play', update);
   audio.addEventListener('pause', update);
 
+  // volume: iOS ignores audio.volume (media always plays at full volume), so there the sound is routed
+  // through a Web Audio gain node, which iOS does let a page turn down
+  var volumeLocked = (function () { var a = new Audio(); a.volume = 0.5; return a.volume !== 0.5; }());
+  var ctx = null, gain = null;
+  function ensureGain() {
+    if (!volumeLocked || gain) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try {
+      ctx = new AC(); gain = ctx.createGain(); gain.gain.value = 0;
+      ctx.createMediaElementSource(audio).connect(gain); gain.connect(ctx.destination);
+    } catch (e) { ctx = null; gain = null; }
+  }
+  function getVol() { return gain ? gain.gain.value : audio.volume; }
+  function setVol(v) { if (gain) gain.gain.value = v; else audio.volume = v; }
+
   // playback with short fades
   var fadeTimer = null;
   function fadeTo(target, ms, done) {
     clearInterval(fadeTimer);
-    var start = audio.volume, t0 = performance.now();
+    var start = getVol(), t0 = performance.now();
     fadeTimer = setInterval(function () {
       var f = Math.min(1, (performance.now() - t0) / ms);
-      audio.volume = start + (target - start) * f;
+      setVol(start + (target - start) * f);
       if (f === 1) { clearInterval(fadeTimer); if (done) done(); }
     }, 30);
   }
   function play() {
     if (!enabled || document.hidden || !audio.paused) return;
+    // Safari: treat this as media playback, like a video, rather than as sound effects the mute switch silences
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    ensureGain();
+    if (ctx && ctx.state !== 'running') ctx.resume().catch(function () {});
     var p = audio.play();
     if (p && p.then) p.then(function () { fadeTo(VOLUME, 1500); }, function () {});
   }
   function stop() { fadeTo(0, 400, function () { audio.pause(); }); }
 
-  onFirstInteraction(play);
+  onGestureUntil(play, function () { return !audio.paused || !enabled; });
 
   // pause while the tab is in the background; pick up again when it returns
   document.addEventListener('visibilitychange', function () {
@@ -189,7 +211,7 @@
     window.requestAnimationFrame = function () { return 0; };        // animation loops stop rescheduling
     var last = setTimeout(function () {}, 0);
     for (var id = last; id > 0; id--) { clearTimeout(id); clearInterval(id); }
-    if (!audio.paused) audio.volume = VOLUME;                          // in case a fade was cut short
+    if (!audio.paused) setVol(VOLUME);                                 // in case a fade was cut short
     startSaving();
     Array.prototype.slice.call(document.body.children).forEach(function (el) { if (el !== frame) el.remove(); });
     document.body.style.cssText += ';margin:0;overflow:hidden;background:#0b1316;';
