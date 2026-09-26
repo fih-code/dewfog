@@ -94,6 +94,15 @@
       color: rgba(159,232,219,.5); text-shadow: 0 0 10px rgba(159,232,219,.3);
       animation: dewFadeIn 2.4s ease-in-out both;
     }
+    #dewTitle {
+      position: absolute; left: 50%; bottom: calc(3.2% + 26px); transform: translateX(-50%); z-index: 5;
+      margin: 0; pointer-events: none; width: max-content; max-width: 90vw; text-align: center;
+      font-family: 'Italiana',serif; font-weight: 400; font-size: clamp(1.05rem, 2vw, 1.45rem);
+      letter-spacing: .04em; text-transform: lowercase; color: rgba(223,240,236,.82);
+      /* dark halo first so connector lines behind the title fade out, then the soft glow */
+      text-shadow: 0 0 3px #0b1316, 0 0 8px #0b1316, 0 0 14px rgba(11,19,22,.9), 0 0 26px rgba(159,232,219,.28);
+      animation: dewFadeIn 2.4s ease-in-out both;
+    }
     /* ── site nav ─────────────────────────────────────────────────────────── */
     @keyframes dewDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     #dewNav {
@@ -107,9 +116,9 @@
       transition: background .6s ease, border-color .6s ease;
     }
     #dewLogo {
-      font-family: 'Space Mono',monospace; font-size: 11px;
-      letter-spacing: .42em; text-transform: lowercase; text-decoration: none;
-      color: rgba(159,232,219,.52); pointer-events: auto;
+      font-family: 'Space Mono',monospace; font-size: 12px;
+      letter-spacing: .3em; text-transform: lowercase; text-decoration: none;
+      color: rgba(159,232,219,.8); pointer-events: auto;
       flex-shrink: 0;
       transition: color 3s ease, text-shadow .25s ease;
     }
@@ -119,7 +128,7 @@
       padding: 20px 26px 24px;
       display: none;
       position: fixed; top: 50px; left: clamp(20px,4vw,44px); z-index: 7;
-      flex-direction: column; gap: 18px;
+      flex-direction: column; gap: 14px;
       background: rgba(7,13,16,.94);
       border: 1px solid rgba(159,232,219,.08);
       border-radius: 3px;
@@ -129,13 +138,17 @@
       overflow-y: auto;
     }
     #dewNav.open #dewLinks { display: flex; animation: dewDrop .2s ease; }
-    #dewLinks a {
-      font-family: 'Space Mono',monospace; font-size: 9px;
-      letter-spacing: .36em; text-transform: lowercase; text-decoration: none;
-      color: rgba(159,232,219,.45); pointer-events: auto;
+    #dewLinks a, #dewLinks button {
+      font-family: 'Space Mono',monospace; font-size: 11px;
+      letter-spacing: .14em; text-transform: lowercase; text-decoration: none;
+      color: rgba(159,232,219,.7); pointer-events: auto;
+      background: none; border: none; padding: 0; cursor: pointer; text-align: left;
       transition: color .25s ease, text-shadow .25s ease;
     }
-    #dewLinks a:hover { color: rgba(159,232,219,.88); text-shadow: 0 0 10px rgba(159,232,219,.35); }
+    #dewLinks a:hover, #dewLinks button:hover { color: rgba(159,232,219,1); text-shadow: 0 0 10px rgba(159,232,219,.35); }
+    /* phone-only copies of the top-bar items; the last one separates them from the essays */
+    #dewLinks .dewMenuExtra { display: none; }
+    #dewLinks .dewMenuLast { padding-bottom: 14px; border-bottom: 1px solid rgba(159,232,219,.12); }
     #dewBurger {
       display: flex; flex-direction: column; justify-content: center;
       gap: 5px; background: none; border: none;
@@ -151,13 +164,13 @@
     /* ── "the case" / "contribute" / "references" buttons + overlays ───────────────────────── */
     #dewNavLeft { display: flex; align-items: center; gap: 1.5em; }
     #dewCase, #dewQuestion, #dewContribute, #dewReferences {
-      font-family: 'Space Mono',monospace; font-size: 9px;
-      letter-spacing: .36em; text-transform: lowercase;
-      color: rgba(159,232,219,.32); background: none; border: none;
+      font-family: 'Space Mono',monospace; font-size: 11px;
+      letter-spacing: .16em; text-transform: lowercase;
+      color: rgba(159,232,219,.68); background: none; border: none;
       cursor: pointer; padding: 0; pointer-events: auto; text-decoration: none;
       transition: color .25s ease;
     }
-    #dewCase:hover, #dewQuestion:hover, #dewContribute:hover, #dewReferences:hover { color: rgba(159,232,219,.7); }
+    #dewCase:hover, #dewQuestion:hover, #dewContribute:hover, #dewReferences:hover { color: rgba(159,232,219,1); }
     #dewCaseOverlay, #dewQuestionOverlay, #dewContributeOverlay {
       display: none; position: fixed; inset: 0; z-index: 9;
       align-items: center; justify-content: center;
@@ -193,13 +206,12 @@
       transition: color .2s ease, border-color .2s ease;
     }
     #dewMailLink:hover { color: #fff; border-color: rgba(159,232,219,.8); }
-    /* phones: tighten the nav row so the menu button stays on screen */
+    /* phones: the four top-bar items move into the menu so the bar is just logo + menu button */
     @media (max-width: 560px) {
       #dewNav { padding-left: 16px; padding-right: 16px; }
-      #dewNavLeft { gap: .8em; }
-      #dewLogo { display: none; }  /* links to this same page; frees room for the menu items */
-      #dewCase, #dewQuestion, #dewContribute, #dewReferences { letter-spacing: .12em; white-space: nowrap; }
-      #dewLinks { left: 16px; }
+      #dewCase, #dewQuestion, #dewContribute, #dewReferences { display: none; }
+      #dewLinks .dewMenuExtra { display: list-item; }
+      #dewLinks { left: 16px; right: 16px; }
     }
     @media (prefers-reduced-motion: reduce) {
       .dewBlob { animation: none; }
@@ -221,6 +233,7 @@
   <div id="brainWrap"><div id="brain"><canvas id="brainCanvas" aria-hidden="true"></canvas></div></div>
 
   <div id="vignette"></div>
+  <h1 id="dewTitle">is consciousness fundamental to reality?</h1>
   <div id="status" aria-hidden="true"></div>
 
   <!-- SITE NAV (z:7 — inside stage so iOS compositing always puts it on top) -->
@@ -236,6 +249,10 @@
       </button>
     </div>
     <ul id="dewLinks">
+      <li class="dewMenuExtra"><button data-for="dewCase">the case</button></li>
+      <li class="dewMenuExtra"><button data-for="dewQuestion">the question</button></li>
+      <li class="dewMenuExtra"><button data-for="dewContribute">contribute</button></li>
+      <li class="dewMenuExtra dewMenuLast"><a href="/references.html">references</a></li>
       <li><a href="/double-slit.html">the double slit</a></li>
       <li><a href="/emc2.html">e = mc²</a></li>
       <li><a href="/entanglement.html">entanglement</a></li>
@@ -369,7 +386,7 @@ import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 const BRAIN_MODEL_URL = '/models/brain.ply';
 
 // essay nodes — built from the nav drawer so the two lists can never drift apart
-const ESSAYS = [...document.querySelectorAll('#dewLinks a')].map(a => [a.getAttribute('href'), a.textContent]);
+const ESSAYS = [...document.querySelectorAll('#dewLinks li:not(.dewMenuExtra) a')].map(a => [a.getAttribute('href'), a.textContent]);
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const seeded = i => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
@@ -400,12 +417,13 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
 camera.position.set(0, 0, 5.6);
 const group = new THREE.Group(); scene.add(group);
-const brainMats = [];                              // fill + edge materials, dimmed by resize()
+const brainMats = [], brainBox = new THREE.Box3();                              // fill + edge materials, dimmed by resize()
 let dimFactor = 1;
 function resize() {
   const w = brainEl.clientWidth, h = brainEl.clientHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h;
-  camera.position.z = Math.max(5.6, 6.6 / camera.aspect);   // pull back on portrait screens so the brain fits the width
+  const fitW = innerWidth < 600 ? 5.8 : 6.6;                  // phones: let the brain fill more of the width
+  camera.position.z = Math.max(5.6, fitW / camera.aspect);   // pull back on portrait screens so the brain fits the width
   camera.updateProjectionMatrix();
   // a smaller brain packs the same lines into fewer pixels, so dim the additive layers to match
   const brainPx = FIT * h / (2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
@@ -422,7 +440,7 @@ function addBrain(geo) {
   const size = new THREE.Vector3(); geo.boundingBox.getSize(size);
   const s = FIT / Math.max(size.x, size.y, size.z);
   geo.scale(s, s, s);
-  geo.computeBoundingBox();
+  geo.computeBoundingBox(); brainBox.copy(geo.boundingBox);
   const minY = geo.boundingBox.min.y, spanY = geo.boundingBox.max.y - minY;
   const paint = g => {
     const p = g.attributes.position, cols = new Float32Array(p.count * 3);
@@ -458,7 +476,7 @@ function buildNetwork(geo) {
     const inner = best, outer = best.clone().addScaledVector(dir, 0.55);
     group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([inner, outer]), new THREE.LineBasicMaterial({ color: 0x9fe8db, transparent: true, opacity: 0.22 })));
     const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: 0xbfe8ee, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
-    spr.scale.set(0.16, 0.16, 1); spr.visible = !reduceMotion; group.add(spr);
+    spr.scale.set(0.09, 0.09, 1); spr.visible = !reduceMotion; group.add(spr);
     nodes.push({ outer, dir });
     pulses.push({ spr, inner, outer, dur: 2 + seeded(i * 6.4) * 2.6, phase: seeded(i * 8.1) * 6 });
   }
@@ -466,7 +484,7 @@ function buildNetwork(geo) {
 function makeGlowTexture() {
   const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
   const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
-  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(190,225,235,.8)'); g.addColorStop(1, 'rgba(159,232,219,0)');
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.2, 'rgba(210,240,245,.85)'); g.addColorStop(.55, 'rgba(159,232,219,.18)'); g.addColorStop(1, 'rgba(159,232,219,0)');
   x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
 }
 
@@ -487,7 +505,8 @@ function tick() {
 
   const w = brainEl.clientWidth, h = brainEl.clientHeight, br = brainEl.getBoundingClientRect();
   const minX = 8 - br.left, maxX = innerWidth - 8 - br.left;   // viewport edges in brain-box coords
-  const heroLimit = hero.getBoundingClientRect().bottom + 14, statusLimit = statusEl.getBoundingClientRect().top - 14;
+  const heroLimit = hero.getBoundingClientRect().bottom + 14, statusLimit = document.getElementById('dewTitle').getBoundingClientRect().top - 14;
+  const narrow = innerWidth < 600, ell = narrow ? brainEllipse(w, h) : null;
   nodes.forEach((n, i) => {
     tmp.copy(n.outer).applyMatrix4(group.matrixWorld);
     n.z = tmp.z; n.i = i;
@@ -501,7 +520,8 @@ function tick() {
     const x0 = Math.max(minX, Math.min(maxX - lw, sx > w / 2 ? sx + 10 : sx - 10 - lw));
     l.style.transform = `translate(${x0.toFixed(1)}px,${(sy - 5).toFixed(1)}px)`;
     const vy = br.top + sy;
-    boxes[i] = { x0, x1: x0 + lw, y0: sy - 5, y1: sy + 9, hidden: vy < heroLimit || vy > statusLimit, vis };
+    boxes[i] = { x0, x1: x0 + lw, y0: sy - 5, y1: sy + 9, vis };
+    boxes[i].hidden = vy < heroLimit || vy > statusLimit || vis < 1 || (ell && overlapsEllipse(boxes[i], ell));
   });
   // front-most labels win; a label overlapping one already shown is hidden (its dot stays clickable)
   const placed = [];
@@ -509,10 +529,28 @@ function tick() {
     const b = boxes[i];
     const hide = b.hidden || placed.some(o => b.x0 < o.x1 + 4 && b.x1 > o.x0 - 4 && b.y0 < o.y1 + 2 && b.y1 > o.y0 - 2);
     if (!hide) placed.push(b);
-    labels[i].style.opacity = hide ? 0 : (b.vis * 0.85).toFixed(2);
+    labels[i].style.opacity = hide ? 0 : 0.85;
     labels[i].style.pointerEvents = hide ? 'none' : 'auto';
   });
   renderer.render(scene, camera);
+}
+
+// on-screen ellipse around the brain (from its projected bounding box), shrunk a little since the box's corners are empty
+const corner = new THREE.Vector3();
+function brainEllipse(w, h) {
+  if (brainBox.isEmpty()) return null;
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (let k = 0; k < 8; k++) {
+    corner.set(k & 1 ? brainBox.max.x : brainBox.min.x, k & 2 ? brainBox.max.y : brainBox.min.y, k & 4 ? brainBox.max.z : brainBox.min.z)
+      .applyMatrix4(group.matrixWorld).project(camera);
+    const sx = (corner.x * .5 + .5) * w, sy = (-corner.y * .5 + .5) * h;
+    x0 = Math.min(x0, sx); x1 = Math.max(x1, sx); y0 = Math.min(y0, sy); y1 = Math.max(y1, sy);
+  }
+  return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, rx: (x1 - x0) / 2 * 0.86, ry: (y1 - y0) / 2 * 0.86 };
+}
+function overlapsEllipse(b, e) {
+  const px = Math.max(b.x0, Math.min(e.cx, b.x1)), py = Math.max(b.y0, Math.min(e.cy, b.y1));   // box point nearest the centre
+  return ((px - e.cx) / e.rx) ** 2 + ((py - e.cy) / e.ry) ** 2 < 1;
 }
 
 function start(geo) {
@@ -540,6 +578,18 @@ new PLYLoader().load(BRAIN_MODEL_URL,
     var open = nav.classList.toggle('open');
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     burger.setAttribute('aria-label', open ? 'close menu' : 'menu');
+  });
+
+  function closeMenu() {
+    nav.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-label', 'menu');
+  }
+  document.querySelectorAll('#dewLinks [data-for]').forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      e.stopPropagation(); closeMenu();
+      document.getElementById(b.getAttribute('data-for')).click();
+    });
   });
 
   // close drawer when tapping outside it
