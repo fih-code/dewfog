@@ -232,7 +232,6 @@
       <a href="/reincarnation.html">reincarnation</a>
       <a href="/tesla-quote.html">tesla quote</a>
       <a href="/biophotons.html">biophotons</a>
-      <a href="/advaita.html">advaita</a>
     </div>
   </div>
   <div id="title-wrap">
@@ -261,7 +260,7 @@ const status  = document.getElementById('status');
 const lensBtn = document.getElementById('lens-btn');
 const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const TEAL = '159,232,219', CREAM = '255,248,228', VIOLET = '176,160,240';
+const TEAL = '159,232,219', AMBER = '240,198,154', CREAM = '255,248,228';
 
 // the signals: every other page on the site, read from the nav so the two lists never drift apart
 const SIGNALS = [...document.querySelectorAll('#nav-links a')]
@@ -326,14 +325,14 @@ function hubAwareness(x, y, alpha, t) {
 }
 function hubBrain(x, y, alpha, t) {
   if (alpha <= 0.01) return;
-  ctx.strokeStyle = `rgba(${VIOLET},${0.35 * alpha})`; ctx.lineWidth = 0.8;
+  ctx.strokeStyle = `rgba(${AMBER},${0.35 * alpha})`; ctx.lineWidth = 0.8;
   NEURONS.forEach((n, k) => {
     const m = NEURONS[(k + 3) % NEURONS.length], o = NEURONS[(k + 5) % NEURONS.length];
     ctx.beginPath(); ctx.moveTo(x + n.x, y + n.y); ctx.lineTo(x + m.x, y + m.y); ctx.lineTo(x + o.x, y + o.y); ctx.stroke();
   });
   NEURONS.forEach((n, k) => {
     const flick = 0.55 + 0.45 * Math.sin(t * 2.2 + k * 1.7);
-    ctx.fillStyle = `rgba(${VIOLET},${alpha * flick})`;
+    ctx.fillStyle = `rgba(${AMBER},${alpha * flick})`;
     ctx.beginPath(); ctx.arc(x + n.x, y + n.y, 2.1, 0, Math.PI * 2); ctx.fill();
   });
 }
@@ -370,12 +369,12 @@ function frame(now) {
   canvas.style.cursor = hover ? 'pointer' : 'default';
 
   // connections
-  const lineCol = `${Math.round(lerp(255, 176, phys))},${Math.round(lerp(248, 160, phys))},${Math.round(lerp(228, 240, phys))}`;
+  const lineCol = `${Math.round(lerp(255, 240, phys))},${Math.round(lerp(248, 198, phys))},${Math.round(lerp(228, 154, phys))}`;
   SIGNALS.forEach(s => {
     if (s.test && split > 0.02) {
       ctx.setLineDash([3, 5]); ctx.lineWidth = 1;
       ctx.strokeStyle = `rgba(${CREAM},${0.5 * split})`; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(ax, cy); ctx.stroke();
-      ctx.strokeStyle = `rgba(${VIOLET},${0.5 * split})`; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(bx, cy); ctx.stroke();
+      ctx.strokeStyle = `rgba(${AMBER},${0.5 * split})`; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(bx, cy); ctx.stroke();
       ctx.setLineDash([]);
     }
     const a = (s.test ? 0.16 * (1 - split) : 0.16 * (1 - 0.8 * split)) * (s === hover ? 2.5 : 1);
@@ -445,7 +444,7 @@ requestAnimationFrame(frame);
   <a href="/reincarnation.html" style="color:rgba(159,232,219,.55);">reincarnation</a>
   <a href="/tesla-quote.html" style="color:rgba(159,232,219,.55);">tesla quote</a>
   <a href="/biophotons.html" style="color:rgba(159,232,219,.55);">biophotons</a>
-  <a href="/advaita.html" style="color:rgba(159,232,219,.55);">advaita</a>
+  <a href="/advaita.html" style="color:rgba(159,232,219,.55);">advaita vedanta</a>
 </div>
 </noscript>
 

@@ -284,7 +284,7 @@
       <li><a href="/reincarnation.html">reincarnation</a></li>
       <li><a href="/tesla-quote.html">tesla quote</a></li>
       <li><a href="/biophotons.html">biophotons</a></li>
-      <li><a href="/advaita.html">if advaita were true</a></li>
+      <li><a href="/advaita.html">advaita vedanta</a></li>
     </ul>
   </nav>
 </div>
@@ -375,7 +375,7 @@
       <li><a href="/reincarnation.html" style="color:rgba(159,232,219,.7);font-size:12px;">reincarnation</a></li>
       <li><a href="/tesla-quote.html" style="color:rgba(159,232,219,.7);font-size:12px;">tesla quote</a></li>
       <li><a href="/biophotons.html" style="color:rgba(159,232,219,.7);font-size:12px;">biophotons</a></li>
-      <li><a href="/advaita.html" style="color:rgba(159,232,219,.7);font-size:12px;">if advaita were true</a></li>
+      <li><a href="/advaita.html" style="color:rgba(159,232,219,.7);font-size:12px;">advaita vedanta</a></li>
     </ul>
   </nav>
 </main>
@@ -468,7 +468,8 @@ function buildNetwork(geo) {
   const pos = geo.attributes.position, N = ESSAYS.length, glow = makeGlowTexture();
   const step = Math.max(1, Math.floor(pos.count / 20000)), v = new THREE.Vector3();
   for (let i = 0; i < N; i++) {
-    const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(Math.max(0, 1 - y * y)), th = Math.PI * (1 + Math.sqrt(5)) * i;
+    // offset by half a step and kept off the poles: a node on the spin axis would turn in place instead of circling
+    const y = 0.86 * (1 - (2 * i + 1) / N), r = Math.sqrt(Math.max(0, 1 - y * y)), th = Math.PI * (1 + Math.sqrt(5)) * i;
     const dir = new THREE.Vector3(Math.cos(th) * r, y, Math.sin(th) * r).normalize();
     let best = new THREE.Vector3(), bestDot = -2;  // surface vertex most aligned with dir
     for (let k = 0; k < pos.count; k += step) {
