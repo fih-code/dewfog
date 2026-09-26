@@ -115,6 +115,7 @@
     #dewBalance:hover .dewG-needle, #dewBalance:focus-visible .dewG-needle { stroke: rgba(223,240,236,1); }
     #dewBalance:focus-visible { outline: 1px solid rgba(159,232,219,.5); outline-offset: 3px; }
     #dewBalancePanel { max-width: 640px; max-height: 84vh; overflow-y: auto; }
+    #dewBalancePanel p + p { margin-top: 1em; }
     #dewBalancePanel h2 {
       font-family: 'Italiana',serif; font-weight: 400; font-size: 1.6rem; letter-spacing: .04em;
       color: rgba(223,240,236,.9); margin: 0 0 .6rem; text-transform: lowercase;
@@ -337,7 +338,8 @@
   <div id="dewBalancePanel" role="dialog" aria-labelledby="dewBalanceTitle">
     <button id="dewBalanceClose" aria-label="close">×</button>
     <h2 id="dewBalanceTitle">the balance</h2>
-    <p>Where does the evidence behind these signals point: consciousness made by the brain, or consciousness as fundamental? Each signal is scored by where its own chapter of the book lands — <b>−1</b> if the evidence favours the brain producing consciousness, <b>+1</b> if it's a real anomaly for that view, <b>0</b> if both readings predict what's observed. Physics that only removes the assumption that matter obviously comes first scores 0: stacking open questions on top of each other doesn't add up to evidence.</p>
+    <p>Where does the evidence behind these signals point: consciousness made by the brain, or consciousness as fundamental? One rule decides every score: <b>only evidence that tells the two views apart counts</b> — a result the two views predicted differently, which came out in favour of one. A finding both views predict equally, however striking, scores 0.</p>
+    <p><b>0</b> — nothing yet tells the views apart (or the finding only removes an assumption; stacking open questions doesn't add up to evidence). <b>±½</b> — distinguishing evidence exists but is weak: a single study, uncontrolled data, or an untested explanation. <b>±1</b> — distinguishing evidence from replicated controlled studies or a systematic review. Minus leans towards the brain producing consciousness, plus towards consciousness being fundamental. Scores follow the matching chapter of the book and its sources, and change only when new evidence does.</p>
     <div id="dewBalanceBig"></div>
     <p id="dewBalanceSummary"></p>
     <div id="dewBalanceList"></div>
@@ -654,134 +656,38 @@ new PLYLoader().load(BRAIN_MODEL_URL,
 // +1 a real anomaly for that view. Scores come from each book chapter's own conclusion; update them when a chapter changes.
 (function () {
   var BAL = {
-    "/the-particle-they-didnt-want-to-name.html": [
-      0,
-      "even mass turns out to be relational — but that says nothing about minds"
-    ],
-    "/double-slit.html": [
-      0,
-      "matter is less solid than it feels — physics, not evidence about minds"
-    ],
-    "/emc2.html": [
-      0,
-      "matter is packed energy in a field; the question stays open"
-    ],
-    "/entanglement.html": [
-      0,
-      "reality is deeply connected, but gives brains no mechanism"
-    ],
-    "/hard-problem.html": [
-      0,
-      "the explanatory gap is real — but a gap isn't proof of what fills it"
-    ],
-    "/antenna.html": [
-      0,
-      "generator or filter: no experiment yet tells them apart"
-    ],
-    "/lucid-dreaming.html": [
-      0,
-      "self-awareness is a dial the brain can turn; why it's felt is open"
-    ],
-    "/default-mode.html": [
-      0,
-      "quieting the self-network: both readings predict the same brain scan"
-    ],
-    "/near-death.html": [
-      0,
-      "experience returns with brain activity — yet the leading explanation is incomplete"
-    ],
-    "/terminal-lucidity.html": [
-      0.5,
-      "a well-documented anomaly; the physical explanation is plausible but unconfirmed"
-    ],
-    "/realer-than-real.html": [
-      -0.5,
-      "inducible on demand — 'a mechanism, not a miracle' — though the fork remains"
-    ],
-    "/leaving-on-command.html": [
-      -1,
-      "felt self-location can be moved on command; the hidden-target test found nothing"
-    ],
-    "/reincarnation.html": [
-      -1,
-      "the book's most skeptical chapter: cultural clustering fits the ordinary explanation"
-    ],
-    "/quantum-myths.html": [
-      0,
-      "debunks shortcuts; the question has to be argued on its own terms"
-    ],
-    "/tesla-quote.html": [
-      0,
-      "the quote is fake; frequency theories remain minority positions"
-    ],
-    "/biophotons.html": [
-      0,
-      "real but faint light; nobody has shown it does anything"
-    ],
-    "/superposition.html": [
-      0,
-      "consciousness-causes-collapse is a respected minority view, not evidence"
-    ],
-    "/holographic.html": [
-      0,
-      "even space may be secondary — still silent about minds"
-    ],
-    "/many-worlds.html": [
-      0,
-      "branching physics can't say why you experience one branch"
-    ],
-    "/entropy.html": [
-      0,
-      "brains are islands of order; why they're conscious is still disputed"
-    ],
-    "/fine-tuning.html": [
-      0,
-      "a real explanatory gap, filled only by competing proposals"
-    ],
-    "/black-hole.html": [
-      0,
-      "Penrose's Orch-OR is serious but unproven, and being squeezed by experiment"
-    ],
-    "/spacetime.html": [
-      0,
-      "physics has no 'now'; whether the felt now is fundamental is open"
-    ],
-    "/universe.html": [
-      0,
-      "the life-permitting slice is narrow; no mind is needed to explain it"
-    ],
-    "/interface-theory.html": [
-      0,
-      "perception isn't built for truth; Hoffman's further leap is speculative"
-    ],
-    "/cell-turnover.html": [
-      0,
-      "the book calls this one plainly neutral"
-    ],
-    "/split-brain.html": [
-      0,
-      "unity tracks brain integration; why it's felt is untouched"
-    ],
-    "/free-will.html": [
-      0,
-      "Libet's certainty has eroded, but the fork is open both ways"
-    ],
-    "/self-inquiry.html": [
-      0,
-      "no findable observer — exactly what both readings predict"
-    ],
-    "/oneness.html": [
-      0,
-      "a shared shape of experience: shared biology or something real, undecided"
-    ],
-    "/present-moment.html": [
-      0,
-      "the built 'now' is the hard problem in its most immediate form"
-    ],
-    "/advaita.html": [
-      0,
-      "fits every signal — which is accommodation, not evidence"
-    ]
+    "/the-particle-they-didnt-want-to-name.html": [0, "even mass turns out to be relational — but that says nothing about minds"],
+    "/double-slit.html": [0, "matter is less solid than it feels — physics, not evidence about minds"],
+    "/emc2.html": [0, "matter is packed energy in a field; the question stays open"],
+    "/entanglement.html": [0, "reality is deeply connected, but gives brains no mechanism"],
+    "/hard-problem.html": [0, "the explanatory gap is real — but a gap isn't proof of what fills it"],
+    "/antenna.html": [0, "generator or filter: no experiment yet tells them apart"],
+    "/lucid-dreaming.html": [0, "self-awareness is a dial the brain can turn; why it's felt is open"],
+    "/default-mode.html": [0, "quieting the self-network: both readings predict the same brain scan"],
+    "/near-death.html": [0, "experience returns with brain activity — yet the leading explanation is incomplete"],
+    "/terminal-lucidity.html": [0.5, "weak evidence: a prospective study and a national survey document lucidity despite severe damage — less expected if the brain produces consciousness; the 'spared network' explanation is untested"],
+    "/realer-than-real.html": [0, "inducible on demand, but 'equally well described' as manufacturing the experience or removing a filter — both views predict it"],
+    "/leaving-on-command.html": [-1, "replicated controlled studies produce the experience on demand from brain signals; the one purpose-built hidden-target test found nothing"],
+    "/reincarnation.html": [-1, "a systematic scoping review finds the cultural clustering the ordinary explanation predicts and the survival hypothesis doesn't"],
+    "/quantum-myths.html": [0, "debunks shortcuts; the question has to be argued on its own terms"],
+    "/tesla-quote.html": [0, "the quote is fake; frequency theories remain minority positions"],
+    "/biophotons.html": [0, "real but faint light; nobody has shown it does anything"],
+    "/superposition.html": [0, "consciousness-causes-collapse is a respected minority view, not evidence"],
+    "/holographic.html": [0, "even space may be secondary — still silent about minds"],
+    "/many-worlds.html": [0, "branching physics can't say why you experience one branch"],
+    "/entropy.html": [0, "brains are islands of order; why they're conscious is still disputed"],
+    "/fine-tuning.html": [0, "a real explanatory gap, filled only by competing proposals"],
+    "/black-hole.html": [0, "Penrose's Orch-OR is serious but unproven, and being squeezed by experiment"],
+    "/spacetime.html": [0, "physics has no 'now'; whether the felt now is fundamental is open"],
+    "/universe.html": [0, "the life-permitting slice is narrow; no mind is needed to explain it"],
+    "/interface-theory.html": [0, "perception isn't built for truth; Hoffman's further leap is speculative"],
+    "/cell-turnover.html": [0, "the book calls this one plainly neutral"],
+    "/split-brain.html": [0, "unity tracks brain integration; why it's felt is untouched"],
+    "/free-will.html": [0, "Libet's certainty has eroded, but the fork is open both ways"],
+    "/self-inquiry.html": [0, "no findable observer — exactly what both readings predict"],
+    "/oneness.html": [0, "a shared shape of experience: shared biology or something real, undecided"],
+    "/present-moment.html": [0, "the built 'now' is the hard problem in its most immediate form"],
+    "/advaita.html": [0, "fits every signal — which is accommodation, not evidence"]
   };
   var names = {};
   document.querySelectorAll('#dewLinks li:not(.dewMenuExtra) a').forEach(function (a) { names[a.getAttribute('href')] = a.textContent; });
@@ -813,7 +719,7 @@ new PLYLoader().load(BRAIN_MODEL_URL,
   document.getElementById('dewBalanceBig').innerHTML = gauge(360, true);
   document.getElementById('dewBalanceSummary').textContent =
     'Right now the needle sits at ' + (mean > 0 ? '+' : '') + mean.toFixed(2) + ' — in the open zone — and ' + Math.round(open * n) + ' of ' + n +
-    ' signals still end on a fork both readings predict; that share sets the width of the shaded band. It moves only when the evidence in a chapter does.';
+    ' signals have no evidence yet that tells the two views apart; that share sets the width of the shaded band.';
   var esc = function (x) { var d = document.createElement('div'); d.textContent = x; return d.innerHTML; };
   var group = function (title, list) {
     if (!list.length) return '';
@@ -824,7 +730,7 @@ new PLYLoader().load(BRAIN_MODEL_URL,
   document.getElementById('dewBalanceList').innerHTML =
     group('leaning towards the brain', rows.filter(function (r) { return r.lean < 0; }).sort(function (a, b) { return a.lean - b.lean; })) +
     group('leaning towards fundamental', rows.filter(function (r) { return r.lean > 0; })) +
-    group('open — both readings predict it', rows.filter(function (r) { return r.lean === 0; }));
+    group('open — nothing yet tells the views apart', rows.filter(function (r) { return r.lean === 0; }));
 }());
 </script>
 <script>
