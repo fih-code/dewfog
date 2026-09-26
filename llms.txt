@@ -37,4 +37,5 @@ Each page below is a short, animated, plainly-explained look at one topic — a 
 - [Why does time only move forward? Entropy explained](https://dewfog.com/entropy.html)
 - [Why does "now" feel special? The block universe](https://dewfog.com/present-moment.html)
 - [Do human cells actually emit light?](https://dewfog.com/biophotons.html)
+- [If Advaita Vedanta were true, would it explain everything?](https://dewfog.com/advaita.html)
 - [Did Tesla really say "energy, frequency, and vibration"?](https://dewfog.com/tesla-quote.html)
