@@ -423,7 +423,8 @@ function resize() {
   const w = brainEl.clientWidth, h = brainEl.clientHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h;
   const fitW = innerWidth < 600 ? 5.8 : 6.6;                  // phones: let the brain fill more of the width
-  camera.position.z = Math.max(5.6, fitW / camera.aspect);   // pull back on portrait screens so the brain fits the width
+  const zoom = innerWidth < 600 ? 1 : FIT / 2.3;              // desktop: draw the brain as if FIT were 2.3, leaving room around it
+  camera.position.z = Math.max(5.6, fitW / camera.aspect) * zoom;   // pull back on portrait screens so the brain fits the width
   camera.updateProjectionMatrix();
   // a smaller brain packs the same lines into fewer pixels, so dim the additive layers to match
   const brainPx = FIT * h / (2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
