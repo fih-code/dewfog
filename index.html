@@ -87,15 +87,19 @@
     }
     .dewLabel:hover, .dewLabel.hot { color: rgba(255,255,255,.98); }
     #vignette { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 200px 40px rgba(6,12,14,.55); }
-    #status {
+    /* status line + evidence gauge, side by side */
+    #dewStatusRow {
       position: absolute; left: 50%; bottom: 3.2%; transform: translateX(-50%); z-index: 5;
+      display: flex; align-items: center; gap: 14px;
+    }
+    #status {
       pointer-events: none; white-space: nowrap;
       font-size: 11px; letter-spacing: .22em; text-transform: lowercase;
       color: rgba(159,232,219,.5); text-shadow: 0 0 10px rgba(159,232,219,.3);
       animation: dewFadeIn 2.4s ease-in-out both;
     }
     #dewTitle {
-      position: absolute; left: 50%; bottom: calc(3.2% + 26px); transform: translateX(-50%); z-index: 5;
+      position: absolute; left: 50%; bottom: calc(3.2% + 40px); transform: translateX(-50%); z-index: 5;
       margin: 0; pointer-events: none; width: max-content; max-width: 90vw; text-align: center;
       font-family: 'Italiana',serif; font-weight: 400; font-size: clamp(1.05rem, 2vw, 1.45rem);
       letter-spacing: .04em; text-transform: lowercase; color: rgba(223,240,236,.82);
@@ -103,6 +107,29 @@
       text-shadow: 0 0 3px #0b1316, 0 0 8px #0b1316, 0 0 14px rgba(11,19,22,.9), 0 0 26px rgba(159,232,219,.28);
       animation: dewFadeIn 2.4s ease-in-out both;
     }
+    #dewBalance {
+      background: none; border: none; padding: 2px; margin: 0; cursor: pointer; pointer-events: auto;
+      display: block; line-height: 0; animation: dewFadeIn 2.4s ease-in-out both;
+    }
+    #dewBalance svg { display: block; }
+    #dewBalance:hover .dewG-needle, #dewBalance:focus-visible .dewG-needle { stroke: rgba(223,240,236,1); }
+    #dewBalance:focus-visible { outline: 1px solid rgba(159,232,219,.5); outline-offset: 3px; }
+    #dewBalancePanel { max-width: 640px; max-height: 84vh; overflow-y: auto; }
+    #dewBalancePanel h2 {
+      font-family: 'Italiana',serif; font-weight: 400; font-size: 1.6rem; letter-spacing: .04em;
+      color: rgba(223,240,236,.9); margin: 0 0 .6rem; text-transform: lowercase;
+    }
+    #dewBalanceBig svg { display: block; margin: 1.2rem auto .6rem; width: 100%; max-width: 360px; height: auto; }
+    .dewG-list { list-style: none; margin: .4rem 0 1.2rem; padding: 0; }
+    .dewG-list li {
+      display: grid; grid-template-columns: 2.4em 1fr; gap: .2em .9em; padding: .55em 0; border-top: 1px solid rgba(159,232,219,.08);
+      font-family: 'Space Mono',monospace; font-size: 10px; line-height: 1.8; letter-spacing: .04em; color: rgba(159,232,219,.78);
+    }
+    .dewG-list b { font-weight: 400; color: rgba(223,240,236,.9); }
+    .dewG-list a { color: rgba(223,240,236,.9); text-decoration: none; border-bottom: 1px solid rgba(159,232,219,.25); }
+    .dewG-list a:hover { border-color: rgba(159,232,219,.8); }
+    .dewG-score { font-size: 10px; letter-spacing: .08em; color: rgba(159,232,219,.75); text-align: right; padding-top: .2em; }
+    .dewG-head { font-family: 'Space Mono',monospace; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: rgba(159,232,219,.6); margin: 1.2rem 0 .2rem; }
     /* ── site nav ─────────────────────────────────────────────────────────── */
     @keyframes dewDrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     #dewNav {
@@ -171,14 +198,14 @@
       transition: color .25s ease;
     }
     #dewCase:hover, #dewQuestion:hover, #dewContribute:hover, #dewReferences:hover { color: rgba(159,232,219,1); }
-    #dewCaseOverlay, #dewQuestionOverlay, #dewContributeOverlay {
+    #dewCaseOverlay, #dewQuestionOverlay, #dewBalanceOverlay, #dewContributeOverlay {
       display: none; position: fixed; inset: 0; z-index: 9;
       align-items: center; justify-content: center;
       background: rgba(6,12,14,.58);
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     }
-    #dewCaseOverlay.open, #dewQuestionOverlay.open, #dewContributeOverlay.open { display: flex; animation: dewDrop .22s ease; }
-    #dewCasePanel, #dewQuestionPanel, #dewContributePanel {
+    #dewCaseOverlay.open, #dewQuestionOverlay.open, #dewBalanceOverlay.open, #dewContributeOverlay.open { display: flex; animation: dewDrop .22s ease; }
+    #dewCasePanel, #dewQuestionPanel, #dewBalancePanel, #dewContributePanel {
       position: relative; max-width: 520px; width: 90%;
       padding: 36px 40px;
       background: rgba(7,13,16,.96);
@@ -186,15 +213,15 @@
       border-radius: 3px;
       backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     }
-    #dewCaseClose, #dewQuestionClose, #dewContributeClose {
+    #dewCaseClose, #dewQuestionClose, #dewBalanceClose, #dewContributeClose {
       position: absolute; top: 14px; right: 18px;
       font-family: 'Space Mono',monospace; font-size: 13px;
       color: rgba(159,232,219,.28); background: none; border: none;
       cursor: pointer; padding: 4px; line-height: 1;
       transition: color .2s ease;
     }
-    #dewCaseClose:hover, #dewQuestionClose:hover, #dewContributeClose:hover { color: rgba(159,232,219,.7); }
-    #dewCasePanel p, #dewQuestionPanel p, #dewContributePanel p {
+    #dewCaseClose:hover, #dewQuestionClose:hover, #dewBalanceClose:hover, #dewContributeClose:hover { color: rgba(159,232,219,.7); }
+    #dewCasePanel p, #dewQuestionPanel p, #dewBalancePanel p, #dewContributePanel p {
       font-family: 'Space Mono',monospace; font-size: 10px;
       line-height: 2.1; letter-spacing: .05em;
       color: rgba(159,232,219,.82); margin: 0;
@@ -234,7 +261,10 @@
 
   <div id="vignette"></div>
   <h1 id="dewTitle">is consciousness fundamental to reality?</h1>
-  <div id="status" aria-hidden="true"></div>
+  <div id="dewStatusRow">
+    <div id="status" aria-hidden="true"></div>
+    <button id="dewBalance" type="button" aria-label="the balance of evidence — open the details"></button>
+  </div>
 
   <!-- SITE NAV (z:7 — inside stage so iOS compositing always puts it on top) -->
   <nav id="dewNav">
@@ -300,6 +330,17 @@
   <div id="dewQuestionPanel" role="dialog">
     <button id="dewQuestionClose" aria-label="close">×</button>
     <p>Your brain is made of the same stuff as everything else: protons, neutrons and electrons, the same particles that make up a rock, a river or a star. Arranged one way, they make a stone. Arranged as roughly 86 billion neurons trading electrical and chemical signals, they seem to produce something no stone is thought to have — the felt experience of being you: the redness of red, the ache of loss, the taste of coffee. Neuroscience has mapped, in growing detail, which brain activity goes along with which experience. What it hasn't explained is why any of that activity should feel like anything from the inside at all, rather than running in the dark. Philosophers call this the hard problem of consciousness. Either experience somehow switches on once matter is organized in the right way — and no one yet knows how, or where that line would be — or it was never entirely absent from matter to begin with, or the question itself rests on a mistake about what experience is. Which of those is true is the question this project keeps returning to.</p>
+  </div>
+</div>
+
+<div id="dewBalanceOverlay" aria-hidden="true">
+  <div id="dewBalancePanel" role="dialog" aria-labelledby="dewBalanceTitle">
+    <button id="dewBalanceClose" aria-label="close">×</button>
+    <h2 id="dewBalanceTitle">the balance</h2>
+    <p>Where does the evidence behind these signals point: consciousness made by the brain, or consciousness as fundamental? Each signal is scored by where its own chapter of the book lands — <b>−1</b> if the evidence favours the brain producing consciousness, <b>+1</b> if it's a real anomaly for that view, <b>0</b> if both readings predict what's observed. Physics that only removes the assumption that matter obviously comes first scores 0: stacking open questions on top of each other doesn't add up to evidence.</p>
+    <div id="dewBalanceBig"></div>
+    <p id="dewBalanceSummary"></p>
+    <div id="dewBalanceList"></div>
   </div>
 </div>
 
@@ -608,9 +649,188 @@ new PLYLoader().load(BRAIN_MODEL_URL,
 }());
 </script>
 <script>
+// ── the balance: evidence gauge fed by each signal's chapter ──────────────
+// lean per page: -1 evidence favours the brain producing consciousness · 0 an open fork both readings predict ·
+// +1 a real anomaly for that view. Scores come from each book chapter's own conclusion; update them when a chapter changes.
+(function () {
+  var BAL = {
+    "/the-particle-they-didnt-want-to-name.html": [
+      0,
+      "even mass turns out to be relational — but that says nothing about minds"
+    ],
+    "/double-slit.html": [
+      0,
+      "matter is less solid than it feels — physics, not evidence about minds"
+    ],
+    "/emc2.html": [
+      0,
+      "matter is packed energy in a field; the question stays open"
+    ],
+    "/entanglement.html": [
+      0,
+      "reality is deeply connected, but gives brains no mechanism"
+    ],
+    "/hard-problem.html": [
+      0,
+      "the explanatory gap is real — but a gap isn't proof of what fills it"
+    ],
+    "/antenna.html": [
+      0,
+      "generator or filter: no experiment yet tells them apart"
+    ],
+    "/lucid-dreaming.html": [
+      0,
+      "self-awareness is a dial the brain can turn; why it's felt is open"
+    ],
+    "/default-mode.html": [
+      0,
+      "quieting the self-network: both readings predict the same brain scan"
+    ],
+    "/near-death.html": [
+      0,
+      "experience returns with brain activity — yet the leading explanation is incomplete"
+    ],
+    "/terminal-lucidity.html": [
+      0.5,
+      "a well-documented anomaly; the physical explanation is plausible but unconfirmed"
+    ],
+    "/realer-than-real.html": [
+      -0.5,
+      "inducible on demand — 'a mechanism, not a miracle' — though the fork remains"
+    ],
+    "/leaving-on-command.html": [
+      -1,
+      "felt self-location can be moved on command; the hidden-target test found nothing"
+    ],
+    "/reincarnation.html": [
+      -1,
+      "the book's most skeptical chapter: cultural clustering fits the ordinary explanation"
+    ],
+    "/quantum-myths.html": [
+      0,
+      "debunks shortcuts; the question has to be argued on its own terms"
+    ],
+    "/tesla-quote.html": [
+      0,
+      "the quote is fake; frequency theories remain minority positions"
+    ],
+    "/biophotons.html": [
+      0,
+      "real but faint light; nobody has shown it does anything"
+    ],
+    "/superposition.html": [
+      0,
+      "consciousness-causes-collapse is a respected minority view, not evidence"
+    ],
+    "/holographic.html": [
+      0,
+      "even space may be secondary — still silent about minds"
+    ],
+    "/many-worlds.html": [
+      0,
+      "branching physics can't say why you experience one branch"
+    ],
+    "/entropy.html": [
+      0,
+      "brains are islands of order; why they're conscious is still disputed"
+    ],
+    "/fine-tuning.html": [
+      0,
+      "a real explanatory gap, filled only by competing proposals"
+    ],
+    "/black-hole.html": [
+      0,
+      "Penrose's Orch-OR is serious but unproven, and being squeezed by experiment"
+    ],
+    "/spacetime.html": [
+      0,
+      "physics has no 'now'; whether the felt now is fundamental is open"
+    ],
+    "/universe.html": [
+      0,
+      "the life-permitting slice is narrow; no mind is needed to explain it"
+    ],
+    "/interface-theory.html": [
+      0,
+      "perception isn't built for truth; Hoffman's further leap is speculative"
+    ],
+    "/cell-turnover.html": [
+      0,
+      "the book calls this one plainly neutral"
+    ],
+    "/split-brain.html": [
+      0,
+      "unity tracks brain integration; why it's felt is untouched"
+    ],
+    "/free-will.html": [
+      0,
+      "Libet's certainty has eroded, but the fork is open both ways"
+    ],
+    "/self-inquiry.html": [
+      0,
+      "no findable observer — exactly what both readings predict"
+    ],
+    "/oneness.html": [
+      0,
+      "a shared shape of experience: shared biology or something real, undecided"
+    ],
+    "/present-moment.html": [
+      0,
+      "the built 'now' is the hard problem in its most immediate form"
+    ],
+    "/advaita.html": [
+      0,
+      "fits every signal — which is accommodation, not evidence"
+    ]
+  };
+  var names = {};
+  document.querySelectorAll('#dewLinks li:not(.dewMenuExtra) a').forEach(function (a) { names[a.getAttribute('href')] = a.textContent; });
+  var rows = Object.keys(names).map(function (h) { return { href: h, name: names[h], lean: BAL[h] ? BAL[h][0] : 0, why: BAL[h] ? BAL[h][1] : 'not yet scored' }; });
+  var n = rows.length, mean = rows.reduce(function (t, r) { return t + r.lean; }, 0) / n;
+  var open = rows.filter(function (r) { return r.lean === 0; }).length / n;   // share of signals still on an open fork
+
+  // half-circle gauge: angle -90° (brain) … +90° (fundamental); band width = share of open forks
+  function gauge(w, labels) {
+    var h = labels ? w * 0.62 : w * 0.56, cx = w / 2, cy = labels ? w * 0.52 : h - 2, r = w * (labels ? 0.36 : 0.44);
+    var pt = function (deg, rad) { var a = (deg - 90) * Math.PI / 180; return [(cx + rad * Math.cos(a)).toFixed(1), (cy + rad * Math.sin(a)).toFixed(1)]; };
+    var arc = function (d0, d1, rad) { var p = pt(d0, rad), q = pt(d1, rad); return 'M' + p + ' A' + rad + ' ' + rad + ' 0 ' + (d1 - d0 > 180 ? 1 : 0) + ' 1 ' + q; };
+    var needle = mean * 90, half = open * 90;
+    var lo = Math.max(-90, needle - half), hi = Math.min(90, needle + half), sw = Math.max(2, w * 0.05);
+    var s = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h.toFixed(0) + '" aria-hidden="true">'
+      + '<path d="' + arc(-90, -30, r) + '" stroke="rgba(159,232,219,.28)" stroke-width="' + sw + '" fill="none"/>'
+      + '<path d="' + arc(-30, 30, r) + '" stroke="rgba(159,232,219,.5)" stroke-width="' + sw + '" fill="none"/>'
+      + '<path d="' + arc(30, 90, r) + '" stroke="rgba(159,232,219,.28)" stroke-width="' + sw + '" fill="none"/>'
+      + '<path d="' + arc(lo, hi, r * 0.78) + '" stroke="rgba(223,240,236,.14)" stroke-width="' + (r * 0.3).toFixed(1) + '" fill="none"/>'
+      + '<line class="dewG-needle" x1="' + cx + '" y1="' + cy + '" x2="' + pt(needle, r * 0.92)[0] + '" y2="' + pt(needle, r * 0.92)[1] + '" stroke="rgba(223,240,236,.85)" stroke-width="' + Math.max(1.2, w * 0.02) + '" stroke-linecap="round" style="transition:stroke .3s"/>'
+      + '<circle cx="' + cx + '" cy="' + cy + '" r="' + Math.max(1.8, w * 0.025) + '" fill="rgba(223,240,236,.9)"/>';
+    if (labels) {
+      var t = function (x, y, a, txt) { return '<text x="' + x + '" y="' + y + '" text-anchor="' + a + '" font-family="Space Mono, monospace" font-size="10" fill="rgba(159,232,219,.75)">' + txt + '</text>'; };
+      s += t(cx - r - 4, cy + 18, 'start', 'the brain produces it') + t(cx + r + 4, cy + 18, 'end', 'fundamental') + t(cx, cy - r - 14, 'middle', 'open');
+    }
+    return s + '</svg>';
+  }
+  document.getElementById('dewBalance').innerHTML = gauge(46, false);
+  document.getElementById('dewBalanceBig').innerHTML = gauge(360, true);
+  document.getElementById('dewBalanceSummary').textContent =
+    'Right now the needle sits at ' + (mean > 0 ? '+' : '') + mean.toFixed(2) + ' — in the open zone — and ' + Math.round(open * n) + ' of ' + n +
+    ' signals still end on a fork both readings predict; that share sets the width of the shaded band. It moves only when the evidence in a chapter does.';
+  var esc = function (x) { var d = document.createElement('div'); d.textContent = x; return d.innerHTML; };
+  var group = function (title, list) {
+    if (!list.length) return '';
+    return '<div class="dewG-head">' + title + ' (' + list.length + ')</div><ul class="dewG-list">' + list.map(function (r) {
+      return '<li><span class="dewG-score">' + (r.lean > 0 ? '+' : r.lean < 0 ? '−' : '') + (Math.abs(r.lean) === 0.5 ? '½' : Math.abs(r.lean)) + '</span><span><a href="' + esc(r.href) + '">' + esc(r.name) + '</a> — ' + esc(r.why) + '</span></li>';
+    }).join('') + '</ul>';
+  };
+  document.getElementById('dewBalanceList').innerHTML =
+    group('leaning towards the brain', rows.filter(function (r) { return r.lean < 0; }).sort(function (a, b) { return a.lean - b.lean; })) +
+    group('leaning towards fundamental', rows.filter(function (r) { return r.lean > 0; })) +
+    group('open — both readings predict it', rows.filter(function (r) { return r.lean === 0; }));
+}());
+</script>
+<script>
 (function () {
   // "the case" and "the question" popups share the same open/close behaviour
-  ['Case', 'Question'].forEach(function (name) {
+  ['Case', 'Question', 'Balance'].forEach(function (name) {
     var btn     = document.getElementById('dew' + name);
     var overlay = document.getElementById('dew' + name + 'Overlay');
     var close   = document.getElementById('dew' + name + 'Close');
