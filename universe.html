@@ -56,7 +56,7 @@
     }
     /* narrow screens: drop the title below the top nav so they don't collide */
     @media (max-width: 1180px) { #title-wrap { top: calc(5% + 30px); } }
-    @media (max-width: 600px)  { #title-wrap { white-space: normal; width: 90vw; } }
+    @media (max-width: 600px)  { #title-wrap { white-space: normal; width: 90vw; } #title-wrap h1 { line-height: 1.05; } }
     h1 {
       font-family: 'Italiana', serif; font-weight: 400; text-transform: lowercase;
       color: rgba(223,240,236,.65);
@@ -64,8 +64,8 @@
       text-shadow: 0 0 26px rgba(159,232,219,.55), 0 0 60px rgba(159,232,219,.25);
     }
     .subtitle {
-      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
-      color: rgba(159,232,219,.32); margin: .45em 0 0;
+      font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(159,232,219,.6); margin: .45em 0 0;
     }
         #top-nav {
       position: absolute; top: 5%; left: 5%;
@@ -73,18 +73,18 @@
       pointer-events: none;
     }
     #home-btn {
-      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
       color: rgba(159,232,219,.88); text-decoration: none;
       pointer-events: auto; transition: color .4s ease;
     }
-    #home-btn:hover { color: rgba(159,232,219,.75); }
+    #home-btn:hover { color: rgba(159,232,219,1); }
     #dewContribute, #dewReferences {
-      font-size: 9px; letter-spacing: .44em; text-transform: uppercase;
-      color: rgba(159,232,219,.5); background: none; border: none;
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(159,232,219,.68); background: none; border: none;
       cursor: pointer; padding: 0; pointer-events: auto;
-      transition: color .4s ease;
+      transition: color .4s ease; text-decoration: none;
     }
-    #dewContribute:hover { color: rgba(159,232,219,.85); }
+    #dewContribute:hover { color: rgba(159,232,219,1); }
     #dewContributeOverlay {
       display: none; position: fixed; inset: 0; z-index: 20;
       align-items: center; justify-content: center;
@@ -146,9 +146,9 @@
     }
     #nav-links.open { display: flex; animation: navDrop .18s ease; }
     #nav-links a {
-      font-family: 'Space Mono', monospace; font-size: 9px;
-      letter-spacing: .3em; text-transform: lowercase; text-decoration: none;
-      color: rgba(159,232,219,.55); white-space: nowrap;
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      letter-spacing: .14em; text-transform: lowercase; text-decoration: none;
+      color: rgba(159,232,219,.7); white-space: nowrap;
       transition: color .2s ease, text-shadow .2s ease;
     }
     #nav-links a:hover { color: rgba(159,232,219,.95); text-shadow: 0 0 10px rgba(159,232,219,.35); }
@@ -156,7 +156,7 @@
     #status {
       position: absolute; bottom: 6%; left: 50%;
       transform: translateX(-50%);
-      font-size: 9px; letter-spacing: .28em;
+      font-size: 10px; letter-spacing: .28em;
       color: rgba(159,232,219,.95); text-align: center;
     }
     #scale-label {
@@ -167,7 +167,7 @@
     }
     #info {
       position: absolute; bottom: 16%; max-height: calc(79vh - 90px); overflow-y: auto; pointer-events: auto; right: 5%;
-      max-width: min(max(280px, 26vw), 380px, 84vw); font-size: 10px; line-height: 1.9;
+      max-width: min(max(280px, 26vw), 380px, 84vw); font-size: 11px; line-height: 1.9;
       letter-spacing: .05em; color: rgba(159,232,219,.95); text-align: right;
       background: rgba(11,19,22,.72); border: 1px solid rgba(159,232,219,.08);
       padding: 12px 14px; border-radius: 3px;
